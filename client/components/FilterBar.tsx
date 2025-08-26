@@ -13,23 +13,19 @@ interface FilterBarProps {
   onFiltersChange?: (filters: FilterOptions) => void;
   onClearFilters?: () => void;
   availableTypes?: string[];
-  availableRegions?: string[];
   className?: string;
 }
 
 const DEFAULT_FILTERS: FilterOptions = {
   types: [],
-  regions: [],
   priceRange: [0, 1000],
   inStockOnly: false,
-  rating: null,
 };
 
-export function FilterBar({ 
-  onFiltersChange, 
+export function FilterBar({
+  onFiltersChange,
   onClearFilters,
   availableTypes = ["Red Wine", "White Wine", "Rosé", "Sparkling", "Dessert Wine"],
-  availableRegions = ["Napa Valley", "Bordeaux", "Tuscany", "Rioja", "Burgundy", "Champagne"],
   className = ""
 }: FilterBarProps) {
   const [filters, setFilters] = useState<FilterOptions>(DEFAULT_FILTERS);
@@ -41,9 +37,9 @@ export function FilterBar({
     onFiltersChange?.(updatedFilters);
   };
 
-  const toggleFilter = (category: keyof Pick<FilterOptions, 'types' | 'regions'>, value: string) => {
+  const toggleFilter = (category: keyof Pick<FilterOptions, 'types'>, value: string) => {
     const current = filters[category];
-    const updated = current.includes(value) 
+    const updated = current.includes(value)
       ? current.filter(item => item !== value)
       : [...current, value];
     updateFilters({ [category]: updated });
@@ -55,10 +51,8 @@ export function FilterBar({
     setActiveDropdown(null);
   };
 
-  const hasActiveFilters = filters.types.length > 0 || 
-                          filters.regions.length > 0 || 
-                          filters.inStockOnly || 
-                          filters.rating !== null;
+  const hasActiveFilters = filters.types.length > 0 ||
+                          filters.inStockOnly;
 
   const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
