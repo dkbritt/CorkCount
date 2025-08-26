@@ -766,6 +766,9 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     ${item.price.toFixed(2)}
                   </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {item.location || "Not specified"}
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <Button
