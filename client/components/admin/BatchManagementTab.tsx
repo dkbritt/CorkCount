@@ -23,6 +23,8 @@ interface BatchItem {
   agingNotes: string;
   dateAdded: string;
   dateStarted: string;
+  estimatedAgingTime: number; // in weeks
+  estimatedAgingUnit: "weeks" | "months";
   status: "primary-fermentation" | "secondary-fermentation" | "aging" | "ready-to-bottle" | "bottled";
   estimatedBottling?: string;
 }
