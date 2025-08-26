@@ -656,7 +656,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-3">
                     <div>
                       <p className="text-sm text-gray-500">Type & Vintage</p>
                       <p className="font-medium text-gray-900">{batch.type} • {batch.vintage}</p>
