@@ -676,6 +676,41 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
                     <p className="text-sm text-gray-700 leading-relaxed">{batch.agingNotes}</p>
                   </div>
 
+                  {/* Aging Progress Bar */}
+                  {(() => {
+                    const progress = calculateAgingProgress(batch);
+                    return (
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-500">Aging Progress</p>
+                          <span className={`text-sm font-medium ${
+                            progress.isOverdue ? 'text-red-600' :
+                            progress.isComplete ? 'text-green-600' :
+                            'text-gray-700'
+                          }`}>
+                            {progress.percentage}% Complete
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                          <div
+                            className={`h-2 rounded-full transition-all duration-300 ${getProgressBarColor(progress)}`}
+                            style={{ width: `${Math.min(progress.percentage, 100)}%` }}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>{progress.daysElapsed} days elapsed</span>
+                          <span>{progress.totalDays} days total</span>
+                        </div>
+                        {progress.isOverdue && (
+                          <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            Aging time exceeded by {progress.daysElapsed - progress.totalDays} days
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   {batch.estimatedBottling && (
                     <div>
                       <p className="text-sm text-gray-500">Estimated Bottling</p>
