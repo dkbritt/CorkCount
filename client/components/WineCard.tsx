@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Plus, Minus } from "lucide-react";
 
 export interface Wine {
   id: string;
@@ -18,13 +20,49 @@ export interface Wine {
 
 interface WineCardProps {
   wine: Wine;
-  onAddToCart?: (wine: Wine) => void;
+  onAddToCart?: (wine: Wine, quantity: number) => void;
   onViewDetails?: (wine: Wine) => void;
   variant?: "storefront" | "admin";
 }
 
 export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefront" }: WineCardProps) {
+  const [quantity, setQuantity] = useState(1);
   const isAvailable = wine.inStock > 0;
+  const isLowStock = wine.inStock > 0 && wine.inStock <= 5;
+
+  const incrementQuantity = () => {
+    if (quantity < wine.inStock) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const handleAddToCart = () => {
+    onAddToCart?.(wine, quantity);
+    setQuantity(1); // Reset quantity after adding to cart
+  };
+
+  const getWineTypeColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'red wine':
+        return 'bg-wine text-white';
+      case 'white wine':
+        return 'bg-yellow-500 text-white';
+      case 'rosé':
+        return 'bg-pink-500 text-white';
+      case 'sparkling':
+        return 'bg-federal text-white';
+      case 'dessert wine':
+        return 'bg-amber-600 text-white';
+      default:
+        return 'bg-gray-500 text-white';
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group">
