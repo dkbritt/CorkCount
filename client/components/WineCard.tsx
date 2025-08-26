@@ -85,15 +85,22 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
         )}
         
         {/* Stock Badge */}
-        {!isAvailable && (
-          <Badge className="absolute top-2 right-2 bg-red-500 text-white">
-            Out of Stock
-          </Badge>
-        )}
-        
+        <div className="absolute top-2 right-2 flex flex-col gap-1">
+          {!isAvailable && (
+            <Badge className="bg-red-500 text-white text-xs px-3 py-1 rounded-full">
+              Sold Out
+            </Badge>
+          )}
+          {isLowStock && isAvailable && (
+            <Badge className="bg-orange-500 text-white text-xs px-3 py-1 rounded-full">
+              Low Stock
+            </Badge>
+          )}
+        </div>
+
         {/* Rating Badge */}
         {wine.rating > 0 && (
-          <Badge className="absolute top-2 left-2 bg-white/90 text-gray-700">
+          <Badge className="absolute top-2 left-2 bg-white/90 text-gray-700 rounded-full">
             ⭐ {wine.rating}
           </Badge>
         )}
