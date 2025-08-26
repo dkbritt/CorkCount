@@ -5,10 +5,8 @@ import { ChevronDown, Filter, X } from "lucide-react";
 
 export interface FilterOptions {
   types: string[];
-  regions: string[];
   priceRange: [number, number];
   inStockOnly: boolean;
-  rating: number | null;
 }
 
 interface FilterBarProps {
