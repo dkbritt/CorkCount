@@ -405,6 +405,13 @@ export default function Index() {
         onCheckout={handleCheckout}
       />
 
+      {/* Admin Login Modal */}
+      <AdminLoginModal
+        isOpen={isAdminLoginModalOpen}
+        onClose={handleCloseAdminLogin}
+        onLogin={handleAdminLogin}
+      />
+
       {/* Sticky Cart Footer */}
       <StickyCartFooter
         itemCount={totalCartItems}
