@@ -226,7 +226,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {metricCards.map((metric, index) => {
+        {metricCards.slice(0, -1).map((metric, index) => {
           const Icon = metric.icon;
 
           return (
@@ -254,6 +254,128 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
             </div>
           );
         })}
+
+        {/* Wine Type Breakdown Pie Chart */}
+        {(() => {
+          const typeQuantities = mockInventoryData
+            .filter(item => item.status === "active")
+            .reduce((acc, item) => {
+              acc[item.type] = (acc[item.type] || 0) + item.quantity;
+              return acc;
+            }, {} as Record<string, number>);
+
+          const totalQuantity = Object.values(typeQuantities).reduce((sum, qty) => sum + qty, 0);
+          const typeData = Object.entries(typeQuantities)
+            .map(([type, quantity]) => ({
+              type,
+              quantity,
+              percentage: totalQuantity > 0 ? (quantity / totalQuantity) * 100 : 0
+            }))
+            .sort((a, b) => b.quantity - a.quantity);
+
+          const colors = [
+            '#9C1B2A', // Wine
+            '#1F2937', // Federal
+            '#7C3AED', // Purple
+            '#059669', // Green
+            '#DC2626', // Red
+          ];
+
+          if (typeData.length === 0) {
+            return (
+              <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                    <PieChart className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-600">Wine Type Breakdown</p>
+                  <p className="text-lg text-gray-500">No inventory data</p>
+                </div>
+              </div>
+            );
+          }
+
+          let cumulativePercentage = 0;
+          const radius = 80;
+          const centerX = 100;
+          const centerY = 100;
+
+          return (
+            <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                  <PieChart className="h-6 w-6 text-white" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-sm font-medium text-gray-600">Wine Type Breakdown</p>
+
+                {/* SVG Pie Chart */}
+                <div className="flex flex-col lg:flex-row items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <svg width="200" height="200" viewBox="0 0 200 200" className="w-32 h-32 lg:w-40 lg:h-40">
+                      {typeData.map((data, index) => {
+                        const startAngle = (cumulativePercentage / 100) * 360;
+                        const endAngle = startAngle + (data.percentage / 100) * 360;
+
+                        const startAngleRad = (startAngle - 90) * (Math.PI / 180);
+                        const endAngleRad = (endAngle - 90) * (Math.PI / 180);
+
+                        const x1 = centerX + radius * Math.cos(startAngleRad);
+                        const y1 = centerY + radius * Math.sin(startAngleRad);
+                        const x2 = centerX + radius * Math.cos(endAngleRad);
+                        const y2 = centerY + radius * Math.sin(endAngleRad);
+
+                        const largeArcFlag = data.percentage > 50 ? 1 : 0;
+
+                        const pathData = [
+                          `M ${centerX} ${centerY}`,
+                          `L ${x1} ${y1}`,
+                          `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+                          'Z'
+                        ].join(' ');
+
+                        cumulativePercentage += data.percentage;
+
+                        return (
+                          <path
+                            key={data.type}
+                            d={pathData}
+                            fill={colors[index % colors.length]}
+                            stroke="white"
+                            strokeWidth="2"
+                            className="hover:opacity-80 transition-opacity"
+                          />
+                        );
+                      })}
+                    </svg>
+                  </div>
+
+                  {/* Legend */}
+                  <div className="flex-1 space-y-2">
+                    {typeData.map((data, index) => (
+                      <div key={data.type} className="flex items-center gap-2 text-sm">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: colors[index % colors.length] }}
+                        />
+                        <span className="font-medium text-gray-700">{data.type}</span>
+                        <span className="text-gray-500">
+                          {data.percentage.toFixed(1)}% ({data.quantity} bottles)
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-500">Based on current inventory</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Recent Activity */}
