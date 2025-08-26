@@ -134,7 +134,7 @@ export function Navigation({
                 variant="navigation"
                 size="sm"
                 className="hidden sm:flex"
-                onClick={() => window.location.href = '/admin'}
+                onClick={onOpenAdminLogin}
               >
                 Admin Login
               </Button>
