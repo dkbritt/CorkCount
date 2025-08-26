@@ -141,6 +141,8 @@ export default function Index() {
   });
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
+  const [selectedWine, setSelectedWine] = useState<Wine | null>(null);
+  const [isWineDetailsModalOpen, setIsWineDetailsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // Save cart to localStorage whenever cartItems changes
@@ -382,7 +384,7 @@ export default function Index() {
                 key={wine.id}
                 wine={wine}
                 onAddToCart={handleAddToCart}
-                onViewDetails={(wine) => console.log("View details:", wine)}
+                onViewDetails={handleViewWineDetails}
                 variant="storefront"
               />
             ))}
