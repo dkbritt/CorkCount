@@ -75,8 +75,19 @@ const mockBatches: BatchItem[] = [
     quantity: 180,
     agingNotes: "Cold fermentation preserving delicate fruit flavors. Ready for immediate bottling.",
     dateAdded: "2023-08-05",
-    status: "ready",
+    status: "secondary-fermentation",
     estimatedBottling: "2024-02-01"
+  },
+  {
+    id: "batch-005",
+    name: "Russian River Pinot Gris 2024",
+    type: "White Wine",
+    vintage: 2024,
+    quantity: 220,
+    agingNotes: "Just started fermentation. Monitoring sugar levels and temperature closely.",
+    dateAdded: "2024-01-15",
+    status: "primary-fermentation",
+    estimatedBottling: "2024-06-15"
   }
 ];
 
