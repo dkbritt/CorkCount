@@ -22,6 +22,7 @@ interface BatchItem {
   quantity: number;
   agingNotes: string;
   dateAdded: string;
+  dateStarted: string;
   status: "primary-fermentation" | "secondary-fermentation" | "aging" | "ready-to-bottle" | "bottled";
   estimatedBottling?: string;
 }
