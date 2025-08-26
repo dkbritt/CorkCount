@@ -41,6 +41,7 @@ interface AddInventoryForm {
   batchLink: string;
   status: string;
   location: string;
+  image: string;
 }
 
 interface BatchItem {
