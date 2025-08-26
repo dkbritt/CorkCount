@@ -170,6 +170,7 @@ interface InventoryTabProps {
     lowStockThreshold: number;
     outOfStockThreshold: number;
   };
+  onSetAddCallback?: (callback: () => void) => void;
 }
 
 export function InventoryTab({ settings }: InventoryTabProps = {}) {
