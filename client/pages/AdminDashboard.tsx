@@ -66,6 +66,44 @@ export default function AdminDashboard() {
     // In a real app, this would save to backend/localStorage
   };
 
+  const handleFloatingActionClick = () => {
+    switch (activeTab) {
+      case "inventory":
+        if (onAddInventory) {
+          onAddInventory();
+        }
+        break;
+      case "batch":
+        if (onAddBatch) {
+          onAddBatch();
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const getFloatingButtonConfig = () => {
+    switch (activeTab) {
+      case "inventory":
+        return {
+          show: true,
+          label: "Add Bottle",
+          icon: Package,
+          action: handleFloatingActionClick
+        };
+      case "batch":
+        return {
+          show: true,
+          label: "Add Batch",
+          icon: ClipboardList,
+          action: handleFloatingActionClick
+        };
+      default:
+        return { show: false };
+    }
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "inventory":
