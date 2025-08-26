@@ -376,6 +376,24 @@ export default function Index() {
           </div>
         )}
       </div>
+
+      {/* Cart Modal */}
+      <CartModal
+        isOpen={isCartModalOpen}
+        onClose={handleCloseCart}
+        cartItems={cartItems}
+        onUpdateQuantity={handleUpdateCartQuantity}
+        onRemoveItem={handleRemoveFromCart}
+        onCheckout={handleCheckout}
+      />
+
+      {/* Sticky Cart Footer */}
+      <StickyCartFooter
+        itemCount={totalCartItems}
+        totalPrice={totalCartPrice}
+        onOpenCart={handleOpenCart}
+        className="md:hidden" // Only show on mobile
+      />
     </div>
   );
 }
