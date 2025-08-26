@@ -39,7 +39,8 @@ const mockWines: Wine[] = [
     inStock: 8,
     rating: 4.9,
     description: "The epitome of luxury Champagne, with fine bubbles and complex flavors of brioche, citrus, and toasted almonds. A celebration in every sip.",
-    flavorNotes: ["Brioche", "Citrus", "Toasted Almonds", "Honey", "Minerality"]
+    flavorNotes: ["Brioche", "Citrus", "Toasted Almonds", "Honey", "Minerality"],
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=600&fit=crop"
   },
   {
     id: "wine-003",
@@ -52,7 +53,8 @@ const mockWines: Wine[] = [
     inStock: 15,
     rating: 4.7,
     description: "A Bordeaux-style blend from Napa Valley, combining Cabernet Sauvignon with Merlot and other varietals. Rich, full-bodied with layers of dark fruit and spice.",
-    flavorNotes: ["Blackberry", "Cassis", "Vanilla", "Oak", "Dark Spices"]
+    flavorNotes: ["Blackberry", "Cassis", "Vanilla", "Oak", "Dark Spices"],
+    image: "https://images.unsplash.com/photo-1566995147102-a84a5b4b8b0a?w=400&h=600&fit=crop"
   },
   {
     id: "wine-004",
@@ -65,7 +67,8 @@ const mockWines: Wine[] = [
     inStock: 24,
     rating: 4.6,
     description: "Classic Barolo with intense garnet color and complex aromas of tar, roses, and dark cherries. A wine of great structure and aging potential.",
-    flavorNotes: ["Tar", "Roses", "Dark Cherry", "Leather", "Truffle"]
+    flavorNotes: ["Tar", "Roses", "Dark Cherry", "Leather", "Truffle"],
+    image: "https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?w=400&h=600&fit=crop"
   },
   {
     id: "wine-005",
@@ -78,7 +81,8 @@ const mockWines: Wine[] = [
     inStock: 36,
     rating: 4.4,
     description: "Crisp and mineral-driven Sauvignon Blanc with notes of citrus, gooseberry, and wet stone. Perfect expression of Loire Valley terroir.",
-    flavorNotes: ["Citrus", "Gooseberry", "Wet Stone", "Green Herbs", "Minerality"]
+    flavorNotes: ["Citrus", "Gooseberry", "Wet Stone", "Green Herbs", "Minerality"],
+    image: "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=600&fit=crop"
   },
   {
     id: "wine-006",
@@ -91,7 +95,8 @@ const mockWines: Wine[] = [
     inStock: 18,
     rating: 4.5,
     description: "A rich and powerful blend showcasing the diversity of Rhône varieties. Deep, concentrated flavors of dark fruit, herbs, and spice.",
-    flavorNotes: ["Dark Fruit", "Herbs", "Spice", "Garrigue", "Pepper"]
+    flavorNotes: ["Dark Fruit", "Herbs", "Spice", "Garrigue", "Pepper"],
+    image: "https://images.unsplash.com/photo-1574282248091-7e8bfcef9e8d?w=400&h=600&fit=crop"
   },
   {
     id: "wine-007",
@@ -104,7 +109,8 @@ const mockWines: Wine[] = [
     inStock: 48,
     rating: 4.2,
     description: "Pale pink Provence rosé with delicate flavors of strawberry, peach, and citrus. Light, fresh, and perfect for warm weather enjoyment.",
-    flavorNotes: ["Strawberry", "Peach", "Citrus", "Melon", "Fresh Herbs"]
+    flavorNotes: ["Strawberry", "Peach", "Citrus", "Melon", "Fresh Herbs"],
+    image: "https://images.unsplash.com/photo-1569235186275-626cb8f3c7be?w=400&h=600&fit=crop"
   },
   {
     id: "wine-008",
@@ -117,7 +123,8 @@ const mockWines: Wine[] = [
     inStock: 0,
     rating: 4.3,
     description: "Late harvest Riesling with beautiful balance of sweetness and acidity. Notes of honey, apricot, and mineral undertones.",
-    flavorNotes: ["Honey", "Apricot", "Minerality", "Lime", "Petrol"]
+    flavorNotes: ["Honey", "Apricot", "Minerality", "Lime", "Petrol"],
+    image: "https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400&h=600&fit=crop"
   }
 ];
 
