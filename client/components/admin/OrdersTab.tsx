@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/SearchBar";
-import { 
-  Eye, 
-  Package, 
-  Truck, 
-  CheckCircle, 
-  Clock, 
+import {
+  Eye,
+  Package,
+  Truck,
+  CheckCircle,
+  Clock,
   AlertCircle,
   Filter,
   ArrowUpDown,
@@ -113,10 +113,61 @@ const mockOrders: Order[] = [
 ];
 
 export function OrdersTab() {
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<keyof Order>("orderDate");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  // Load orders from localStorage on component mount
+  useEffect(() => {
+    const loadOrdersFromStorage = () => {
+      try {
+        const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+
+        // Convert checkout orders to admin order format
+        const convertedOrders = checkoutOrders.map((checkoutOrder: any) => ({
+          id: checkoutOrder.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+          orderNumber: checkoutOrder.orderNumber,
+          customer: {
+            name: checkoutOrder.customerName,
+            email: checkoutOrder.email
+          },
+          items: checkoutOrder.items.map((item: any) => ({
+            name: `${item.wine.name} ${item.wine.vintage}`,
+            quantity: item.quantity,
+            price: item.wine.price
+          })),
+          total: checkoutOrder.totalPrice,
+          status: checkoutOrder.status,
+          orderDate: checkoutOrder.orderDate,
+          pickupDate: checkoutOrder.pickupDate,
+          pickupTime: checkoutOrder.pickupTime,
+          paymentMethod: checkoutOrder.paymentMethod,
+          phone: checkoutOrder.phone,
+          orderNotes: checkoutOrder.orderNotes
+        }));
+
+        // Merge with mock orders, with checkout orders first
+        setOrders([...convertedOrders, ...mockOrders]);
+      } catch (error) {
+        console.error('Error loading orders from localStorage:', error);
+        setOrders(mockOrders);
+      }
+    };
+
+    loadOrdersFromStorage();
+
+    // Optional: Listen for storage changes if orders are updated from other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'corkCountOrders') {
+        loadOrdersFromStorage();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -177,7 +228,7 @@ export function OrdersTab() {
     });
   };
 
-  const filteredOrders = mockOrders
+  const filteredOrders = orders
     .filter(order => {
       const matchesSearch = searchQuery === "" || 
         order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
