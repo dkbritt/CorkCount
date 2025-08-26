@@ -9,7 +9,8 @@ import {
   ShoppingCart,
   ClipboardList,
   BarChart3,
-  Settings
+  Settings,
+  Plus
 } from "lucide-react";
 
 // Import tab components and settings modal
