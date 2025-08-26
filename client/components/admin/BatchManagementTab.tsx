@@ -141,7 +141,9 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
     vintage: new Date().getFullYear(),
     quantity: 0,
     agingNotes: "",
-    dateStarted: new Date().toISOString().split('T')[0]
+    dateStarted: new Date().toISOString().split('T')[0],
+    estimatedAgingTime: 12,
+    estimatedAgingUnit: "weeks"
   });
   const [formErrors, setFormErrors] = useState<Partial<BatchFormData>>({});
 
@@ -291,7 +293,9 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
       vintage: new Date().getFullYear(),
       quantity: 0,
       agingNotes: "",
-      dateStarted: new Date().toISOString().split('T')[0]
+      dateStarted: new Date().toISOString().split('T')[0],
+      estimatedAgingTime: 12,
+      estimatedAgingUnit: "weeks"
     });
     setFormErrors({});
     setShowForm(false);
@@ -305,7 +309,9 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
       vintage: batch.vintage,
       quantity: batch.quantity,
       agingNotes: batch.agingNotes,
-      dateStarted: batch.dateStarted
+      dateStarted: batch.dateStarted,
+      estimatedAgingTime: batch.estimatedAgingTime,
+      estimatedAgingUnit: batch.estimatedAgingUnit
     });
     setEditingBatch(batch);
     setShowForm(true);
