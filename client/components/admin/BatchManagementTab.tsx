@@ -36,6 +36,8 @@ interface BatchFormData {
   quantity: number;
   agingNotes: string;
   dateStarted: string;
+  estimatedAgingTime: number;
+  estimatedAgingUnit: "weeks" | "months";
 }
 
 const mockBatches: BatchItem[] = [
