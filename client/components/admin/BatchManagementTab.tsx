@@ -140,6 +140,36 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
     }
   };
 
+  const getBatchInventoryAlert = (batchId: string) => {
+    const batchInventory = mockInventoryItems.filter(item => item.batchId === batchId);
+
+    const lowStockItems = batchInventory.filter(item =>
+      item.quantity <= lowStockThreshold && item.quantity > outOfStockThreshold
+    );
+
+    const outOfStockItems = batchInventory.filter(item =>
+      item.quantity <= outOfStockThreshold
+    );
+
+    if (outOfStockItems.length > 0) {
+      return {
+        type: "out-of-stock",
+        message: `${outOfStockItems.length} bottle${outOfStockItems.length === 1 ? '' : 's'} out of stock`,
+        items: outOfStockItems
+      };
+    }
+
+    if (lowStockItems.length > 0) {
+      return {
+        type: "low-stock",
+        message: `${lowStockItems.length} bottle${lowStockItems.length === 1 ? '' : 's'} low stock`,
+        items: lowStockItems
+      };
+    }
+
+    return null;
+  };
+
   const validateForm = (): boolean => {
     const errors: Partial<BatchFormData> = {};
 
