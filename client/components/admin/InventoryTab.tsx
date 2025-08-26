@@ -278,7 +278,8 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
         status: getInventoryStatus(formData.status),
         lastUpdated: new Date().toISOString().split('T')[0],
         flavorNotes: formData.flavorNotes,
-        batchId: formData.batchLink
+        batchId: formData.batchLink,
+        location: formData.location
       };
 
       setInventory(inventory.map(item =>
@@ -297,7 +298,8 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
         status: getInventoryStatus(formData.status),
         lastUpdated: new Date().toISOString().split('T')[0],
         flavorNotes: formData.flavorNotes,
-        batchId: formData.batchLink
+        batchId: formData.batchLink,
+        location: formData.location
       };
 
       setInventory([...inventory, newItem]);
@@ -316,7 +318,8 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
       price: "",
       flavorNotes: "",
       batchLink: "",
-      status: "Active"
+      status: "Active",
+      location: ""
     });
     setFormErrors({});
     setShowAddForm(false);
@@ -348,7 +351,8 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
       price: item.price.toString(),
       flavorNotes: item.flavorNotes || "",
       batchLink: item.batchId || "",
-      status: getFormStatus(item.status)
+      status: getFormStatus(item.status),
+      location: item.location || ""
     });
     setEditingItem(item);
     setShowAddForm(true);
