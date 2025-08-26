@@ -21,7 +21,8 @@ const mockWines: Wine[] = [
     price: 450.00,
     inStock: 12,
     rating: 4.8,
-    description: "A legendary Bordeaux blend with exceptional complexity, featuring notes of blackcurrant, cedar, and violet. This wine showcases the perfect harmony between power and elegance."
+    description: "A legendary Bordeaux blend with exceptional complexity, featuring notes of blackcurrant, cedar, and violet. This wine showcases the perfect harmony between power and elegance.",
+    flavorNotes: ["Blackcurrant", "Cedar", "Violet", "Dark Chocolate", "Tobacco"]
   },
   {
     id: "wine-002",
