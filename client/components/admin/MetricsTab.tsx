@@ -46,9 +46,9 @@ const calculateMetrics = () => {
     .filter(item => item.status === "active")
     .reduce((sum, item) => sum + item.quantity, 0);
 
-  // Low stock alerts (quantity < 5)
+  // Low stock alerts (quantity <= lowStockThreshold but > outOfStockThreshold)
   const lowStockCount = mockInventoryData
-    .filter(item => item.status === "active" && item.quantity < 5)
+    .filter(item => item.status === "active" && item.quantity <= lowStockThreshold && item.quantity > outOfStockThreshold)
     .length;
 
   // Recent additions (last 7 days)
@@ -187,7 +187,15 @@ const recentActivity = [
   }
 ];
 
-export function MetricsTab() {
+interface MetricsTabProps {
+  settings?: {
+    lowStockThreshold: number;
+    outOfStockThreshold: number;
+  };
+}
+
+export function MetricsTab({ settings }: MetricsTabProps = {}) {
+  const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
