@@ -444,6 +444,28 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
                   </p>
                 )}
               </div>
+
+              {/* Date Started */}
+              <div className="space-y-2">
+                <label htmlFor="dateStarted" className="block text-sm font-medium text-gray-700">
+                  Date Started *
+                </label>
+                <input
+                  id="dateStarted"
+                  type="date"
+                  value={formData.dateStarted}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dateStarted: e.target.value }))}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors ${
+                    formErrors.dateStarted ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                />
+                {formErrors.dateStarted && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {formErrors.dateStarted}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Aging Notes */}
