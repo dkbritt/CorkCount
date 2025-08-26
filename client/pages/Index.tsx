@@ -237,9 +237,10 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-smoke">
-      <Navigation 
-        cartItemCount={cartItems.length}
+      <Navigation
+        cartItemCount={totalCartItems}
         userRole="customer"
+        onOpenCart={handleOpenCart}
       />
 
       {/* Hero Section */}
@@ -247,7 +248,7 @@ export default function Index() {
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center">
             <h1 className="font-playfair text-4xl sm:text-6xl font-bold mb-6">
-              Discover Exceptional Wines
+              Sip Happens — Find Your Vintage
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-wine-100 max-w-3xl mx-auto">
               Curated collection of premium wines from renowned vineyards around the world. 
