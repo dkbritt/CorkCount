@@ -97,36 +97,6 @@ export function FilterBar({
         )}
       </div>
 
-      {/* Region Filter */}
-      <div className="relative">
-        <Button
-          variant="navigation"
-          size="sm"
-          onClick={() => toggleDropdown('regions')}
-          className="gap-1"
-        >
-          Region {filters.regions.length > 0 && `(${filters.regions.length})`}
-          <ChevronDown className="h-3 w-3" />
-        </Button>
-        
-        {activeDropdown === 'regions' && (
-          <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-            <div className="p-2 space-y-1">
-              {availableRegions.map((region) => (
-                <label key={region} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.regions.includes(region)}
-                    onChange={() => toggleFilter('regions', region)}
-                    className="accent-federal"
-                  />
-                  <span className="text-sm">{region}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* In Stock Only */}
       <Button
@@ -137,39 +107,6 @@ export function FilterBar({
         In Stock Only
       </Button>
 
-      {/* Rating Filter */}
-      <div className="relative">
-        <Button
-          variant="navigation"
-          size="sm"
-          onClick={() => toggleDropdown('rating')}
-          className="gap-1"
-        >
-          Rating {filters.rating && `${filters.rating}+`}
-          <ChevronDown className="h-3 w-3" />
-        </Button>
-        
-        {activeDropdown === 'rating' && (
-          <div className="absolute top-full left-0 mt-1 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-            <div className="p-2 space-y-1">
-              {[4.5, 4.0, 3.5, 3.0].map((rating) => (
-                <button
-                  key={rating}
-                  onClick={() => {
-                    updateFilters({ rating: filters.rating === rating ? null : rating });
-                    setActiveDropdown(null);
-                  }}
-                  className={`w-full text-left p-2 text-sm rounded hover:bg-gray-50 ${
-                    filters.rating === rating ? 'bg-federal/10 text-federal' : ''
-                  }`}
-                >
-                  ⭐ {rating}+
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* Active Filter Badges */}
       {hasActiveFilters && (
@@ -178,15 +115,6 @@ export function FilterBar({
             <Badge key={type} variant="secondary" className="gap-1">
               {type}
               <button onClick={() => toggleFilter('types', type)}>
-                <X className="h-3 w-3" />
-              </button>
-            </Badge>
-          ))}
-          
-          {filters.regions.map((region) => (
-            <Badge key={region} variant="secondary" className="gap-1">
-              {region}
-              <button onClick={() => toggleFilter('regions', region)}>
                 <X className="h-3 w-3" />
               </button>
             </Badge>
