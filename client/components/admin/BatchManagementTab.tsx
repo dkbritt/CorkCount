@@ -33,6 +33,7 @@ interface BatchFormData {
   vintage: number;
   quantity: number;
   agingNotes: string;
+  dateStarted: string;
 }
 
 const mockBatches: BatchItem[] = [
