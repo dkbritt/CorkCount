@@ -69,7 +69,8 @@ const mockInventory: InventoryItem[] = [
     price: 450.00,
     status: "in-stock",
     lastUpdated: "2024-01-15",
-    location: "Wine Cellar - Section A"
+    location: "Wine Cellar - Section A",
+    image: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
   },
   {
     id: "inv-002",
@@ -81,7 +82,8 @@ const mockInventory: InventoryItem[] = [
     price: 280.00,
     status: "in-stock",
     lastUpdated: "2024-01-14",
-    location: "Refrigerator - Top Shelf"
+    location: "Refrigerator - Top Shelf",
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=600&fit=crop"
   },
   {
     id: "inv-003",
@@ -93,7 +95,8 @@ const mockInventory: InventoryItem[] = [
     price: 380.00,
     status: "in-stock",
     lastUpdated: "2024-01-13",
-    location: "Wine Cellar - Section B"
+    location: "Wine Cellar - Section B",
+    image: "https://images.unsplash.com/photo-1566995147102-a84a5b4b8b0a?w=400&h=600&fit=crop"
   },
   {
     id: "inv-004",
@@ -105,7 +108,8 @@ const mockInventory: InventoryItem[] = [
     price: 120.00,
     status: "low-stock",
     lastUpdated: "2024-01-12",
-    location: "Dining Room Cabinet"
+    location: "Dining Room Cabinet",
+    image: "https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?w=400&h=600&fit=crop"
   },
   {
     id: "inv-005",
@@ -117,7 +121,8 @@ const mockInventory: InventoryItem[] = [
     price: 85.00,
     status: "in-stock",
     lastUpdated: "2024-01-11",
-    location: "Kitchen Wine Fridge"
+    location: "Kitchen Wine Fridge",
+    image: "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=600&fit=crop"
   },
   {
     id: "inv-006",
@@ -129,7 +134,8 @@ const mockInventory: InventoryItem[] = [
     price: 95.00,
     status: "low-stock",
     lastUpdated: "2024-01-10",
-    location: "Basement Storage"
+    location: "Basement Storage",
+    image: "https://images.unsplash.com/photo-1574282248091-7e8bfcef9e8d?w=400&h=600&fit=crop"
   },
   {
     id: "inv-007",
@@ -141,7 +147,8 @@ const mockInventory: InventoryItem[] = [
     price: 25.00,
     status: "in-stock",
     lastUpdated: "2024-01-09",
-    location: "Pantry Rack"
+    location: "Pantry Rack",
+    image: "https://images.unsplash.com/photo-1569235186275-626cb8f3c7be?w=400&h=600&fit=crop"
   },
   {
     id: "inv-008",
@@ -153,7 +160,8 @@ const mockInventory: InventoryItem[] = [
     price: 45.00,
     status: "out-of-stock",
     lastUpdated: "2024-01-08",
-    location: "Wine Cellar - Section C"
+    location: "Wine Cellar - Section C",
+    image: "https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400&h=600&fit=crop"
   }
 ];
 
