@@ -490,6 +490,40 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
                   </p>
                 )}
               </div>
+
+              {/* Estimated Aging Time */}
+              <div className="space-y-2">
+                <label htmlFor="estimatedAgingTime" className="block text-sm font-medium text-gray-700">
+                  Estimated Aging Time *
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="estimatedAgingTime"
+                    type="number"
+                    value={formData.estimatedAgingTime || ""}
+                    onChange={(e) => setFormData(prev => ({ ...prev, estimatedAgingTime: parseInt(e.target.value) || 0 }))}
+                    min="1"
+                    placeholder="12"
+                    className={`flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors ${
+                      formErrors.estimatedAgingTime ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  />
+                  <select
+                    value={formData.estimatedAgingUnit}
+                    onChange={(e) => setFormData(prev => ({ ...prev, estimatedAgingUnit: e.target.value as "weeks" | "months" }))}
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors"
+                  >
+                    <option value="weeks">Weeks</option>
+                    <option value="months">Months</option>
+                  </select>
+                </div>
+                {formErrors.estimatedAgingTime && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {formErrors.estimatedAgingTime}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Aging Notes */}
