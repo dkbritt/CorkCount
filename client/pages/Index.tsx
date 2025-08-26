@@ -208,9 +208,14 @@ export default function Index() {
   };
 
   const handleCheckout = () => {
-    // Implement checkout logic here
-    console.log("Checkout:", cartItems);
+    if (cartItems.length === 0) {
+      return;
+    }
+
     setIsCartModalOpen(false);
+    navigate("/checkout", {
+      state: { cartItems }
+    });
   };
 
   const handleOpenAdminLogin = () => {
