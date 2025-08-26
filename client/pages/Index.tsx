@@ -396,6 +396,7 @@ export default function Index() {
                 onAddToCart={handleAddToCart}
                 onViewDetails={handleViewWineDetails}
                 variant="storefront"
+                layout={viewMode}
               />
             ))}
           </div>
