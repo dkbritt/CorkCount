@@ -114,6 +114,20 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
+      case "primary-fermentation":
+        return (
+          <Badge className="bg-purple-100 text-purple-800 gap-1">
+            <AlertTriangle className="h-3 w-3" />
+            Primary Fermentation
+          </Badge>
+        );
+      case "secondary-fermentation":
+        return (
+          <Badge className="bg-indigo-100 text-indigo-800 gap-1">
+            <AlertTriangle className="h-3 w-3" />
+            Secondary Fermentation
+          </Badge>
+        );
       case "aging":
         return (
           <Badge className="bg-yellow-100 text-yellow-800 gap-1">
@@ -121,11 +135,11 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
             Aging
           </Badge>
         );
-      case "ready":
+      case "ready-to-bottle":
         return (
           <Badge className="bg-green-100 text-green-800 gap-1">
             <CheckCircle className="h-3 w-3" />
-            Ready
+            Ready to Bottle
           </Badge>
         );
       case "bottled":
