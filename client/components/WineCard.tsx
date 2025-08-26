@@ -23,6 +23,7 @@ interface WineCardProps {
   onAddToCart?: (wine: Wine, quantity: number) => void;
   onViewDetails?: (wine: Wine) => void;
   variant?: "storefront" | "admin";
+  layout?: "grid" | "list";
 }
 
 export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefront" }: WineCardProps) {
