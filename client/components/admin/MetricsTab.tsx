@@ -1,11 +1,10 @@
 import { Badge } from "@/components/ui/badge";
-import { 
-  Package, 
-  AlertTriangle, 
-  TrendingUp, 
-  Users, 
-  DollarSign,
-  ShoppingCart,
+import {
+  Wine,
+  AlertTriangle,
+  Plus,
+  Archive,
+  WineOff,
   Calendar,
   Activity
 } from "lucide-react";
@@ -13,60 +12,116 @@ import {
 interface MetricCard {
   title: string;
   value: string | number;
-  change?: string;
-  trend?: "up" | "down" | "neutral";
+  subtext: string;
   icon: React.ComponentType<{ className?: string }>;
   color: string;
 }
 
+// Mock inventory data for calculations
+const mockInventoryData = [
+  { id: 1, name: "Château Margaux", type: "Red", quantity: 12, status: "active", dateAdded: "2024-01-10" },
+  { id: 2, name: "Dom Pérignon", type: "Sparkling", quantity: 3, status: "active", dateAdded: "2024-01-12" },
+  { id: 3, name: "Sancerre", type: "White", quantity: 25, status: "active", dateAdded: "2024-01-08" },
+  { id: 4, name: "Barolo", type: "Red", quantity: 2, status: "active", dateAdded: "2024-01-15" },
+  { id: 5, name: "Whispering Angel", type: "Rosé", quantity: 18, status: "active", dateAdded: "2024-01-14" },
+  { id: 6, name: "Opus One", type: "Red", quantity: 8, status: "active", dateAdded: "2024-01-11" },
+  { id: 7, name: "Vintage Port", type: "Dessert", quantity: 1, status: "active", dateAdded: "2024-01-09" },
+  { id: 8, name: "Aged Bordeaux", type: "Red", quantity: 6, status: "archived", dateAdded: "2023-12-20" },
+  { id: 9, name: "Reserve Chardonnay", type: "White", quantity: 14, status: "active", dateAdded: "2024-01-13" }
+];
+
+const mockBatchData = [
+  { id: 1, name: "2023 Bordeaux Reserve", status: "active" },
+  { id: 2, name: "2022 Burgundy Collection", status: "archived" },
+  { id: 3, name: "2021 Napa Valley Cabernet", status: "active" },
+  { id: 4, name: "2020 Loire Valley Whites", status: "archived" },
+  { id: 5, name: "2022 Champagne Selection", status: "active" }
+];
+
+// Calculate metrics from mock data
+const calculateMetrics = () => {
+  // Total inventory count
+  const totalInventory = mockInventoryData
+    .filter(item => item.status === "active")
+    .reduce((sum, item) => sum + item.quantity, 0);
+
+  // Low stock alerts (quantity < 5)
+  const lowStockCount = mockInventoryData
+    .filter(item => item.status === "active" && item.quantity < 5)
+    .length;
+
+  // Recent additions (last 7 days)
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const recentAdditions = mockInventoryData
+    .filter(item => {
+      const itemDate = new Date(item.dateAdded);
+      return itemDate >= sevenDaysAgo && item.status === "active";
+    })
+    .reduce((sum, item) => sum + item.quantity, 0);
+
+  // Archived batches count
+  const archivedBatches = mockBatchData
+    .filter(batch => batch.status === "archived")
+    .length;
+
+  // Most popular wine type
+  const typeQuantities = mockInventoryData
+    .filter(item => item.status === "active")
+    .reduce((acc, item) => {
+      acc[item.type] = (acc[item.type] || 0) + item.quantity;
+      return acc;
+    }, {} as Record<string, number>);
+
+  const mostPopularType = Object.entries(typeQuantities)
+    .sort(([,a], [,b]) => b - a)[0]?.[0] || "Red";
+
+  return {
+    totalInventory,
+    lowStockCount,
+    recentAdditions,
+    archivedBatches,
+    mostPopularType
+  };
+};
+
+const metrics = calculateMetrics();
+
 const metricCards: MetricCard[] = [
   {
     title: "Total Inventory",
-    value: "1,247",
-    change: "+5.2%",
-    trend: "up",
-    icon: Package,
-    color: "bg-blue-500"
+    value: metrics.totalInventory.toLocaleString(),
+    subtext: "Updated daily",
+    icon: Wine,
+    color: "bg-federal"
   },
   {
     title: "Low Stock Alerts",
-    value: 8,
-    change: "-2 from yesterday",
-    trend: "down",
+    value: metrics.lowStockCount,
+    subtext: "Check Inventory tab",
     icon: AlertTriangle,
     color: "bg-orange-500"
   },
   {
-    title: "Monthly Revenue",
-    value: "$47,329",
-    change: "+12.5%",
-    trend: "up",
-    icon: DollarSign,
+    title: "Recent Additions",
+    value: metrics.recentAdditions,
+    subtext: "Batch Management activity",
+    icon: Plus,
     color: "bg-green-500"
   },
   {
-    title: "Orders Today",
-    value: 23,
-    change: "+4 from yesterday",
-    trend: "up",
-    icon: ShoppingCart,
-    color: "bg-federal"
-  },
-  {
-    title: "Active Customers",
-    value: 156,
-    change: "+8.1%",
-    trend: "up",
-    icon: Users,
-    color: "bg-wine"
-  },
-  {
-    title: "Avg Order Value",
-    value: "$127.45",
-    change: "+3.2%",
-    trend: "up",
-    icon: TrendingUp,
+    title: "Archived Batches",
+    value: metrics.archivedBatches,
+    subtext: "Stored for aging or review",
+    icon: Archive,
     color: "bg-eggplant"
+  },
+  {
+    title: "Most Popular Type",
+    value: metrics.mostPopularType,
+    subtext: "Based on current inventory",
+    icon: WineOff,
+    color: "bg-wine"
   }
 ];
 
@@ -122,21 +177,17 @@ export function MetricsTab() {
     }
   };
 
-  const getTrendIcon = (trend?: string) => {
-    if (trend === "up") return <TrendingUp className="h-3 w-3 text-green-500" />;
-    if (trend === "down") return <TrendingUp className="h-3 w-3 text-red-500 rotate-180" />;
-    return null;
-  };
+  // Remove getTrendIcon function as it's no longer needed
 
   return (
     <div className="space-y-8">
       {/* Page Header */}
       <div>
         <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
-          Dashboard Overview
+          Dashboard Metrics
         </h1>
         <p className="text-gray-600">
-          Monitor your wine inventory, sales, and business metrics
+          Monitor your wine inventory and business metrics
         </p>
       </div>
 
@@ -144,38 +195,28 @@ export function MetricsTab() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {metricCards.map((metric, index) => {
           const Icon = metric.icon;
-          
+
           return (
             <div
               key={index}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 ${metric.color} rounded-lg flex items-center justify-center`}>
+                <div className={`w-12 h-12 ${metric.color} rounded-lg flex items-center justify-center shadow-sm`}>
                   <Icon className="h-6 w-6 text-white" />
                 </div>
-                {metric.trend && getTrendIcon(metric.trend)}
               </div>
-              
+
               <div className="space-y-2">
                 <p className="text-sm font-medium text-gray-600">
                   {metric.title}
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-3xl font-bold text-gray-900">
                   {metric.value}
                 </p>
-                {metric.change && (
-                  <div className="flex items-center gap-1">
-                    {getTrendIcon(metric.trend)}
-                    <span className={`text-sm ${
-                      metric.trend === "up" ? "text-green-600" : 
-                      metric.trend === "down" ? "text-red-600" : 
-                      "text-gray-600"
-                    }`}>
-                      {metric.change}
-                    </span>
-                  </div>
-                )}
+                <p className="text-sm text-gray-500">
+                  {metric.subtext}
+                </p>
               </div>
             </div>
           );
