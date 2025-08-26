@@ -128,6 +128,7 @@ interface BatchManagementTabProps {
     lowStockThreshold: number;
     outOfStockThreshold: number;
   };
+  onSetAddCallback?: (callback: () => void) => void;
 }
 
 export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
