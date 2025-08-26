@@ -122,11 +122,6 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
                     Low Stock
                   </Badge>
                 )}
-                {wine.rating > 0 && (
-                  <Badge className="bg-white/90 text-gray-700 text-xs px-2 py-1 rounded-full border">
-                    ⭐ {wine.rating}
-                  </Badge>
-                )}
               </div>
             </div>
 
