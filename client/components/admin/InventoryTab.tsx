@@ -592,6 +592,25 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
                 </select>
               </div>
 
+              {/* Location */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                    formErrors.location ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="e.g., Wine Cellar - Section A"
+                />
+                {formErrors.location && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.location}</p>
+                )}
+              </div>
+
               {/* Flavor Notes */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
