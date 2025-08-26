@@ -1,10 +1,12 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { WineCard, Wine } from "@/components/WineCard";
 import { SearchBar } from "@/components/SearchBar";
 import { FilterBar, FilterOptions } from "@/components/FilterBar";
 import { CartModal, CartItem } from "@/components/CartModal";
 import { StickyCartFooter } from "@/components/StickyCartFooter";
+import { AdminLoginModal } from "@/components/AdminLoginModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, Grid, List } from "lucide-react";
