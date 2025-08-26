@@ -159,6 +159,7 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [inventory, setInventory] = useState<InventoryItem[]>(mockInventory);
   const [formData, setFormData] = useState<AddInventoryForm>({
     bottleName: "",
@@ -254,23 +255,48 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
       }
     };
 
-    const newItem: InventoryItem = {
-      id: `inv-${Date.now()}`,
-      name: formData.bottleName,
-      winery: "CorkCount Winery", // Default winery
-      vintage: parseInt(formData.vintage),
-      type: formData.type,
-      quantity: parseInt(formData.quantity),
-      price: parseFloat(formData.price),
-      status: getInventoryStatus(formData.status),
-      lastUpdated: new Date().toISOString().split('T')[0],
-      flavorNotes: formData.flavorNotes,
-      batchId: formData.batchLink
-    };
+    if (editingItem) {
+      // Update existing item
+      const updatedItem: InventoryItem = {
+        ...editingItem,
+        name: formData.bottleName,
+        vintage: parseInt(formData.vintage),
+        type: formData.type,
+        quantity: parseInt(formData.quantity),
+        price: parseFloat(formData.price),
+        status: getInventoryStatus(formData.status),
+        lastUpdated: new Date().toISOString().split('T')[0],
+        flavorNotes: formData.flavorNotes,
+        batchId: formData.batchLink
+      };
 
-    setInventory([...inventory, newItem]);
+      setInventory(inventory.map(item =>
+        item.id === editingItem.id ? updatedItem : item
+      ));
+    } else {
+      // Add new item
+      const newItem: InventoryItem = {
+        id: `inv-${Date.now()}`,
+        name: formData.bottleName,
+        winery: "CorkCount Winery", // Default winery
+        vintage: parseInt(formData.vintage),
+        type: formData.type,
+        quantity: parseInt(formData.quantity),
+        price: parseFloat(formData.price),
+        status: getInventoryStatus(formData.status),
+        lastUpdated: new Date().toISOString().split('T')[0],
+        flavorNotes: formData.flavorNotes,
+        batchId: formData.batchLink
+      };
+
+      setInventory([...inventory, newItem]);
+    }
 
     // Reset form
+    resetForm();
+  };
+
+  const resetForm = () => {
     setFormData({
       bottleName: "",
       type: "",
@@ -283,21 +309,42 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
     });
     setFormErrors({});
     setShowAddForm(false);
+    setEditingItem(null);
   };
 
   const handleFormCancel = () => {
-    setShowAddForm(false);
+    resetForm();
+  };
+
+  const handleEditItem = (item: InventoryItem) => {
+    // Convert inventory status back to form status
+    const getFormStatus = (status: string): string => {
+      switch (status) {
+        case "low-stock":
+          return "Low Stock";
+        case "out-of-stock":
+          return "Archived";
+        default:
+          return "Active";
+      }
+    };
+
     setFormData({
-      bottleName: "",
-      type: "",
-      vintage: "",
-      quantity: "",
-      price: "",
-      flavorNotes: "",
-      batchLink: "",
-      status: "Active"
+      bottleName: item.name,
+      type: item.type,
+      vintage: item.vintage.toString(),
+      quantity: item.quantity.toString(),
+      price: item.price.toString(),
+      flavorNotes: item.flavorNotes || "",
+      batchLink: item.batchId || "",
+      status: getFormStatus(item.status)
     });
-    setFormErrors({});
+    setEditingItem(item);
+    setShowAddForm(true);
+  };
+
+  const handleDeleteItem = (itemId: string) => {
+    setInventory(inventory.filter(item => item.id !== itemId));
   };
 
   const handleInputChange = (field: keyof AddInventoryForm, value: string) => {
@@ -373,7 +420,7 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-playfair text-xl font-semibold text-gray-900">
-              Add New Inventory
+              {editingItem ? "Edit Inventory Item" : "Add New Inventory"}
             </h2>
             <Button
               variant="ghost"
@@ -557,7 +604,7 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
               </Button>
               <Button type="submit" variant="accent" className="gap-2">
                 <Save className="h-4 w-4" />
-                Add Bottle
+                {editingItem ? "Update Bottle" : "Add Bottle"}
               </Button>
             </div>
           </form>
@@ -682,10 +729,22 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-2">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        onClick={() => handleEditItem(item)}
+                        title="Edit item"
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                        onClick={() => handleDeleteItem(item.id)}
+                        title="Delete item"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
