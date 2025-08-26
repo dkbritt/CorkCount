@@ -48,6 +48,15 @@ export default function AdminDashboard() {
   const [onAddInventory, setOnAddInventory] = useState<(() => void) | null>(null);
   const [onAddBatch, setOnAddBatch] = useState<(() => void) | null>(null);
 
+  // Create stable callback setters using useCallback
+  const handleSetAddInventory = useCallback((callback: () => void) => {
+    setOnAddInventory(() => callback);
+  }, []);
+
+  const handleSetAddBatch = useCallback((callback: () => void) => {
+    setOnAddBatch(() => callback);
+  }, []);
+
   const handleLogout = () => {
     // In a real app, this would clear auth tokens
     navigate("/");
