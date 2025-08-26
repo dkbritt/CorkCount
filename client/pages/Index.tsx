@@ -437,6 +437,16 @@ export default function Index() {
         onLogin={handleAdminLogin}
       />
 
+      {/* Wine Details Modal */}
+      {selectedWine && (
+        <WineDetailsModal
+          wine={selectedWine}
+          isOpen={isWineDetailsModalOpen}
+          onClose={handleCloseWineDetails}
+          onAddToCart={handleAddToCart}
+        />
+      )}
+
       {/* Sticky Cart Footer */}
       <StickyCartFooter
         itemCount={totalCartItems}
