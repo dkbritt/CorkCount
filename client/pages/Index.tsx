@@ -130,7 +130,16 @@ export default function Index() {
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    // Load cart from localStorage on initialization
+    try {
+      const savedCart = localStorage.getItem("corkCountCart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+      return [];
+    }
+  });
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
   const navigate = useNavigate();
