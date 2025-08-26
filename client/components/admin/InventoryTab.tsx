@@ -455,7 +455,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
       {/* Add Inventory Form */}
       {showAddForm && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 shadow-sm mx-auto max-w-full">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-playfair text-xl font-semibold text-gray-900">
               {editingItem ? "Edit Inventory Item" : "Add New Inventory"}
