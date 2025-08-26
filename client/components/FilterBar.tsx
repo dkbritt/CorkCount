@@ -79,7 +79,7 @@ export function FilterBar({
         </Button>
         
         {activeDropdown === 'types' && (
-          <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+          <div className="absolute top-full left-0 right-0 sm:left-0 sm:right-auto mt-1 w-full sm:w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
             <div className="p-2 space-y-1">
               {availableTypes.map((type) => (
                 <label key={type} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
