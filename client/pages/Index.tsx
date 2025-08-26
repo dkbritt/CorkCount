@@ -260,10 +260,8 @@ export default function Index() {
   const clearFilters = () => {
     setFilters({
       types: [],
-      regions: [],
       priceRange: [0, 1000],
       inStockOnly: false,
-      rating: null,
     });
   };
 
@@ -333,7 +331,7 @@ export default function Index() {
                 Filters
               </Button>
               
-              {(searchQuery || filters.types.length > 0 || filters.regions.length > 0 || filters.inStockOnly || filters.rating) && (
+              {(searchQuery || filters.types.length > 0 || filters.inStockOnly) && (
                 <Badge variant="secondary">
                   {filteredWines.length} of {mockWines.length} wines
                 </Badge>
@@ -367,7 +365,6 @@ export default function Index() {
               onFiltersChange={handleFiltersChange}
               onClearFilters={clearFilters}
               availableTypes={Array.from(new Set(mockWines.map(w => w.type)))}
-              availableRegions={Array.from(new Set(mockWines.map(w => w.region)))}
             />
           )}
         </div>
