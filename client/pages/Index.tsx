@@ -315,21 +315,6 @@ export default function Index() {
               />
             </div>
 
-            {/* Quick Stats */}
-            <div className="flex flex-wrap justify-center gap-8 text-sm">
-              <div className="text-center">
-                <div className="text-2xl font-bold">{mockWines.length}</div>
-                <div className="text-wine-200">Wines Available</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">{mockWines.filter(w => w.inStock > 0).length}</div>
-                <div className="text-wine-200">In Stock</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">{Array.from(new Set(mockWines.map(w => w.region))).length}</div>
-                <div className="text-wine-200">Regions</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
