@@ -164,17 +164,11 @@ export default function Index() {
       // Type filter
       if (filters.types.length > 0 && !filters.types.includes(wine.type)) return false;
 
-      // Region filter
-      if (filters.regions.length > 0 && !filters.regions.includes(wine.region)) return false;
-
       // Price range filter
       if (wine.price < filters.priceRange[0] || wine.price > filters.priceRange[1]) return false;
 
       // In stock filter
       if (filters.inStockOnly && wine.inStock === 0) return false;
-
-      // Rating filter
-      if (filters.rating && wine.rating < filters.rating) return false;
 
       return true;
     });
