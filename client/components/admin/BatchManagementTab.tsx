@@ -47,14 +47,14 @@ const mockBatches: BatchItem[] = [
     estimatedBottling: "2024-03-15"
   },
   {
-    id: "batch-002", 
+    id: "batch-002",
     name: "Sonoma Chardonnay 2023",
     type: "White Wine",
     vintage: 2023,
     quantity: 300,
     agingNotes: "Stainless steel fermentation, minimal oak contact. Crisp acidity maintained.",
     dateAdded: "2023-10-20",
-    status: "ready",
+    status: "ready-to-bottle",
     estimatedBottling: "2024-01-20"
   },
   {
@@ -238,7 +238,7 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
         id: `batch-${Date.now()}`,
         ...formData,
         dateAdded: new Date().toISOString().split('T')[0],
-        status: "aging",
+        status: "primary-fermentation",
         estimatedBottling: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
       };
       setBatches(prev => [newBatch, ...prev]);
