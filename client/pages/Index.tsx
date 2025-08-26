@@ -7,6 +7,7 @@ import { FilterBar, FilterOptions } from "@/components/FilterBar";
 import { CartModal, CartItem } from "@/components/CartModal";
 import { StickyCartFooter } from "@/components/StickyCartFooter";
 import { AdminLoginModal } from "@/components/AdminLoginModal";
+import { WineDetailsModal } from "@/components/WineDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, Grid, List } from "lucide-react";
