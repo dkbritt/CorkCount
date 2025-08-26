@@ -10,7 +10,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ 
-  placeholder = "Search wines, wineries, regions...", 
+  placeholder = "Search wines", 
   onSearch, 
   onClear,
   className = ""
