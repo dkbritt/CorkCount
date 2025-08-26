@@ -27,6 +27,7 @@ interface InventoryItem {
   lastUpdated: string;
   flavorNotes?: string;
   batchId?: string;
+  location?: string;
 }
 
 interface AddInventoryForm {
