@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SearchBar } from "@/components/SearchBar";
-import {
-  Eye,
-  Package,
-  Truck,
-  CheckCircle,
+import { 
+  Eye, 
+  Calendar,
+  User,
+  Mail,
+  Phone,
+  CreditCard,
+  FileText,
+  X,
   Clock,
-  AlertCircle,
-  Filter,
-  ArrowUpDown,
-  Calendar
+  CheckCircle,
+  Package,
+  XCircle
 } from "lucide-react";
 
 interface Order {
@@ -27,9 +29,8 @@ interface Order {
     price: number;
   }[];
   total: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  status: "pending" | "ready-for-pickup" | "picked-up" | "cancelled";
   orderDate: string;
-  estimatedDelivery?: string;
   pickupDate?: string;
   pickupTime?: string;
   paymentMethod?: string;
@@ -40,96 +41,86 @@ interface Order {
 const mockOrders: Order[] = [
   {
     id: "ord-001",
-    orderNumber: "ORD-2024-0156",
+    orderNumber: "ORD-20240115-001",
     customer: {
       name: "Sarah Wilson",
       email: "sarah.wilson@email.com"
     },
     items: [
       { name: "Château Margaux 2015", quantity: 1, price: 450.00 },
-      { name: "Dom Pérignon Vintage", quantity: 2, price: 280.00 }
+      { name: "Dom Pérignon Vintage 2012", quantity: 2, price: 280.00 }
     ],
     total: 1010.00,
     status: "pending",
     orderDate: "2024-01-15T14:30:00Z",
-    estimatedDelivery: "2024-01-22"
+    pickupDate: "2024-01-18",
+    pickupTime: "2:00 PM",
+    paymentMethod: "zelle",
+    phone: "(555) 123-4567",
+    orderNotes: "Please hold until pickup confirmation"
   },
   {
     id: "ord-002",
-    orderNumber: "ORD-2024-0155",
+    orderNumber: "ORD-20240114-001",
     customer: {
       name: "John Smith",
       email: "john.smith@email.com"
     },
     items: [
       { name: "Opus One 2018", quantity: 1, price: 380.00 },
-      { name: "Barolo Brunate", quantity: 2, price: 120.00 }
+      { name: "Barolo Brunate 2017", quantity: 2, price: 120.00 }
     ],
     total: 620.00,
-    status: "shipped",
+    status: "ready-for-pickup",
     orderDate: "2024-01-14T09:15:00Z",
-    estimatedDelivery: "2024-01-18"
+    pickupDate: "2024-01-16",
+    pickupTime: "4:00 PM",
+    paymentMethod: "cashapp"
   },
   {
     id: "ord-003",
-    orderNumber: "ORD-2024-0154",
+    orderNumber: "ORD-20240112-001",
     customer: {
       name: "Emily Davis",
       email: "emily.davis@email.com"
     },
     items: [
-      { name: "Sancerre Les Monts Damnés", quantity: 3, price: 85.00 }
+      { name: "Sancerre Les Monts Damnés 2020", quantity: 3, price: 85.00 }
     ],
     total: 255.00,
-    status: "delivered",
+    status: "picked-up",
     orderDate: "2024-01-12T16:45:00Z",
-    estimatedDelivery: "2024-01-16"
-  },
-  {
-    id: "ord-004",
-    orderNumber: "ORD-2024-0153",
-    customer: {
-      name: "Michael Brown",
-      email: "michael.brown@email.com"
-    },
-    items: [
-      { name: "Châteauneuf-du-Pape", quantity: 2, price: 95.00 },
-      { name: "Whispering Angel Rosé", quantity: 4, price: 25.00 }
-    ],
-    total: 290.00,
-    status: "processing",
-    orderDate: "2024-01-11T11:20:00Z",
-    estimatedDelivery: "2024-01-19"
-  },
-  {
-    id: "ord-005",
-    orderNumber: "ORD-2024-0152",
-    customer: {
-      name: "Lisa Anderson",
-      email: "lisa.anderson@email.com"
-    },
-    items: [
-      { name: "Riesling Spätlese", quantity: 2, price: 45.00 }
-    ],
-    total: 90.00,
-    status: "cancelled",
-    orderDate: "2024-01-10T13:30:00Z"
+    pickupDate: "2024-01-15",
+    pickupTime: "11:00 AM",
+    paymentMethod: "cash"
   }
 ];
 
+const statusOptions = [
+  { value: "pending", label: "Pending" },
+  { value: "ready-for-pickup", label: "Ready for Pickup" },
+  { value: "picked-up", label: "Picked Up" },
+  { value: "cancelled", label: "Cancelled" }
+];
+
+const paymentMethodLabels: Record<string, string> = {
+  zelle: "Zelle",
+  cashapp: "CashApp",
+  cash: "Cash"
+};
+
 export function OrdersTab() {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sortField, setSortField] = useState<keyof Order>("orderDate");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
 
   // Load orders from localStorage on component mount
   useEffect(() => {
     const loadOrdersFromStorage = () => {
       try {
         const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-
+        
         // Convert checkout orders to admin order format
         const convertedOrders = checkoutOrders.map((checkoutOrder: any) => ({
           id: checkoutOrder.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-'),
@@ -144,7 +135,7 @@ export function OrdersTab() {
             price: item.wine.price
           })),
           total: checkoutOrder.totalPrice,
-          status: checkoutOrder.status,
+          status: checkoutOrder.status === "pending" ? "pending" : checkoutOrder.status,
           orderDate: checkoutOrder.orderDate,
           pickupDate: checkoutOrder.pickupDate,
           pickupTime: checkoutOrder.pickupTime,
@@ -152,26 +143,31 @@ export function OrdersTab() {
           phone: checkoutOrder.phone,
           orderNotes: checkoutOrder.orderNotes
         }));
-
+        
         // Merge with mock orders, with checkout orders first
-        setOrders([...convertedOrders, ...mockOrders]);
+        const allOrders = [...convertedOrders, ...mockOrders];
+        setOrders(allOrders);
+        
+        // Initialize status updates for all orders
+        const initialStatusUpdates: Record<string, string> = {};
+        allOrders.forEach(order => {
+          initialStatusUpdates[order.id] = order.status;
+        });
+        setStatusUpdates(initialStatusUpdates);
       } catch (error) {
         console.error('Error loading orders from localStorage:', error);
         setOrders(mockOrders);
+        
+        // Initialize status updates for mock orders
+        const initialStatusUpdates: Record<string, string> = {};
+        mockOrders.forEach(order => {
+          initialStatusUpdates[order.id] = order.status;
+        });
+        setStatusUpdates(initialStatusUpdates);
       }
     };
-
+    
     loadOrdersFromStorage();
-
-    // Optional: Listen for storage changes if orders are updated from other tabs
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'corkCountOrders') {
-        loadOrdersFromStorage();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const getStatusBadge = (status: string) => {
@@ -183,31 +179,24 @@ export function OrdersTab() {
             Pending
           </Badge>
         );
-      case "processing":
+      case "ready-for-pickup":
         return (
           <Badge className="bg-blue-100 text-blue-800 gap-1">
             <Package className="h-3 w-3" />
-            Processing
+            Ready for Pickup
           </Badge>
         );
-      case "shipped":
-        return (
-          <Badge className="bg-purple-100 text-purple-800 gap-1">
-            <Truck className="h-3 w-3" />
-            Shipped
-          </Badge>
-        );
-      case "delivered":
+      case "picked-up":
         return (
           <Badge className="bg-green-100 text-green-800 gap-1">
             <CheckCircle className="h-3 w-3" />
-            Delivered
+            Picked Up
           </Badge>
         );
       case "cancelled":
         return (
           <Badge className="bg-red-100 text-red-800 gap-1">
-            <AlertCircle className="h-3 w-3" />
+            <XCircle className="h-3 w-3" />
             Cancelled
           </Badge>
         );
@@ -225,198 +214,200 @@ export function OrdersTab() {
     });
   };
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+  const formatPickupDateTime = (date?: string, time?: string) => {
+    if (!date) return "Not scheduled";
+    const formattedDate = formatDate(date);
+    return time ? `${formattedDate} at ${time}` : formattedDate;
   };
 
-  const filteredOrders = orders
-    .filter(order => {
-      const matchesSearch = searchQuery === "" || 
-        order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customer.email.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-      
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      if (sortField === "orderDate") {
-        const aDate = new Date(a.orderDate).getTime();
-        const bDate = new Date(b.orderDate).getTime();
-        return sortDirection === "asc" ? aDate - bDate : bDate - aDate;
-      }
-      
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortDirection === "asc" 
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
-      
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
-      }
-      
-      return 0;
-    });
+  const getTotalBottles = (items: Order['items']) => {
+    return items.reduce((sum, item) => sum + item.quantity, 0);
+  };
 
-  const handleSort = (field: keyof Order) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
+  const handleViewOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setShowOrderModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowOrderModal(false);
+    setSelectedOrder(null);
+  };
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    setStatusUpdates(prev => ({
+      ...prev,
+      [orderId]: newStatus
+    }));
+  };
+
+  const handleUpdateStatus = (orderId: string) => {
+    const newStatus = statusUpdates[orderId];
+    setOrders(prev => prev.map(order => 
+      order.id === orderId 
+        ? { ...order, status: newStatus as Order['status'] }
+        : order
+    ));
+    
+    // Update localStorage if this is a checkout order
+    try {
+      const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+      const updatedCheckoutOrders = checkoutOrders.map((order: any) => {
+        const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        return orderId_normalized === orderId 
+          ? { ...order, status: newStatus }
+          : order;
+      });
+      localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
+    } catch (error) {
+      console.error('Error updating order status in localStorage:', error);
     }
   };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCloseModal();
+    }
+  };
+
+  if (orders.length === 0) {
+    return (
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div>
+          <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
+            Customer Orders
+          </h1>
+          <p className="text-gray-600">
+            View and manage customer pickup orders
+          </p>
+        </div>
+        
+        {/* Empty State */}
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+            No orders yet — corks are still popping!
+          </h2>
+          <p className="text-gray-600">
+            Customer orders will appear here once they complete checkout.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div>
         <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
-          Order Management
+          Customer Orders
         </h1>
         <p className="text-gray-600">
-          View and manage customer orders and shipments
+          View and manage customer pickup orders
         </p>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <SearchBar
-            onSearch={setSearchQuery}
-            onClear={() => setSearchQuery("")}
-            placeholder="Search orders, customers..."
-          />
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Orders List */}
-      <div className="bg-white rounded-lg border border-gray-200">
+      {/* Orders Table */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("orderNumber")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Order
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Order #
                 </th>
-                <th className="px-6 py-3 text-left">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer
-                  </span>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Customer Name
                 </th>
-                <th className="px-6 py-3 text-left">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Items
-                  </span>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Order Date
                 </th>
-                <th className="px-6 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("total")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Total
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  # Bottles Ordered
                 </th>
-                <th className="px-6 py-3 text-left">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </span>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Pickup Date & Time
                 </th>
-                <th className="px-6 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("orderDate")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Date
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Payment Method
                 </th>
-                <th className="px-6 py-3 text-center">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </span>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredOrders.map((order) => (
+              {orders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium text-gray-900 font-mono">
                       {order.orderNumber}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {order.customer.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {order.customer.email}
-                      </div>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium text-gray-900">
+                      {order.customer.name}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">
-                      {order.items.length} item{order.items.length !== 1 ? 's' : ''}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {order.items.slice(0, 2).map(item => item.name).join(", ")}
-                      {order.items.length > 2 && "..."}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    ${order.total.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4">
-                    {getStatusBadge(order.status)}
-                  </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
                       {formatDate(order.orderDate)}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {formatTime(order.orderDate)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {getTotalBottles(order.items)} bottles
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Eye className="h-4 w-4" />
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {formatPickupDateTime(order.pickupDate, order.pickupTime)}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {order.paymentMethod ? paymentMethodLabels[order.paymentMethod] || order.paymentMethod : "Not specified"}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={statusUpdates[order.id] || order.status}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                      >
+                        {statusOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      <Button
+                        size="sm"
+                        variant="accent"
+                        onClick={() => handleUpdateStatus(order.id)}
+                        disabled={statusUpdates[order.id] === order.status}
+                        className="px-3 py-1 text-xs"
+                      >
+                        Update
                       </Button>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleViewOrder(order)}
+                      className="h-8 w-8 p-0"
+                      title="View order details"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -427,8 +418,161 @@ export function OrdersTab() {
 
       {/* Results Summary */}
       <div className="text-sm text-gray-500">
-        Showing {filteredOrders.length} of {mockOrders.length} orders
+        Showing {orders.length} order{orders.length !== 1 ? 's' : ''}
       </div>
+
+      {/* Order Details Modal */}
+      {showOrderModal && selectedOrder && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={handleBackdropClick}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="font-playfair text-xl font-semibold text-gray-900">
+                Order Details
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCloseModal}
+                className="h-8 w-8 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Order Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">Order Information</h3>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-gray-600">Order #:</span>
+                      <span className="ml-2 font-mono font-medium">{selectedOrder.orderNumber}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Order Date:</span>
+                      <span className="ml-2">{formatDate(selectedOrder.orderDate)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Status:</span>
+                      <span className="ml-2">{getStatusBadge(selectedOrder.status)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">Customer Information</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-gray-400" />
+                      <span>{selectedOrder.customer.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-gray-400" />
+                      <span>{selectedOrder.customer.email}</span>
+                    </div>
+                    {selectedOrder.phone && (
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-gray-400" />
+                        <span>{selectedOrder.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pickup & Payment Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">Pickup Information</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <span>{formatPickupDateTime(selectedOrder.pickupDate, selectedOrder.pickupTime)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">Payment Information</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 text-gray-400" />
+                      <span>{selectedOrder.paymentMethod ? paymentMethodLabels[selectedOrder.paymentMethod] : "Not specified"}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottle List */}
+              <div>
+                <h3 className="font-medium text-gray-900 mb-3">Bottle List</h3>
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                        <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Qty</th>
+                        <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {selectedOrder.items.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900 text-center">{item.quantity}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900 text-right">${item.price.toFixed(2)}</td>
+                          <td className="px-4 py-2 text-sm font-medium text-gray-900 text-right">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="bg-gray-50">
+                        <td colSpan={3} className="px-4 py-2 text-sm font-medium text-gray-900 text-right">
+                          Total:
+                        </td>
+                        <td className="px-4 py-2 text-sm font-bold text-wine text-right">
+                          ${selectedOrder.total.toFixed(2)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Order Notes */}
+              {selectedOrder.orderNotes && (
+                <div>
+                  <h3 className="flex items-center gap-2 font-medium text-gray-900 mb-3">
+                    <FileText className="h-4 w-4" />
+                    Order Notes
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                      {selectedOrder.orderNotes}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-gray-200 p-6">
+              <div className="flex justify-end">
+                <Button variant="outline" onClick={handleCloseModal}>
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
