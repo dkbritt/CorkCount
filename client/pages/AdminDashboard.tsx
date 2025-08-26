@@ -200,6 +200,26 @@ export default function AdminDashboard() {
         {renderTabContent()}
       </div>
 
+      {/* Floating Action Button */}
+      {(() => {
+        const buttonConfig = getFloatingButtonConfig();
+        if (!buttonConfig.show) return null;
+
+        const Icon = buttonConfig.icon!;
+
+        return (
+          <Button
+            onClick={buttonConfig.action}
+            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40 md:bottom-8 md:right-8"
+            variant="accent"
+            size="lg"
+            title={buttonConfig.label}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        );
+      })()}
+
       {/* Settings Modal */}
       <SettingsModal
         isOpen={isSettingsModalOpen}
