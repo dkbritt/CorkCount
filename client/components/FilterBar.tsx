@@ -1,0 +1,227 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ChevronDown, Filter, X } from "lucide-react";
+
+export interface FilterOptions {
+  types: string[];
+  regions: string[];
+  priceRange: [number, number];
+  inStockOnly: boolean;
+  rating: number | null;
+}
+
+interface FilterBarProps {
+  onFiltersChange?: (filters: FilterOptions) => void;
+  onClearFilters?: () => void;
+  availableTypes?: string[];
+  availableRegions?: string[];
+  className?: string;
+}
+
+const DEFAULT_FILTERS: FilterOptions = {
+  types: [],
+  regions: [],
+  priceRange: [0, 1000],
+  inStockOnly: false,
+  rating: null,
+};
+
+export function FilterBar({ 
+  onFiltersChange, 
+  onClearFilters,
+  availableTypes = ["Red Wine", "White Wine", "Rosé", "Sparkling", "Dessert Wine"],
+  availableRegions = ["Napa Valley", "Bordeaux", "Tuscany", "Rioja", "Burgundy", "Champagne"],
+  className = ""
+}: FilterBarProps) {
+  const [filters, setFilters] = useState<FilterOptions>(DEFAULT_FILTERS);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  const updateFilters = (newFilters: Partial<FilterOptions>) => {
+    const updatedFilters = { ...filters, ...newFilters };
+    setFilters(updatedFilters);
+    onFiltersChange?.(updatedFilters);
+  };
+
+  const toggleFilter = (category: keyof Pick<FilterOptions, 'types' | 'regions'>, value: string) => {
+    const current = filters[category];
+    const updated = current.includes(value) 
+      ? current.filter(item => item !== value)
+      : [...current, value];
+    updateFilters({ [category]: updated });
+  };
+
+  const clearAllFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+    onClearFilters?.();
+    setActiveDropdown(null);
+  };
+
+  const hasActiveFilters = filters.types.length > 0 || 
+                          filters.regions.length > 0 || 
+                          filters.inStockOnly || 
+                          filters.rating !== null;
+
+  const toggleDropdown = (dropdown: string) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  };
+
+  return (
+    <div className={`flex flex-wrap items-center gap-3 ${className}`}>
+      {/* Filter Icon */}
+      <div className="flex items-center gap-2 text-gray-600">
+        <Filter className="h-4 w-4" />
+        <span className="font-medium text-sm">Filters:</span>
+      </div>
+
+      {/* Wine Type Filter */}
+      <div className="relative">
+        <Button
+          variant="navigation"
+          size="sm"
+          onClick={() => toggleDropdown('types')}
+          className="gap-1"
+        >
+          Type {filters.types.length > 0 && `(${filters.types.length})`}
+          <ChevronDown className="h-3 w-3" />
+        </Button>
+        
+        {activeDropdown === 'types' && (
+          <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+            <div className="p-2 space-y-1">
+              {availableTypes.map((type) => (
+                <label key={type} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.types.includes(type)}
+                    onChange={() => toggleFilter('types', type)}
+                    className="accent-federal"
+                  />
+                  <span className="text-sm">{type}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Region Filter */}
+      <div className="relative">
+        <Button
+          variant="navigation"
+          size="sm"
+          onClick={() => toggleDropdown('regions')}
+          className="gap-1"
+        >
+          Region {filters.regions.length > 0 && `(${filters.regions.length})`}
+          <ChevronDown className="h-3 w-3" />
+        </Button>
+        
+        {activeDropdown === 'regions' && (
+          <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+            <div className="p-2 space-y-1">
+              {availableRegions.map((region) => (
+                <label key={region} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.regions.includes(region)}
+                    onChange={() => toggleFilter('regions', region)}
+                    className="accent-federal"
+                  />
+                  <span className="text-sm">{region}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* In Stock Only */}
+      <Button
+        variant={filters.inStockOnly ? "accent" : "navigation"}
+        size="sm"
+        onClick={() => updateFilters({ inStockOnly: !filters.inStockOnly })}
+      >
+        In Stock Only
+      </Button>
+
+      {/* Rating Filter */}
+      <div className="relative">
+        <Button
+          variant="navigation"
+          size="sm"
+          onClick={() => toggleDropdown('rating')}
+          className="gap-1"
+        >
+          Rating {filters.rating && `${filters.rating}+`}
+          <ChevronDown className="h-3 w-3" />
+        </Button>
+        
+        {activeDropdown === 'rating' && (
+          <div className="absolute top-full left-0 mt-1 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+            <div className="p-2 space-y-1">
+              {[4.5, 4.0, 3.5, 3.0].map((rating) => (
+                <button
+                  key={rating}
+                  onClick={() => {
+                    updateFilters({ rating: filters.rating === rating ? null : rating });
+                    setActiveDropdown(null);
+                  }}
+                  className={`w-full text-left p-2 text-sm rounded hover:bg-gray-50 ${
+                    filters.rating === rating ? 'bg-federal/10 text-federal' : ''
+                  }`}
+                >
+                  ⭐ {rating}+
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Active Filter Badges */}
+      {hasActiveFilters && (
+        <div className="flex items-center gap-2 ml-2">
+          {filters.types.map((type) => (
+            <Badge key={type} variant="secondary" className="gap-1">
+              {type}
+              <button onClick={() => toggleFilter('types', type)}>
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+          
+          {filters.regions.map((region) => (
+            <Badge key={region} variant="secondary" className="gap-1">
+              {region}
+              <button onClick={() => toggleFilter('regions', region)}>
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Clear All Filters */}
+      {hasActiveFilters && (
+        <Button
+          variant="cancel"
+          size="sm"
+          onClick={clearAllFilters}
+          className="gap-1 ml-auto"
+        >
+          <X className="h-3 w-3" />
+          Clear All
+        </Button>
+      )}
+
+      {/* Click outside to close dropdowns */}
+      {activeDropdown && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setActiveDropdown(null)}
+        />
+      )}
+    </div>
+  );
+}
