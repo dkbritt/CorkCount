@@ -2,20 +2,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Wine, 
-  LogOut, 
-  Package, 
-  ShoppingCart, 
-  ClipboardList, 
-  BarChart3 
+import {
+  Wine,
+  LogOut,
+  Package,
+  ShoppingCart,
+  ClipboardList,
+  BarChart3,
+  Settings
 } from "lucide-react";
 
-// Import tab components (we'll create these next)
+// Import tab components and settings modal
 import { InventoryTab } from "@/components/admin/InventoryTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { BatchManagementTab } from "@/components/admin/BatchManagementTab";
 import { MetricsTab } from "@/components/admin/MetricsTab";
+import { SettingsModal, InventorySettings } from "@/components/admin/SettingsModal";
 
 type TabType = "inventory" | "orders" | "batch" | "metrics";
 
@@ -34,6 +36,11 @@ const tabs: Tab[] = [
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("metrics");
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [inventorySettings, setInventorySettings] = useState<InventorySettings>({
+    lowStockThreshold: 5,
+    outOfStockThreshold: 0
+  });
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -41,18 +48,31 @@ export default function AdminDashboard() {
     navigate("/");
   };
 
+  const handleOpenSettings = () => {
+    setIsSettingsModalOpen(true);
+  };
+
+  const handleCloseSettings = () => {
+    setIsSettingsModalOpen(false);
+  };
+
+  const handleSaveSettings = (settings: InventorySettings) => {
+    setInventorySettings(settings);
+    // In a real app, this would save to backend/localStorage
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "inventory":
-        return <InventoryTab />;
+        return <InventoryTab settings={inventorySettings} />;
       case "orders":
         return <OrdersTab />;
       case "batch":
-        return <BatchManagementTab />;
+        return <BatchManagementTab settings={inventorySettings} />;
       case "metrics":
-        return <MetricsTab />;
+        return <MetricsTab settings={inventorySettings} />;
       default:
-        return <MetricsTab />;
+        return <MetricsTab settings={inventorySettings} />;
     }
   };
 
@@ -77,16 +97,28 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Logout Button */}
-            <Button
-              variant="navigation"
-              size="sm"
-              onClick={handleLogout}
-              className="gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">Logout</span>
-            </Button>
+            {/* Settings and Logout Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleOpenSettings}
+                className="h-8 w-8 p-0"
+                title="Settings"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="navigation"
+                size="sm"
+                onClick={handleLogout}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
@@ -124,6 +156,14 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderTabContent()}
       </div>
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={handleCloseSettings}
+        onSave={handleSaveSettings}
+        currentSettings={inventorySettings}
+      />
     </div>
   );
 }
