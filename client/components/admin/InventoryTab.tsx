@@ -726,13 +726,13 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         </div>
       </div>
 
-      {/* Inventory Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      {/* Inventory Table - Desktop */}
+      <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[800px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <button
                     onClick={() => handleSort("name")}
                     className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
@@ -741,7 +741,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <button
                     onClick={() => handleSort("vintage")}
                     className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
@@ -750,7 +750,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <button
                     onClick={() => handleSort("type")}
                     className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
@@ -759,7 +759,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <button
                     onClick={() => handleSort("quantity")}
                     className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
@@ -768,12 +768,12 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </span>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <button
                     onClick={() => handleSort("price")}
                     className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
@@ -782,12 +782,12 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-3 text-left">
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Location
                   </span>
                 </th>
-                <th className="px-6 py-3 text-center">
+                <th className="px-4 py-3 text-center">
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </span>
@@ -797,7 +797,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredInventory.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4">
                     <div>
                       <div className="font-playfair font-medium text-gray-900">
                         {item.name}
@@ -807,25 +807,25 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  <td className="px-4 py-4 text-sm text-gray-900">
                     {item.vintage}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  <td className="px-4 py-4 text-sm text-gray-900">
                     {item.type}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  <td className="px-4 py-4 text-sm text-gray-900">
                     {item.quantity} bottles
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4">
                     {getStatusBadge(item)}
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                  <td className="px-4 py-4 text-sm font-medium text-gray-900">
                     ${item.price.toFixed(2)}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  <td className="px-4 py-4 text-sm text-gray-900">
                     {item.location || "Not specified"}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <Button
                         variant="ghost"
@@ -852,6 +852,70 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Inventory Cards - Mobile/Tablet */}
+      <div className="lg:hidden space-y-4">
+        {filteredInventory.map((item) => (
+          <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-playfair font-medium text-gray-900 truncate">
+                  {item.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {item.winery} • {item.vintage}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 ml-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => handleEditItem(item)}
+                  title="Edit item"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                  onClick={() => handleDeleteItem(item.id)}
+                  title="Delete item"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">Type:</span>
+                <div className="font-medium">{item.type}</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Quantity:</span>
+                <div className="font-medium">{item.quantity} bottles</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Price:</span>
+                <div className="font-medium text-wine">${item.price.toFixed(2)}</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Status:</span>
+                <div className="mt-1">{getStatusBadge(item)}</div>
+              </div>
+            </div>
+
+            {item.location && (
+              <div className="mt-3 text-sm">
+                <span className="text-gray-500">Location:</span>
+                <div className="font-medium">{item.location}</div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Results Summary */}
