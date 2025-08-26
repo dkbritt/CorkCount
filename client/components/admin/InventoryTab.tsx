@@ -145,7 +145,15 @@ const mockInventory: InventoryItem[] = [
   }
 ];
 
-export function InventoryTab() {
+interface InventoryTabProps {
+  settings?: {
+    lowStockThreshold: number;
+    outOfStockThreshold: number;
+  };
+}
+
+export function InventoryTab({ settings }: InventoryTabProps = {}) {
+  const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<keyof InventoryItem>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -164,31 +172,29 @@ export function InventoryTab() {
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "in-stock":
-        return (
-          <Badge className="bg-green-100 text-green-800 gap-1">
-            <CheckCircle className="h-3 w-3" />
-            In Stock
-          </Badge>
-        );
-      case "low-stock":
-        return (
-          <Badge className="bg-orange-100 text-orange-800 gap-1">
-            <AlertTriangle className="h-3 w-3" />
-            Low Stock
-          </Badge>
-        );
-      case "out-of-stock":
-        return (
-          <Badge className="bg-red-100 text-red-800 gap-1">
-            <Package className="h-3 w-3" />
-            Out of Stock
-          </Badge>
-        );
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
+  const getStatusBadge = (item: InventoryItem) => {
+    // Use dynamic thresholds to determine status
+    if (item.quantity <= outOfStockThreshold) {
+      return (
+        <Badge className="bg-red-100 text-red-800 gap-1">
+          <Package className="h-3 w-3" />
+          Out of Stock
+        </Badge>
+      );
+    } else if (item.quantity <= lowStockThreshold) {
+      return (
+        <Badge className="bg-orange-100 text-orange-800 gap-1">
+          <AlertTriangle className="h-3 w-3" />
+          Low Stock
+        </Badge>
+      );
+    } else {
+      return (
+        <Badge className="bg-green-100 text-green-800 gap-1">
+          <CheckCircle className="h-3 w-3" />
+          In Stock
+        </Badge>
+      );
     }
   };
 
@@ -669,7 +675,7 @@ export function InventoryTab() {
                     {item.quantity} bottles
                   </td>
                   <td className="px-6 py-4">
-                    {getStatusBadge(item.status)}
+                    {getStatusBadge(item)}
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     ${item.price.toFixed(2)}
