@@ -18,6 +18,7 @@ interface NavigationProps {
   userRole?: "customer" | "admin";
   onOpenCart?: () => void;
   onOpenSearch?: () => void;
+  onOpenAdminLogin?: () => void;
 }
 
 export function Navigation({ 
