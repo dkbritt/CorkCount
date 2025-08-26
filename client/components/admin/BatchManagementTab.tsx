@@ -91,7 +91,15 @@ const mockInventoryItems = [
   { id: "inv-005", batchId: "batch-001", name: "Napa Valley Merlot", quantity: 1 }
 ];
 
-export function BatchManagementTab() {
+interface BatchManagementTabProps {
+  settings?: {
+    lowStockThreshold: number;
+    outOfStockThreshold: number;
+  };
+}
+
+export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
+  const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
   const [batches, setBatches] = useState<BatchItem[]>(mockBatches);
   const [showForm, setShowForm] = useState(false);
   const [editingBatch, setEditingBatch] = useState<BatchItem | null>(null);
