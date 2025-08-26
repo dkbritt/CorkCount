@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -131,7 +131,7 @@ interface BatchManagementTabProps {
   onSetAddCallback?: (callback: () => void) => void;
 }
 
-export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
+export function BatchManagementTab({ settings, onSetAddCallback }: BatchManagementTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
   const [batches, setBatches] = useState<BatchItem[]>(mockBatches);
   const [showForm, setShowForm] = useState(false);
@@ -147,6 +147,13 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
     estimatedAgingUnit: "weeks"
   });
   const [formErrors, setFormErrors] = useState<Partial<BatchFormData>>({});
+
+  // Set up floating action button callback
+  useEffect(() => {
+    if (onSetAddCallback) {
+      onSetAddCallback(() => setShowForm(true));
+    }
+  }, [onSetAddCallback]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
