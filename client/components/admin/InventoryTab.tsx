@@ -634,30 +634,59 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 )}
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL
+                  Wine Image
                 </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => handleInputChange('image', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.image ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="https://example.com/wine-image.jpg"
-                />
+                <div className="space-y-3">
+                  {/* File Upload */}
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Upload from device:</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            const result = event.target?.result as string;
+                            handleInputChange('image', result);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal text-sm"
+                    />
+                  </div>
+
+                  {/* URL Input */}
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Or enter image URL:</label>
+                    <input
+                      type="url"
+                      value={formData.image}
+                      onChange={(e) => handleInputChange('image', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                        formErrors.image ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="https://example.com/wine-image.jpg"
+                    />
+                  </div>
+                </div>
+
                 {formErrors.image && (
                   <p className="mt-1 text-sm text-red-600">{formErrors.image}</p>
                 )}
+
                 {formData.image && (
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-500 mb-2">Preview:</p>
                     <img
                       src={formData.image}
                       alt="Wine preview"
-                      className="w-16 h-20 object-cover rounded-lg border border-gray-200"
+                      className="w-20 h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
