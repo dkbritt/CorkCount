@@ -246,7 +246,7 @@ export default function AdminDashboard() {
         return (
           <Button
             onClick={buttonConfig.action}
-            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40 md:bottom-8 md:right-8"
+            className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40 md:bottom-8 md:right-8"
             variant="accent"
             size="lg"
             title={buttonConfig.label}
