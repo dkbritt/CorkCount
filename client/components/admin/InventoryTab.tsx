@@ -618,6 +618,39 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
                 )}
               </div>
 
+              {/* Image URL */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.image}
+                  onChange={(e) => handleInputChange('image', e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                    formErrors.image ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="https://example.com/wine-image.jpg"
+                />
+                {formErrors.image && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.image}</p>
+                )}
+                {formData.image && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                    <img
+                      src={formData.image}
+                      alt="Wine preview"
+                      className="w-16 h-20 object-cover rounded-lg border border-gray-200"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
               {/* Flavor Notes */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
