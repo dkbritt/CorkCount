@@ -86,8 +86,19 @@ export function CartModal({
           {cartItems.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingBag className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">Your cart is empty</p>
-              <p className="text-sm text-gray-500">Add some wines to get started!</p>
+              <p className="text-lg text-gray-600 mb-2 font-playfair">
+                Sip happens — your cart is empty!
+              </p>
+              <p className="text-sm text-gray-500 mb-4">
+                Add some wines to get started!
+              </p>
+              <Button
+                variant="accent"
+                onClick={onClose}
+                className="mt-2"
+              >
+                Return to Shop
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
