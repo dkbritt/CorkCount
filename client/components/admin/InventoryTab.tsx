@@ -2,15 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/SearchBar";
-import { 
-  Edit, 
-  Trash2, 
-  Plus, 
+import {
+  Edit,
+  Trash2,
+  Plus,
   Filter,
   ArrowUpDown,
   AlertTriangle,
   CheckCircle,
-  Package
+  Package,
+  X,
+  Save
 } from "lucide-react";
 
 interface InventoryItem {
@@ -23,7 +25,34 @@ interface InventoryItem {
   price: number;
   status: "in-stock" | "low-stock" | "out-of-stock";
   lastUpdated: string;
+  flavorNotes?: string;
+  batchId?: string;
 }
+
+interface AddInventoryForm {
+  bottleName: string;
+  type: string;
+  vintage: string;
+  quantity: string;
+  price: string;
+  flavorNotes: string;
+  batchLink: string;
+  status: string;
+}
+
+interface BatchItem {
+  id: string;
+  name: string;
+}
+
+// Mock batch data for linking
+const mockBatches: BatchItem[] = [
+  { id: "batch-001", name: "2023 Bordeaux Reserve" },
+  { id: "batch-002", name: "2022 Burgundy Collection" },
+  { id: "batch-003", name: "2021 Napa Valley Cabernet" },
+  { id: "batch-004", name: "2023 Loire Valley Whites" },
+  { id: "batch-005", name: "2022 Champagne Selection" }
+];
 
 const mockInventory: InventoryItem[] = [
   {
@@ -121,6 +150,19 @@ export function InventoryTab() {
   const [sortField, setSortField] = useState<keyof InventoryItem>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [inventory, setInventory] = useState<InventoryItem[]>(mockInventory);
+  const [formData, setFormData] = useState<AddInventoryForm>({
+    bottleName: "",
+    type: "",
+    vintage: "",
+    quantity: "",
+    price: "",
+    flavorNotes: "",
+    batchLink: "",
+    status: "Active"
+  });
+  const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -150,7 +192,118 @@ export function InventoryTab() {
     }
   };
 
-  const filteredInventory = mockInventory
+  const validateForm = (): boolean => {
+    const errors: Partial<AddInventoryForm> = {};
+
+    if (!formData.bottleName.trim()) {
+      errors.bottleName = "Bottle name is required";
+    }
+
+    if (!formData.type) {
+      errors.type = "Type is required";
+    }
+
+    if (!formData.vintage) {
+      errors.vintage = "Vintage is required";
+    } else {
+      const year = parseInt(formData.vintage);
+      const currentYear = new Date().getFullYear();
+      if (isNaN(year) || year < 1800 || year > currentYear + 5) {
+        errors.vintage = "Please enter a valid vintage year";
+      }
+    }
+
+    if (!formData.quantity) {
+      errors.quantity = "Quantity is required";
+    } else if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
+      errors.quantity = "Please enter a valid quantity";
+    }
+
+    if (!formData.price) {
+      errors.price = "Price is required";
+    } else if (isNaN(parseFloat(formData.price)) || parseFloat(formData.price) < 0) {
+      errors.price = "Please enter a valid price";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    // Convert form status to inventory status
+    const getInventoryStatus = (status: string): "in-stock" | "low-stock" | "out-of-stock" => {
+      switch (status) {
+        case "Low Stock":
+          return "low-stock";
+        case "Archived":
+          return "out-of-stock";
+        default:
+          return "in-stock";
+      }
+    };
+
+    const newItem: InventoryItem = {
+      id: `inv-${Date.now()}`,
+      name: formData.bottleName,
+      winery: "CorkCount Winery", // Default winery
+      vintage: parseInt(formData.vintage),
+      type: formData.type,
+      quantity: parseInt(formData.quantity),
+      price: parseFloat(formData.price),
+      status: getInventoryStatus(formData.status),
+      lastUpdated: new Date().toISOString().split('T')[0],
+      flavorNotes: formData.flavorNotes,
+      batchId: formData.batchLink
+    };
+
+    setInventory([...inventory, newItem]);
+
+    // Reset form
+    setFormData({
+      bottleName: "",
+      type: "",
+      vintage: "",
+      quantity: "",
+      price: "",
+      flavorNotes: "",
+      batchLink: "",
+      status: "Active"
+    });
+    setFormErrors({});
+    setShowAddForm(false);
+  };
+
+  const handleFormCancel = () => {
+    setShowAddForm(false);
+    setFormData({
+      bottleName: "",
+      type: "",
+      vintage: "",
+      quantity: "",
+      price: "",
+      flavorNotes: "",
+      batchLink: "",
+      status: "Active"
+    });
+    setFormErrors({});
+  };
+
+  const handleInputChange = (field: keyof AddInventoryForm, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const filteredInventory = inventory
     .filter(item => {
       const matchesSearch = searchQuery === "" || 
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -199,11 +352,211 @@ export function InventoryTab() {
             Manage your wine collection and track stock levels
           </p>
         </div>
-        <Button variant="accent" className="gap-2">
+        <Button
+          variant="accent"
+          className="gap-2"
+          onClick={() => setShowAddForm(true)}
+        >
           <Plus className="h-4 w-4" />
           Add Wine
         </Button>
       </div>
+
+      {/* Add Inventory Form */}
+      {showAddForm && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-playfair text-xl font-semibold text-gray-900">
+              Add New Inventory
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleFormCancel}
+              className="h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <form onSubmit={handleFormSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Bottle Name */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bottle Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.bottleName}
+                  onChange={(e) => handleInputChange('bottleName', e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                    formErrors.bottleName ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter bottle name"
+                />
+                {formErrors.bottleName && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.bottleName}</p>
+                )}
+              </div>
+
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Type *
+                </label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => handleInputChange('type', e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                    formErrors.type ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                >
+                  <option value="">Select wine type</option>
+                  <option value="Red">Red</option>
+                  <option value="White">White</option>
+                  <option value="Rosé">Rosé</option>
+                  <option value="Sparkling">Sparkling</option>
+                  <option value="Dessert">Dessert</option>
+                </select>
+                {formErrors.type && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.type}</p>
+                )}
+              </div>
+
+              {/* Vintage */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vintage *
+                </label>
+                <input
+                  type="number"
+                  value={formData.vintage}
+                  onChange={(e) => handleInputChange('vintage', e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                    formErrors.vintage ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="2023"
+                  min="1800"
+                  max={new Date().getFullYear() + 5}
+                />
+                {formErrors.vintage && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.vintage}</p>
+                )}
+              </div>
+
+              {/* Quantity */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quantity *
+                </label>
+                <input
+                  type="number"
+                  value={formData.quantity}
+                  onChange={(e) => handleInputChange('quantity', e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                    formErrors.quantity ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="12"
+                  min="0"
+                />
+                {formErrors.quantity && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.quantity}</p>
+                )}
+              </div>
+
+              {/* Price */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Price *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    value={formData.price}
+                    onChange={(e) => handleInputChange('price', e.target.value)}
+                    className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
+                      formErrors.price ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="45.00"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                {formErrors.price && (
+                  <p className="mt-1 text-sm text-red-600">{formErrors.price}</p>
+                )}
+              </div>
+
+              {/* Batch Link */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Batch Link
+                </label>
+                <select
+                  value={formData.batchLink}
+                  onChange={(e) => handleInputChange('batchLink', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                >
+                  <option value="">Select a batch (optional)</option>
+                  {mockBatches.map((batch) => (
+                    <option key={batch.id} value={batch.id}>
+                      {batch.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Archived">Archived</option>
+                  <option value="Low Stock">Low Stock</option>
+                </select>
+              </div>
+
+              {/* Flavor Notes */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Flavor Notes
+                </label>
+                <textarea
+                  value={formData.flavorNotes}
+                  onChange={(e) => handleInputChange('flavorNotes', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                  placeholder="Describe the wine's flavor profile, tasting notes, and characteristics..."
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleFormCancel}
+                className="bg-smoke hover:bg-gray-100"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="accent" className="gap-2">
+                <Save className="h-4 w-4" />
+                Add Bottle
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -340,7 +693,7 @@ export function InventoryTab() {
 
       {/* Results Summary */}
       <div className="text-sm text-gray-500">
-        Showing {filteredInventory.length} of {mockInventory.length} wines
+        Showing {filteredInventory.length} of {inventory.length} wines
       </div>
     </div>
   );
