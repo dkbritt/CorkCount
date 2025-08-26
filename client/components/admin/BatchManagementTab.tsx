@@ -50,6 +50,8 @@ const mockBatches: BatchItem[] = [
     agingNotes: "French oak barrels, 18 months aging planned. Notes of blackcurrant and vanilla developing well.",
     dateAdded: "2023-09-15",
     dateStarted: "2023-09-10",
+    estimatedAgingTime: 18,
+    estimatedAgingUnit: "months",
     status: "aging",
     estimatedBottling: "2024-03-15"
   },
@@ -62,6 +64,8 @@ const mockBatches: BatchItem[] = [
     agingNotes: "Stainless steel fermentation, minimal oak contact. Crisp acidity maintained.",
     dateAdded: "2023-10-20",
     dateStarted: "2023-10-15",
+    estimatedAgingTime: 12,
+    estimatedAgingUnit: "weeks",
     status: "ready-to-bottle",
     estimatedBottling: "2024-01-20"
   },
@@ -74,6 +78,8 @@ const mockBatches: BatchItem[] = [
     agingNotes: "Completed 14 months aging. Complex earthy notes with bright cherry finish.",
     dateAdded: "2022-11-10",
     dateStarted: "2022-11-05",
+    estimatedAgingTime: 14,
+    estimatedAgingUnit: "months",
     status: "bottled"
   },
   {
@@ -85,6 +91,8 @@ const mockBatches: BatchItem[] = [
     agingNotes: "Cold fermentation preserving delicate fruit flavors. Ready for immediate bottling.",
     dateAdded: "2023-08-05",
     dateStarted: "2023-08-01",
+    estimatedAgingTime: 8,
+    estimatedAgingUnit: "weeks",
     status: "secondary-fermentation",
     estimatedBottling: "2024-02-01"
   },
@@ -97,6 +105,8 @@ const mockBatches: BatchItem[] = [
     agingNotes: "Just started fermentation. Monitoring sugar levels and temperature closely.",
     dateAdded: "2024-01-15",
     dateStarted: "2024-01-10",
+    estimatedAgingTime: 6,
+    estimatedAgingUnit: "weeks",
     status: "primary-fermentation",
     estimatedBottling: "2024-06-15"
   }
