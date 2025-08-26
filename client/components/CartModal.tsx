@@ -195,18 +195,18 @@ export function CartModal({
             {/* Action Buttons */}
             <div className="flex gap-2">
               <Button
-                variant="navigation"
+                variant="cancel"
                 onClick={onClose}
                 className="flex-1"
               >
-                Continue Shopping
+                Cancel
               </Button>
               <Button
                 variant="accent"
                 onClick={onCheckout}
                 className="flex-1"
               >
-                Checkout
+                Proceed to Checkout
               </Button>
             </div>
           </div>
