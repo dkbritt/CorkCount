@@ -212,7 +212,7 @@ export function Navigation({
             {userRole === "customer" && (
               <Button
                 variant="navigation"
-                onClick={() => window.location.href = '/admin'}
+                onClick={onOpenAdminLogin}
                 className="w-full justify-start gap-2"
               >
                 <User className="h-4 w-4" />
