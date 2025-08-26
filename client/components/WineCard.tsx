@@ -12,6 +12,7 @@ export interface Wine {
   inStock: number;
   rating: number;
   description: string;
+  flavorNotes: string[];
   image?: string;
 }
 
