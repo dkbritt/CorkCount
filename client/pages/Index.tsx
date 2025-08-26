@@ -128,7 +128,8 @@ export default function Index() {
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
-  const [cartItems, setCartItems] = useState<Wine[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
 
   // Filter and search logic
   const filteredWines = useMemo(() => {
