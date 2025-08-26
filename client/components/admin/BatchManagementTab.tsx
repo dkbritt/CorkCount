@@ -334,6 +334,37 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
     });
   };
 
+  const calculateAgingProgress = (batch: BatchItem) => {
+    const startDate = new Date(batch.dateStarted);
+    const currentDate = new Date();
+
+    // Convert aging time to days
+    const agingTimeInDays = batch.estimatedAgingUnit === "months"
+      ? batch.estimatedAgingTime * 30.44 // Average days per month
+      : batch.estimatedAgingTime * 7; // Days per week
+
+    // Calculate days elapsed
+    const daysElapsed = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Calculate percentage (max 100%)
+    const percentage = Math.min(Math.max((daysElapsed / agingTimeInDays) * 100, 0), 100);
+
+    return {
+      percentage: Math.round(percentage),
+      daysElapsed,
+      totalDays: Math.round(agingTimeInDays),
+      isComplete: percentage >= 100,
+      isOverdue: percentage > 100
+    };
+  };
+
+  const getProgressBarColor = (progress: ReturnType<typeof calculateAgingProgress>) => {
+    if (progress.isOverdue) return "bg-red-500";
+    if (progress.isComplete) return "bg-green-500";
+    if (progress.percentage >= 75) return "bg-yellow-500";
+    return "bg-blue-500";
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
