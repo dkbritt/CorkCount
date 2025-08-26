@@ -154,50 +154,85 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
           </div>
         )}
 
-        {/* Price & Actions */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="text-xl font-bold text-wine">
-            ${wine.price.toFixed(2)}
-          </div>
-          
-          <div className="flex gap-2">
-            {variant === "storefront" ? (
-              <>
-                <Button 
-                  variant="navigation" 
-                  size="sm"
-                  onClick={() => onViewDetails?.(wine)}
-                >
-                  Details
-                </Button>
-                <Button 
-                  variant="accent" 
-                  size="sm"
-                  disabled={!isAvailable}
-                  onClick={() => onAddToCart?.(wine)}
-                >
-                  {isAvailable ? "Add to Cart" : "Unavailable"}
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  variant="navigation" 
-                  size="sm"
-                  onClick={() => onViewDetails?.(wine)}
-                >
-                  Edit
-                </Button>
-                <Button 
-                  variant="wine" 
-                  size="sm"
-                >
-                  Manage
-                </Button>
-              </>
-            )}
-          </div>
+        {/* Price */}
+        <div className="text-xl font-bold text-wine">
+          ${wine.price.toFixed(2)}
         </div>
+
+        {/* Actions */}
+        {variant === "storefront" ? (
+          <div className="space-y-3">
+            {/* Quantity Selector */}
+            {isAvailable && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Qty:</span>
+                <div className="flex items-center border border-gray-200 rounded-lg">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={decrementQuantity}
+                    disabled={quantity <= 1}
+                    className="h-8 w-8 p-0 rounded-l-lg rounded-r-none"
+                  >
+                    <Minus className="h-3 w-3" />
+                  </Button>
+                  <span className="px-3 py-1 text-sm font-medium min-w-[40px] text-center">
+                    {quantity}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={incrementQuantity}
+                    disabled={quantity >= wine.inStock}
+                    className="h-8 w-8 p-0 rounded-r-lg rounded-l-none"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </div>
+                <span className="text-xs text-gray-500">
+                  {wine.inStock} available
+                </span>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <Button
+                variant="navigation"
+                size="sm"
+                onClick={() => onViewDetails?.(wine)}
+                className="flex-1"
+              >
+                Details
+              </Button>
+              <Button
+                variant="accent"
+                size="sm"
+                disabled={!isAvailable}
+                onClick={handleAddToCart}
+                className="flex-1"
+              >
+                {isAvailable ? "Add to Cart" : "Unavailable"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Button
+              variant="navigation"
+              size="sm"
+              onClick={() => onViewDetails?.(wine)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="wine"
+              size="sm"
+            >
+              Manage
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
