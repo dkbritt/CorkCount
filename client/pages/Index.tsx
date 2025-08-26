@@ -132,6 +132,8 @@ export default function Index() {
   const [showFilters, setShowFilters] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Filter and search logic
   const filteredWines = useMemo(() => {
