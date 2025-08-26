@@ -27,6 +27,10 @@ const App = () => (
           {/* Admin Dashboard */}
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
+          {/* Checkout Routes */}
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
+
           {/* Customer Routes */}
           <Route
             path="/collections"
