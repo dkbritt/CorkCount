@@ -173,7 +173,7 @@ interface InventoryTabProps {
   onSetAddCallback?: (callback: () => void) => void;
 }
 
-export function InventoryTab({ settings }: InventoryTabProps = {}) {
+export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<keyof InventoryItem>("name");
