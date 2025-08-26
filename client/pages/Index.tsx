@@ -258,6 +258,7 @@ export default function Index() {
         cartItemCount={totalCartItems}
         userRole="customer"
         onOpenCart={handleOpenCart}
+        onOpenAdminLogin={handleOpenAdminLogin}
       />
 
       {/* Hero Section */}
