@@ -175,22 +175,22 @@ export default function AdminDashboard() {
         </div>
       </nav>
 
-      {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200">
+      {/* Tab Navigation - Desktop (top) */}
+      <div className="hidden md:block bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 py-4 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
-              
+
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
-                    ${isActive 
-                      ? 'bg-federal text-white shadow-sm' 
+                    ${isActive
+                      ? 'bg-federal text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     }
                   `}
@@ -205,8 +205,35 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
         {renderTabContent()}
+      </div>
+
+      {/* Tab Navigation - Mobile (bottom) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+        <div className="flex justify-around">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  flex flex-col items-center gap-1 px-2 py-3 text-xs font-medium transition-all flex-1
+                  ${isActive
+                    ? 'text-federal bg-federal/5'
+                    : 'text-gray-600 hover:text-gray-900'
+                  }
+                `}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="text-xs leading-none">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Floating Action Button */}
