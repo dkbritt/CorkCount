@@ -82,6 +82,15 @@ const mockBatches: BatchItem[] = [
 
 const wineTypes = ["Red Wine", "White Wine", "Rosé", "Sparkling", "Dessert Wine"];
 
+// Mock inventory data to simulate batch-inventory relationships
+const mockInventoryItems = [
+  { id: "inv-001", batchId: "batch-001", name: "Napa Valley Cabernet Reserve", quantity: 3 },
+  { id: "inv-002", batchId: "batch-002", name: "Sonoma Chardonnay Estate", quantity: 8 },
+  { id: "inv-003", batchId: "batch-003", name: "Monterey Pinot Noir", quantity: 15 },
+  { id: "inv-004", batchId: "batch-004", name: "Central Coast Rosé", quantity: 2 },
+  { id: "inv-005", batchId: "batch-001", name: "Napa Valley Merlot", quantity: 1 }
+];
+
 export function BatchManagementTab() {
   const [batches, setBatches] = useState<BatchItem[]>(mockBatches);
   const [showForm, setShowForm] = useState(false);
