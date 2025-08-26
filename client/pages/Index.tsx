@@ -128,7 +128,19 @@ export default function Index() {
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  // Demo cart items to showcase functionality
+  const [cartItems, setCartItems] = useState<CartItem[]>([
+    {
+      id: "demo-cart-1",
+      wine: mockWines[0], // Château Margaux 2015
+      quantity: 2
+    },
+    {
+      id: "demo-cart-2",
+      wine: mockWines[1], // Dom Pérignon Vintage
+      quantity: 1
+    }
+  ]);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
 
   // Filter and search logic
