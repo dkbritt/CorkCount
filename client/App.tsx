@@ -9,6 +9,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
+import Checkout from "./pages/Checkout";
+import CheckoutConfirmation from "./pages/CheckoutConfirmation";
 import { PlaceholderPage } from "@/components/PlaceholderPage";
 
 const queryClient = new QueryClient();
