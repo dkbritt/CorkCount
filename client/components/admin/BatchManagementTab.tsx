@@ -706,8 +706,8 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                           />
                         </div>
                         <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>{progress.daysElapsed} days elapsed</span>
-                          <span>{progress.totalDays} days total</span>
+                          <span>{progress.daysElapsed}d elapsed</span>
+                          <span>{progress.totalDays}d total</span>
                         </div>
                         {progress.isOverdue && (
                           <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
