@@ -21,11 +21,12 @@ interface NavigationProps {
   onOpenAdminLogin?: () => void;
 }
 
-export function Navigation({ 
-  cartItemCount = 0, 
+export function Navigation({
+  cartItemCount = 0,
   userRole = "customer",
   onOpenCart,
-  onOpenSearch 
+  onOpenSearch,
+  onOpenAdminLogin
 }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
