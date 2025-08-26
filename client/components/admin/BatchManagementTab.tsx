@@ -246,6 +246,10 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
       errors.dateStarted = "Date started is required";
     }
 
+    if (!formData.estimatedAgingTime || formData.estimatedAgingTime <= 0) {
+      errors.estimatedAgingTime = "Estimated aging time must be greater than 0";
+    }
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
