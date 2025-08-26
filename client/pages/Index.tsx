@@ -144,6 +144,15 @@ export default function Index() {
   const [isAdminLoginModalOpen, setIsAdminLoginModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Save cart to localStorage whenever cartItems changes
+  useEffect(() => {
+    try {
+      localStorage.setItem("corkCountCart", JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error);
+    }
+  }, [cartItems]);
+
   // Filter and search logic
   const filteredWines = useMemo(() => {
     return mockWines.filter(wine => {
