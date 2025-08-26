@@ -107,11 +107,11 @@ export default function AdminDashboard() {
   const renderTabContent = () => {
     switch (activeTab) {
       case "inventory":
-        return <InventoryTab settings={inventorySettings} />;
+        return <InventoryTab settings={inventorySettings} onSetAddCallback={setOnAddInventory} />;
       case "orders":
         return <OrdersTab />;
       case "batch":
-        return <BatchManagementTab settings={inventorySettings} />;
+        return <BatchManagementTab settings={inventorySettings} onSetAddCallback={setOnAddBatch} />;
       case "metrics":
         return <MetricsTab settings={inventorySettings} />;
       default:
