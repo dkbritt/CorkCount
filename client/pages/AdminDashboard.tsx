@@ -44,6 +44,10 @@ export default function AdminDashboard() {
   });
   const navigate = useNavigate();
 
+  // Callbacks for floating action button
+  const [onAddInventory, setOnAddInventory] = useState<(() => void) | null>(null);
+  const [onAddBatch, setOnAddBatch] = useState<(() => void) | null>(null);
+
   const handleLogout = () => {
     // In a real app, this would clear auth tokens
     navigate("/");
