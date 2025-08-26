@@ -39,6 +39,7 @@ interface AddInventoryForm {
   flavorNotes: string;
   batchLink: string;
   status: string;
+  location: string;
 }
 
 interface BatchItem {
