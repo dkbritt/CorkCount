@@ -30,6 +30,11 @@ interface Order {
   status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
   orderDate: string;
   estimatedDelivery?: string;
+  pickupDate?: string;
+  pickupTime?: string;
+  paymentMethod?: string;
+  phone?: string;
+  orderNotes?: string;
 }
 
 const mockOrders: Order[] = [
