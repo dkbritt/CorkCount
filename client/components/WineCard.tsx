@@ -118,20 +118,32 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
           </p>
         </div>
 
-        {/* Region & Type */}
+        {/* Region & Wine Type Badge */}
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <span>{wine.region}</span>
           <span>•</span>
-          <Badge variant="secondary" className="text-xs">
+          <Badge className={`text-xs px-3 py-1 rounded-full ${getWineTypeColor(wine.type)}`}>
             {wine.type}
           </Badge>
         </div>
 
-        {/* Description */}
-        {variant === "storefront" && (
-          <p className="text-sm text-gray-600 line-clamp-2">
-            {wine.description}
-          </p>
+        {/* Flavor Notes */}
+        {variant === "storefront" && wine.flavorNotes && wine.flavorNotes.length > 0 && (
+          <div className="text-sm">
+            <p className="text-gray-600 font-medium mb-1">Flavor Notes:</p>
+            <div className="flex flex-wrap gap-1">
+              {wine.flavorNotes.slice(0, 3).map((note, index) => (
+                <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 rounded-full">
+                  {note}
+                </Badge>
+              ))}
+              {wine.flavorNotes.length > 3 && (
+                <Badge variant="secondary" className="text-xs px-2 py-0.5 rounded-full">
+                  +{wine.flavorNotes.length - 3} more
+                </Badge>
+              )}
+            </div>
+          </div>
         )}
 
         {/* Admin-specific info */}
