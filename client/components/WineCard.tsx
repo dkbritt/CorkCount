@@ -65,7 +65,7 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group w-full max-w-full">
       {/* Wine Image */}
       <div className="aspect-[3/4] bg-gradient-to-b from-gray-50 to-gray-100 relative overflow-hidden">
         {wine.image ? (
