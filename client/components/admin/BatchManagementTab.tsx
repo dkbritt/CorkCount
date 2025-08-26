@@ -226,6 +226,10 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
       errors.agingNotes = "Aging notes are required";
     }
 
+    if (!formData.dateStarted) {
+      errors.dateStarted = "Date started is required";
+    }
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
