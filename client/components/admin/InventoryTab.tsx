@@ -28,6 +28,7 @@ interface InventoryItem {
   flavorNotes?: string;
   batchId?: string;
   location?: string;
+  image?: string;
 }
 
 interface AddInventoryForm {
