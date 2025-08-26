@@ -66,7 +66,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 12,
     price: 450.00,
     status: "in-stock",
-    lastUpdated: "2024-01-15"
+    lastUpdated: "2024-01-15",
+    location: "Wine Cellar - Section A"
   },
   {
     id: "inv-002",
@@ -77,7 +78,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 8,
     price: 280.00,
     status: "in-stock",
-    lastUpdated: "2024-01-14"
+    lastUpdated: "2024-01-14",
+    location: "Refrigerator - Top Shelf"
   },
   {
     id: "inv-003",
@@ -88,7 +90,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 15,
     price: 380.00,
     status: "in-stock",
-    lastUpdated: "2024-01-13"
+    lastUpdated: "2024-01-13",
+    location: "Wine Cellar - Section B"
   },
   {
     id: "inv-004",
@@ -99,7 +102,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 3,
     price: 120.00,
     status: "low-stock",
-    lastUpdated: "2024-01-12"
+    lastUpdated: "2024-01-12",
+    location: "Dining Room Cabinet"
   },
   {
     id: "inv-005",
@@ -110,7 +114,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 36,
     price: 85.00,
     status: "in-stock",
-    lastUpdated: "2024-01-11"
+    lastUpdated: "2024-01-11",
+    location: "Kitchen Wine Fridge"
   },
   {
     id: "inv-006",
@@ -121,7 +126,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 2,
     price: 95.00,
     status: "low-stock",
-    lastUpdated: "2024-01-10"
+    lastUpdated: "2024-01-10",
+    location: "Basement Storage"
   },
   {
     id: "inv-007",
@@ -132,7 +138,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 48,
     price: 25.00,
     status: "in-stock",
-    lastUpdated: "2024-01-09"
+    lastUpdated: "2024-01-09",
+    location: "Pantry Rack"
   },
   {
     id: "inv-008",
@@ -143,7 +150,8 @@ const mockInventory: InventoryItem[] = [
     quantity: 0,
     price: 45.00,
     status: "out-of-stock",
-    lastUpdated: "2024-01-08"
+    lastUpdated: "2024-01-08",
+    location: "Wine Cellar - Section C"
   }
 ];
 
