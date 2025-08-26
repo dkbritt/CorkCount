@@ -34,7 +34,8 @@ const mockWines: Wine[] = [
     price: 280.00,
     inStock: 8,
     rating: 4.9,
-    description: "The epitome of luxury Champagne, with fine bubbles and complex flavors of brioche, citrus, and toasted almonds. A celebration in every sip."
+    description: "The epitome of luxury Champagne, with fine bubbles and complex flavors of brioche, citrus, and toasted almonds. A celebration in every sip.",
+    flavorNotes: ["Brioche", "Citrus", "Toasted Almonds", "Honey", "Minerality"]
   },
   {
     id: "wine-003",
@@ -46,7 +47,8 @@ const mockWines: Wine[] = [
     price: 380.00,
     inStock: 15,
     rating: 4.7,
-    description: "A Bordeaux-style blend from Napa Valley, combining Cabernet Sauvignon with Merlot and other varietals. Rich, full-bodied with layers of dark fruit and spice."
+    description: "A Bordeaux-style blend from Napa Valley, combining Cabernet Sauvignon with Merlot and other varietals. Rich, full-bodied with layers of dark fruit and spice.",
+    flavorNotes: ["Blackberry", "Cassis", "Vanilla", "Oak", "Dark Spices"]
   },
   {
     id: "wine-004",
@@ -58,7 +60,8 @@ const mockWines: Wine[] = [
     price: 120.00,
     inStock: 24,
     rating: 4.6,
-    description: "Classic Barolo with intense garnet color and complex aromas of tar, roses, and dark cherries. A wine of great structure and aging potential."
+    description: "Classic Barolo with intense garnet color and complex aromas of tar, roses, and dark cherries. A wine of great structure and aging potential.",
+    flavorNotes: ["Tar", "Roses", "Dark Cherry", "Leather", "Truffle"]
   },
   {
     id: "wine-005",
@@ -70,7 +73,8 @@ const mockWines: Wine[] = [
     price: 85.00,
     inStock: 36,
     rating: 4.4,
-    description: "Crisp and mineral-driven Sauvignon Blanc with notes of citrus, gooseberry, and wet stone. Perfect expression of Loire Valley terroir."
+    description: "Crisp and mineral-driven Sauvignon Blanc with notes of citrus, gooseberry, and wet stone. Perfect expression of Loire Valley terroir.",
+    flavorNotes: ["Citrus", "Gooseberry", "Wet Stone", "Green Herbs", "Minerality"]
   },
   {
     id: "wine-006",
@@ -82,7 +86,8 @@ const mockWines: Wine[] = [
     price: 95.00,
     inStock: 18,
     rating: 4.5,
-    description: "A rich and powerful blend showcasing the diversity of Rhône varieties. Deep, concentrated flavors of dark fruit, herbs, and spice."
+    description: "A rich and powerful blend showcasing the diversity of Rhône varieties. Deep, concentrated flavors of dark fruit, herbs, and spice.",
+    flavorNotes: ["Dark Fruit", "Herbs", "Spice", "Garrigue", "Pepper"]
   },
   {
     id: "wine-007",
@@ -94,7 +99,8 @@ const mockWines: Wine[] = [
     price: 25.00,
     inStock: 48,
     rating: 4.2,
-    description: "Pale pink Provence rosé with delicate flavors of strawberry, peach, and citrus. Light, fresh, and perfect for warm weather enjoyment."
+    description: "Pale pink Provence rosé with delicate flavors of strawberry, peach, and citrus. Light, fresh, and perfect for warm weather enjoyment.",
+    flavorNotes: ["Strawberry", "Peach", "Citrus", "Melon", "Fresh Herbs"]
   },
   {
     id: "wine-008",
@@ -106,7 +112,8 @@ const mockWines: Wine[] = [
     price: 45.00,
     inStock: 0,
     rating: 4.3,
-    description: "Late harvest Riesling with beautiful balance of sweetness and acidity. Notes of honey, apricot, and mineral undertones."
+    description: "Late harvest Riesling with beautiful balance of sweetness and acidity. Notes of honey, apricot, and mineral undertones.",
+    flavorNotes: ["Honey", "Apricot", "Minerality", "Lime", "Petrol"]
   }
 ];
 
