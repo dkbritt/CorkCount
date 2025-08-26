@@ -160,10 +160,58 @@ export default function Index() {
     });
   }, [searchQuery, filters]);
 
-  const handleAddToCart = (wine: Wine) => {
-    setCartItems(prev => [...prev, wine]);
-    // You could add a toast notification here
+  const handleAddToCart = (wine: Wine, quantity: number) => {
+    setCartItems(prev => {
+      const existingItem = prev.find(item => item.wine.id === wine.id);
+      if (existingItem) {
+        // Update quantity of existing item
+        return prev.map(item =>
+          item.wine.id === wine.id
+            ? { ...item, quantity: Math.min(item.quantity + quantity, wine.inStock) }
+            : item
+        );
+      } else {
+        // Add new item
+        return [...prev, {
+          id: `cart-${wine.id}-${Date.now()}`,
+          wine,
+          quantity: Math.min(quantity, wine.inStock)
+        }];
+      }
+    });
   };
+
+  const handleUpdateCartQuantity = (itemId: string, newQuantity: number) => {
+    setCartItems(prev =>
+      prev.map(item =>
+        item.id === itemId
+          ? { ...item, quantity: Math.min(newQuantity, item.wine.inStock) }
+          : item
+      )
+    );
+  };
+
+  const handleRemoveFromCart = (itemId: string) => {
+    setCartItems(prev => prev.filter(item => item.id !== itemId));
+  };
+
+  const handleOpenCart = () => {
+    setIsCartModalOpen(true);
+  };
+
+  const handleCloseCart = () => {
+    setIsCartModalOpen(false);
+  };
+
+  const handleCheckout = () => {
+    // Implement checkout logic here
+    console.log("Checkout:", cartItems);
+    setIsCartModalOpen(false);
+  };
+
+  // Calculate cart totals
+  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalCartPrice = cartItems.reduce((sum, item) => sum + (item.wine.price * item.quantity), 0);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
