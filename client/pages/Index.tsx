@@ -266,7 +266,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-smoke">
+    <div className="min-h-screen bg-smoke overflow-x-hidden">
       <Navigation
         cartItemCount={totalCartItems}
         userRole="customer"
