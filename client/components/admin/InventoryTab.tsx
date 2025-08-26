@@ -726,6 +726,11 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
+                <th className="px-6 py-3 text-left">
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Location
+                  </span>
+                </th>
                 <th className="px-6 py-3 text-center">
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
