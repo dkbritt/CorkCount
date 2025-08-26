@@ -213,6 +213,19 @@ export default function Index() {
     setIsCartModalOpen(false);
   };
 
+  const handleOpenAdminLogin = () => {
+    setIsAdminLoginModalOpen(true);
+  };
+
+  const handleCloseAdminLogin = () => {
+    setIsAdminLoginModalOpen(false);
+  };
+
+  const handleAdminLogin = () => {
+    // Redirect to admin dashboard
+    navigate("/admin-dashboard");
+  };
+
   // Calculate cart totals
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((sum, item) => sum + (item.wine.price * item.quantity), 0);
