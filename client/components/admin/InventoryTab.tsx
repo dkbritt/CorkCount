@@ -179,7 +179,8 @@ export function InventoryTab({ settings }: InventoryTabProps = {}) {
     price: "",
     flavorNotes: "",
     batchLink: "",
-    status: "Active"
+    status: "Active",
+    location: ""
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
 
