@@ -196,6 +196,13 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
 
+  // Set up floating action button callback
+  useEffect(() => {
+    if (onSetAddCallback) {
+      onSetAddCallback(() => setShowAddForm(true));
+    }
+  }, [onSetAddCallback]);
+
   const getStatusBadge = (item: InventoryItem) => {
     // Use dynamic thresholds to determine status
     if (item.quantity <= outOfStockThreshold) {
