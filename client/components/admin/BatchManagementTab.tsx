@@ -126,7 +126,8 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
     type: "Red Wine",
     vintage: new Date().getFullYear(),
     quantity: 0,
-    agingNotes: ""
+    agingNotes: "",
+    dateStarted: new Date().toISOString().split('T')[0]
   });
   const [formErrors, setFormErrors] = useState<Partial<BatchFormData>>({});
 
@@ -271,7 +272,8 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
       type: "Red Wine",
       vintage: new Date().getFullYear(),
       quantity: 0,
-      agingNotes: ""
+      agingNotes: "",
+      dateStarted: new Date().toISOString().split('T')[0]
     });
     setFormErrors({});
     setShowForm(false);
@@ -284,7 +286,8 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
       type: batch.type,
       vintage: batch.vintage,
       quantity: batch.quantity,
-      agingNotes: batch.agingNotes
+      agingNotes: batch.agingNotes,
+      dateStarted: batch.dateStarted
     });
     setEditingBatch(batch);
     setShowForm(true);
