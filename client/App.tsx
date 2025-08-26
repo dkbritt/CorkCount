@@ -22,6 +22,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
 
+          {/* Admin Dashboard */}
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
           {/* Customer Routes */}
           <Route
             path="/collections"
