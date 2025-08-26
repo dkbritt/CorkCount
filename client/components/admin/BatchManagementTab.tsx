@@ -617,7 +617,7 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-3">
                     <div>
                       <p className="text-sm text-gray-500">Type & Vintage</p>
                       <p className="font-medium text-gray-900">{batch.type} • {batch.vintage}</p>
@@ -629,6 +629,10 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
                     <div>
                       <p className="text-sm text-gray-500">Date Started</p>
                       <p className="font-medium text-gray-900">{formatDate(batch.dateStarted)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Estimated Aging Time</p>
+                      <p className="font-medium text-gray-900">{batch.estimatedAgingTime} {batch.estimatedAgingUnit}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Date Added</p>
