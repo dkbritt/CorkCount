@@ -474,7 +474,28 @@ export function BatchManagementTab({ settings }: BatchManagementTabProps = {}) {
                     <h3 className="font-playfair text-lg font-medium text-gray-900">
                       {batch.name}
                     </h3>
-                    {getStatusBadge(batch.status)}
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(batch.status)}
+                      {(() => {
+                        const alert = getBatchInventoryAlert(batch.id);
+                        if (alert) {
+                          return (
+                            <Badge
+                              className={`gap-1 ${
+                                alert.type === "out-of-stock"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-orange-100 text-orange-800"
+                              }`}
+                              title={alert.items.map(item => item.name).join(", ")}
+                            >
+                              <AlertTriangle className="h-3 w-3" />
+                              {alert.message}
+                            </Badge>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
