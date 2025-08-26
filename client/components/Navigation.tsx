@@ -206,6 +206,18 @@ export function Navigation({
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="px-4 py-4 space-y-2">
+            {/* Admin Login - Mobile */}
+            {userRole === "customer" && (
+              <Button
+                variant="navigation"
+                onClick={() => window.location.href = '/admin'}
+                className="w-full justify-start gap-2"
+              >
+                <User className="h-4 w-4" />
+                Admin Login
+              </Button>
+            )}
+
             {/* Mobile Search */}
             <Button
               variant="navigation"
