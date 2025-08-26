@@ -126,6 +126,18 @@ export function Navigation({
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
+            {/* Admin Login Button */}
+            {userRole === "customer" && (
+              <Button
+                variant="navigation"
+                size="sm"
+                className="hidden sm:flex"
+                onClick={() => window.location.href = '/admin'}
+              >
+                Admin Login
+              </Button>
+            )}
+
             {/* Search */}
             <Button
               variant="navigation"
