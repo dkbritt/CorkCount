@@ -123,10 +123,8 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterOptions>({
     types: [],
-    regions: [],
     priceRange: [0, 1000],
     inStockOnly: false,
-    rating: null,
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
