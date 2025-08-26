@@ -39,115 +39,6 @@ const mockBatchData = [
   { id: 5, name: "2022 Champagne Selection", status: "active" }
 ];
 
-// Calculate metrics from mock data
-const calculateMetrics = () => {
-  // Total inventory count
-  const totalInventory = mockInventoryData
-    .filter(item => item.status === "active")
-    .reduce((sum, item) => sum + item.quantity, 0);
-
-  // Low stock alerts (quantity <= lowStockThreshold but > outOfStockThreshold)
-  const lowStockCount = mockInventoryData
-    .filter(item => item.status === "active" && item.quantity <= lowStockThreshold && item.quantity > outOfStockThreshold)
-    .length;
-
-  // Recent additions (last 7 days)
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const recentAdditions = mockInventoryData
-    .filter(item => {
-      const itemDate = new Date(item.dateAdded);
-      return itemDate >= sevenDaysAgo && item.status === "active";
-    })
-    .reduce((sum, item) => sum + item.quantity, 0);
-
-  // Archived batches count
-  const archivedBatches = mockBatchData
-    .filter(batch => batch.status === "archived")
-    .length;
-
-  // Most popular wine type
-  const typeQuantities = mockInventoryData
-    .filter(item => item.status === "active")
-    .reduce((acc, item) => {
-      acc[item.type] = (acc[item.type] || 0) + item.quantity;
-      return acc;
-    }, {} as Record<string, number>);
-
-  const mostPopularType = Object.entries(typeQuantities)
-    .sort(([,a], [,b]) => b - a)[0]?.[0] || "Red";
-
-  // Calculate wine type percentages
-  const totalActiveQuantity = Object.values(typeQuantities).reduce((sum, qty) => sum + qty, 0);
-  const typePercentages = Object.entries(typeQuantities)
-    .sort(([,a], [,b]) => b - a)
-    .map(([type, quantity]) => ({
-      type,
-      percentage: totalActiveQuantity > 0 ? Math.round((quantity / totalActiveQuantity) * 100) : 0
-    }));
-
-  // Format top 3 types for display
-  const wineTypeBreakdown = typePercentages
-    .slice(0, 3)
-    .map(item => `${item.type} ${item.percentage}%`)
-    .join(", ");
-
-  return {
-    totalInventory,
-    lowStockCount,
-    recentAdditions,
-    archivedBatches,
-    mostPopularType,
-    wineTypeBreakdown
-  };
-};
-
-const metrics = calculateMetrics();
-
-const metricCards: MetricCard[] = [
-  {
-    title: "Total Inventory",
-    value: metrics.totalInventory.toLocaleString(),
-    subtext: "Updated daily",
-    icon: Wine,
-    color: "bg-federal"
-  },
-  {
-    title: "Low Stock Alerts",
-    value: metrics.lowStockCount,
-    subtext: "Check Inventory tab",
-    icon: AlertTriangle,
-    color: "bg-orange-500"
-  },
-  {
-    title: "Recent Additions",
-    value: metrics.recentAdditions,
-    subtext: "Batch Management activity",
-    icon: Plus,
-    color: "bg-green-500"
-  },
-  {
-    title: "Archived Batches",
-    value: metrics.archivedBatches,
-    subtext: "Stored for aging or review",
-    icon: Archive,
-    color: "bg-eggplant"
-  },
-  {
-    title: "Most Popular Type",
-    value: metrics.mostPopularType,
-    subtext: "Based on current inventory",
-    icon: WineOff,
-    color: "bg-wine"
-  },
-  {
-    title: "Wine Type Overview",
-    value: metrics.wineTypeBreakdown || "No data",
-    subtext: "Based on current inventory",
-    icon: PieChart,
-    color: "bg-blue-600"
-  }
-];
 
 const recentActivity = [
   {
@@ -196,6 +87,116 @@ interface MetricsTabProps {
 
 export function MetricsTab({ settings }: MetricsTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
+
+  // Calculate metrics from mock data
+  const calculateMetrics = () => {
+    // Total inventory count
+    const totalInventory = mockInventoryData
+      .filter(item => item.status === "active")
+      .reduce((sum, item) => sum + item.quantity, 0);
+
+    // Low stock alerts (quantity <= lowStockThreshold but > outOfStockThreshold)
+    const lowStockCount = mockInventoryData
+      .filter(item => item.status === "active" && item.quantity <= lowStockThreshold && item.quantity > outOfStockThreshold)
+      .length;
+
+    // Recent additions (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentAdditions = mockInventoryData
+      .filter(item => {
+        const itemDate = new Date(item.dateAdded);
+        return itemDate >= sevenDaysAgo && item.status === "active";
+      })
+      .reduce((sum, item) => sum + item.quantity, 0);
+
+    // Archived batches count
+    const archivedBatches = mockBatchData
+      .filter(batch => batch.status === "archived")
+      .length;
+
+    // Most popular wine type
+    const typeQuantities = mockInventoryData
+      .filter(item => item.status === "active")
+      .reduce((acc, item) => {
+        acc[item.type] = (acc[item.type] || 0) + item.quantity;
+        return acc;
+      }, {} as Record<string, number>);
+
+    const mostPopularType = Object.entries(typeQuantities)
+      .sort(([,a], [,b]) => b - a)[0]?.[0] || "Red";
+
+    // Calculate wine type percentages
+    const totalActiveQuantity = Object.values(typeQuantities).reduce((sum, qty) => sum + qty, 0);
+    const typePercentages = Object.entries(typeQuantities)
+      .sort(([,a], [,b]) => b - a)
+      .map(([type, quantity]) => ({
+        type,
+        percentage: totalActiveQuantity > 0 ? Math.round((quantity / totalActiveQuantity) * 100) : 0
+      }));
+
+    // Format top 3 types for display
+    const wineTypeBreakdown = typePercentages
+      .slice(0, 3)
+      .map(item => `${item.type} ${item.percentage}%`)
+      .join(", ");
+
+    return {
+      totalInventory,
+      lowStockCount,
+      recentAdditions,
+      archivedBatches,
+      mostPopularType,
+      wineTypeBreakdown
+    };
+  };
+
+  const metrics = calculateMetrics();
+
+  const metricCards: MetricCard[] = [
+    {
+      title: "Total Inventory",
+      value: metrics.totalInventory.toLocaleString(),
+      subtext: "Updated daily",
+      icon: Wine,
+      color: "bg-federal"
+    },
+    {
+      title: "Low Stock Alerts",
+      value: metrics.lowStockCount,
+      subtext: "Check Inventory tab",
+      icon: AlertTriangle,
+      color: "bg-orange-500"
+    },
+    {
+      title: "Recent Additions",
+      value: metrics.recentAdditions,
+      subtext: "Batch Management activity",
+      icon: Plus,
+      color: "bg-green-500"
+    },
+    {
+      title: "Archived Batches",
+      value: metrics.archivedBatches,
+      subtext: "Stored for aging or review",
+      icon: Archive,
+      color: "bg-eggplant"
+    },
+    {
+      title: "Most Popular Type",
+      value: metrics.mostPopularType,
+      subtext: "Based on current inventory",
+      icon: WineOff,
+      color: "bg-wine"
+    },
+    {
+      title: "Wine Type Overview",
+      value: metrics.wineTypeBreakdown || "No data",
+      subtext: "Based on current inventory",
+      icon: PieChart,
+      color: "bg-blue-600"
+    }
+  ];
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
