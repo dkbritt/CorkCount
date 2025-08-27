@@ -735,40 +735,51 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                   )}
                 </div>
 
-                <div className="ml-4">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-40 p-2" align="end">
-                      <div className="space-y-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(batch)}
-                          className="w-full justify-start gap-2 h-8"
-                        >
-                          <Edit className="h-4 w-4" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(batch.id)}
-                          className="w-full justify-start gap-2 h-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete
-                        </Button>
+                <div className="ml-4 relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => setOpenDropdownId(openDropdownId === batch.id ? null : batch.id)}
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+
+                  {openDropdownId === batch.id && (
+                    <>
+                      {/* Backdrop to close dropdown */}
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setOpenDropdownId(null)}
+                      />
+
+                      {/* Dropdown menu */}
+                      <div className="absolute right-0 top-full mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                        <div className="py-1">
+                          <button
+                            onClick={() => {
+                              handleEdit(batch);
+                              setOpenDropdownId(null);
+                            }}
+                            className="w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center gap-2"
+                          >
+                            <Edit className="h-4 w-4" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleDelete(batch.id);
+                              setOpenDropdownId(null);
+                            }}
+                            className="w-full px-3 py-2 text-sm text-left hover:bg-red-50 text-red-600 hover:text-red-700 flex items-center gap-2"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                    </PopoverContent>
-                  </Popover>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
