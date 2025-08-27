@@ -166,12 +166,12 @@ export function SettingsModal({
 
         {/* Footer */}
         <div className="flex items-center justify-between gap-3 p-6 border-t border-gray-200">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handleResetToDefault}
             className="bg-smoke hover:bg-gray-100"
           >
-            Reset to Default
+            Reset
           </Button>
           
           <div className="flex items-center gap-3">
