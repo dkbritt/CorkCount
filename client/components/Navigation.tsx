@@ -21,7 +21,6 @@ export function Navigation({
   cartItemCount = 0,
   userRole = "customer",
   onOpenCart,
-  onOpenSearch,
   onOpenAdminLogin
 }: NavigationProps) {
   const location = useLocation();
