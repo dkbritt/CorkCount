@@ -87,16 +87,9 @@ export function Navigation({
                 </Button>
               )}
 
-              {/* Mobile Admin Login and Search */}
+              {/* Mobile Admin Login */}
               {userRole === "customer" && (
-                <div className="flex sm:hidden gap-2">
-                  <Button
-                    variant="navigation"
-                    size="icon"
-                    onClick={onOpenSearch}
-                  >
-                    <Search className="h-4 w-4" />
-                  </Button>
+                <div className="flex sm:hidden">
                   <Button
                     variant="navigation"
                     size="sm"
