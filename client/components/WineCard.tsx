@@ -126,13 +126,13 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
             </div>
 
             {/* Bottom Section with Price and Actions */}
-            <div className="flex items-center justify-between mt-3">
-              <div className="text-xl font-bold text-wine">
+            <div className="flex flex-col gap-2 mt-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-lg sm:text-xl font-bold text-wine">
                 ${wine.price.toFixed(2)}
               </div>
 
               {variant === "storefront" && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 flex-wrap">
                   {/* Quantity Selector - Compact for list view */}
                   {isAvailable && (
                     <div className="flex items-center border border-gray-200 rounded-lg">
@@ -145,7 +145,7 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
-                      <span className="px-2 text-xs font-medium min-w-[30px] text-center">
+                      <span className="px-2 text-xs font-medium min-w-[25px] text-center">
                         {quantity}
                       </span>
                       <Button
@@ -165,7 +165,7 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
                     variant="navigation"
                     size="sm"
                     onClick={() => onViewDetails?.(wine)}
-                    className="px-3 py-1 text-xs"
+                    className="px-2 py-1 text-xs h-6"
                   >
                     Details
                   </Button>
@@ -174,7 +174,7 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
                     size="sm"
                     disabled={!isAvailable}
                     onClick={handleAddToCart}
-                    className="px-3 py-1 text-xs"
+                    className="px-2 py-1 text-xs h-6"
                   >
                     {isAvailable ? "Add" : "Unavailable"}
                   </Button>
