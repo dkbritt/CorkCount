@@ -555,7 +555,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                     onChange={(e) => setFormData(prev => ({ ...prev, estimatedAgingTime: parseInt(e.target.value) || 0 }))}
                     min="1"
                     placeholder="12"
-                    className={`flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors ${
+                    className={`w-20 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors ${
                       formErrors.estimatedAgingTime ? 'border-red-300' : 'border-gray-300'
                     }`}
                   />
