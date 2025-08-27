@@ -199,7 +199,10 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
   // Set up floating action button callback
   useEffect(() => {
     if (onSetAddCallback) {
-      onSetAddCallback(() => setShowAddForm(true));
+      onSetAddCallback(() => {
+        setShowAddForm(true);
+        window.scrollTo(0, 0);
+      });
     }
   }, [onSetAddCallback]);
 
