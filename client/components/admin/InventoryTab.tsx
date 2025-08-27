@@ -449,7 +449,10 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         <Button
           variant="accent"
           className="gap-2"
-          onClick={() => setShowAddForm(true)}
+          onClick={() => {
+            setShowAddForm(true);
+            window.scrollTo(0, 0);
+          }}
         >
           <Plus className="h-4 w-4" />
           Add Wine
