@@ -52,6 +52,8 @@ export default function CheckoutConfirmation() {
     if (!orderData) {
       navigate("/");
     }
+    // Scroll to top when page loads
+    window.scrollTo(0, 0);
   }, [orderData, navigate]);
 
   if (!orderData) {
