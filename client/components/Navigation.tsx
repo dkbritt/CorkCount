@@ -14,7 +14,6 @@ interface NavigationProps {
   cartItemCount?: number;
   userRole?: "customer" | "admin";
   onOpenCart?: () => void;
-  onOpenSearch?: () => void;
   onOpenAdminLogin?: () => void;
 }
 
