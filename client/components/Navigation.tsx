@@ -110,8 +110,8 @@ export function Navigation({
         <>
           <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-lg">
             <div className="flex items-center justify-around px-4 py-2">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className={`flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-colors ${
                   isActive("/") ? "text-wine bg-wine/10" : "text-gray-600"
                 }`}
@@ -119,6 +119,19 @@ export function Navigation({
                 <Home className="h-5 w-5" />
                 <span className="text-xs font-medium">Shop</span>
               </Link>
+
+              <button
+                onClick={onOpenCart}
+                className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-colors text-gray-600 relative"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                <span className="text-xs font-medium">Cart</span>
+                {cartItemCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 bg-wine text-white text-xs min-w-[18px] h-[18px] flex items-center justify-center p-0">
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
+                  </Badge>
+                )}
+              </button>
             </div>
           </nav>
           {/* Spacer for bottom navigation */}
