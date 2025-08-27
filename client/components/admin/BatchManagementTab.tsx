@@ -148,6 +148,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
     estimatedAgingUnit: "weeks"
   });
   const [formErrors, setFormErrors] = useState<Partial<BatchFormData>>({});
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   // Set up floating action button callback
   useEffect(() => {
