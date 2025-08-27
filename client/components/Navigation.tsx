@@ -58,18 +58,6 @@ export function Navigation({
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-2">
-              {/* Search */}
-              {userRole === "customer" && (
-                <Button
-                  variant="navigation"
-                  size="icon"
-                  onClick={onOpenSearch}
-                  className="hidden sm:flex"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              )}
-
               {/* Admin Login Button - Always shown for customers */}
               {userRole === "customer" && (
                 <Button
