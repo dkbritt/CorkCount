@@ -1,10 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Wine, 
-  ShoppingCart, 
-  Search, 
+import {
+  Wine,
+  ShoppingCart,
   Home,
   Package,
   ClipboardList,
