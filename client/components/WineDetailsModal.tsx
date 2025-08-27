@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, Star, MapPin, Calendar, Wine as WineIcon, Plus, Minus } from "lucide-react";
+import { X, Calendar, Wine as WineIcon, Plus, Minus } from "lucide-react";
 import { Wine } from "@/components/WineCard";
 import { useState } from "react";
 
