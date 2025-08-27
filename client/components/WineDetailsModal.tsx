@@ -124,12 +124,6 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
                   <span className="text-sm text-gray-600">Vintage:</span>
                   <span className="text-sm font-medium">{wine.vintage}</span>
                 </div>
-                
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Region:</span>
-                  <span className="text-sm font-medium">{wine.region}</span>
-                </div>
 
                 <div className="flex items-center gap-2">
                   <WineIcon className="h-4 w-4 text-gray-500" />
@@ -138,17 +132,6 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
                     {wine.type}
                   </Badge>
                 </div>
-
-                {wine.rating > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Star className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Rating:</span>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-medium">{wine.rating}</span>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Stock Status */}
