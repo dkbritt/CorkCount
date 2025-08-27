@@ -151,7 +151,10 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
   // Set up floating action button callback
   useEffect(() => {
     if (onSetAddCallback) {
-      onSetAddCallback(() => setShowForm(true));
+      onSetAddCallback(() => {
+        setShowForm(true);
+        window.scrollTo(0, 0);
+      });
     }
   }, [onSetAddCallback]);
 
