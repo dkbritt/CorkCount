@@ -429,7 +429,7 @@ export function OrdersTab() {
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between p-3 sm:p-6 border-b border-gray-200">
               <h2 className="font-playfair text-xl font-semibold text-gray-900">
                 Order Details
               </h2>
