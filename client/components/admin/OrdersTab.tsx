@@ -565,7 +565,7 @@ export function OrdersTab() {
             </div>
 
             {/* Modal Footer */}
-            <div className="border-t border-gray-200 p-6">
+            <div className="border-t border-gray-200 p-3 sm:p-6">
               <div className="flex justify-end">
                 <Button variant="outline" onClick={handleCloseModal}>
                   Close
