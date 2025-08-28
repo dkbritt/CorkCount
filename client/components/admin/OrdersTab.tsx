@@ -513,36 +513,38 @@ export function OrdersTab() {
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Bottle List</h3>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                        <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Qty</th>
-                        <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
-                        <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {selectedOrder.items.map((item, index) => (
-                        <tr key={index}>
-                          <td className="px-4 py-2 text-sm text-gray-900">{item.name}</td>
-                          <td className="px-4 py-2 text-sm text-gray-900 text-center">{item.quantity}</td>
-                          <td className="px-4 py-2 text-sm text-gray-900 text-right">${item.price.toFixed(2)}</td>
-                          <td className="px-4 py-2 text-sm font-medium text-gray-900 text-right">
-                            ${(item.price * item.quantity).toFixed(2)}
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[500px]">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
+                          <th className="px-2 sm:px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase w-16">Qty</th>
+                          <th className="px-2 sm:px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">Price</th>
+                          <th className="px-2 sm:px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {selectedOrder.items.map((item, index) => (
+                          <tr key={index}>
+                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900">{item.name}</td>
+                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900 text-center">{item.quantity}</td>
+                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900 text-right">${item.price.toFixed(2)}</td>
+                            <td className="px-2 sm:px-4 py-2 text-sm font-medium text-gray-900 text-right">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </td>
+                          </tr>
+                        ))}
+                        <tr className="bg-gray-50">
+                          <td colSpan={3} className="px-2 sm:px-4 py-2 text-sm font-medium text-gray-900 text-right">
+                            Total:
+                          </td>
+                          <td className="px-2 sm:px-4 py-2 text-sm font-bold text-wine text-right">
+                            ${selectedOrder.total.toFixed(2)}
                           </td>
                         </tr>
-                      ))}
-                      <tr className="bg-gray-50">
-                        <td colSpan={3} className="px-4 py-2 text-sm font-medium text-gray-900 text-right">
-                          Total:
-                        </td>
-                        <td className="px-4 py-2 text-sm font-bold text-wine text-right">
-                          ${selectedOrder.total.toFixed(2)}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
 
