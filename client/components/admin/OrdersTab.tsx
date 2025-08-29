@@ -360,6 +360,35 @@ export function OrdersTab() {
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div>
+          <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
+            Customer Orders
+          </h1>
+          <p className="text-gray-600">
+            View and manage customer pickup orders
+          </p>
+        </div>
+
+        {/* Loading State */}
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <Loader2 className="h-16 w-16 text-gray-400 mx-auto mb-4 animate-spin" />
+          <h2 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+            Loading orders...
+          </h2>
+          <p className="text-gray-600">
+            Please wait while we fetch customer orders.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
   if (orders.length === 0) {
     return (
       <div className="space-y-6">
@@ -372,7 +401,7 @@ export function OrdersTab() {
             View and manage customer pickup orders
           </p>
         </div>
-        
+
         {/* Empty State */}
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
