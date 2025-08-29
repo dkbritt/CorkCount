@@ -205,6 +205,42 @@ export default function Checkout() {
         description: `Your order ${orderNumber} has been submitted.`,
       });
 
+      // Send order confirmation email
+      try {
+        const emailResult = await sendOrderConfirmationEmail({
+          orderNumber,
+          customerName: formData.customerName,
+          customerEmail: formData.email,
+          phone: formData.phone,
+          pickupDate: formData.pickupDate,
+          pickupTime: formData.pickupTime,
+          paymentMethod: formData.paymentMethod,
+          items: cartItems,
+          totalPrice,
+          orderNotes: formData.orderNotes
+        });
+
+        if (emailResult.success) {
+          toast({
+            title: "Confirmation email sent!",
+            description: "Check your email for order details and pickup instructions.",
+          });
+        } else {
+          toast({
+            title: "Email not sent",
+            description: "Order was created successfully, but confirmation email failed to send.",
+            variant: "destructive",
+          });
+        }
+      } catch (emailError) {
+        console.warn('Email sending failed:', emailError);
+        toast({
+          title: "Email not sent",
+          description: "Order was created successfully, but confirmation email failed to send.",
+          variant: "destructive",
+        });
+      }
+
       // Also save to localStorage as backup (minimized and bounded)
       const minimizeOrderForStorage = (o: typeof orderData) => ({
         orderNumber: o.orderNumber,
