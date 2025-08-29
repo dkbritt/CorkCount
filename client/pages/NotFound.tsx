@@ -41,26 +41,6 @@ export default function NotFound() {
             </Button>
           </div>
 
-          {/* Popular Links */}
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <p className="text-sm text-gray-500 mb-4">
-              Or explore these popular sections:
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <Link to="/" className="text-wine hover:text-wine/80 transition-colors">
-                Browse All Wines
-              </Link>
-              <Link to="/collections" className="text-wine hover:text-wine/80 transition-colors">
-                Wine Collections
-              </Link>
-              <Link to="/about" className="text-wine hover:text-wine/80 transition-colors">
-                About Us
-              </Link>
-              <Link to="/contact" className="text-wine hover:text-wine/80 transition-colors">
-                Contact Support
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </div>
