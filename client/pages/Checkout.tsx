@@ -17,6 +17,7 @@ import { CartItem } from "@/components/CartModal";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 interface CheckoutFormData {
   customerName: string;
