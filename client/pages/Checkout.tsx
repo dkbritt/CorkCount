@@ -200,6 +200,25 @@ export default function Checkout() {
         return;
       }
 
+      // Update inventory quantities after successful order
+      try {
+        for (const item of cartItems) {
+          const { error: updateError } = await supabase
+            .from('Inventory')
+            .update({
+              quantity: item.wine.inStock - item.quantity
+            })
+            .eq('id', item.wine.id);
+
+          if (updateError) {
+            console.warn(`Failed to update inventory for wine ${item.wine.id}:`, formatError(updateError));
+          }
+        }
+      } catch (inventoryError) {
+        console.warn('Error updating inventory:', formatError(inventoryError));
+        // Don't fail the order for inventory update issues
+      }
+
       toast({
         title: "Order placed successfully!",
         description: `Your order ${orderNumber} has been submitted.`,
