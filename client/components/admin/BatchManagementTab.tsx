@@ -12,8 +12,11 @@ import {
   Save,
   X,
   AlertTriangle,
-  MoreVertical
+  MoreVertical,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 interface BatchItem {
   id: string;
