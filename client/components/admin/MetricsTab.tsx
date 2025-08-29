@@ -146,43 +146,58 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
     return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
   };
 
-  // Calculate metrics from mock data
+  // Calculate metrics from Supabase data
   const calculateMetrics = () => {
+    if (loading) {
+      return {
+        totalInventory: 0,
+        lowStockCount: 0,
+        recentAdditions: 0,
+        archivedBatches: 0,
+        mostPopularType: "Loading...",
+        wineTypeBreakdown: "Loading..."
+      };
+    }
+
     // Total inventory count
-    const totalInventory = mockInventoryData
-      .filter(item => item.status === "active")
-      .reduce((sum, item) => sum + item.quantity, 0);
+    const totalInventory = inventoryData
+      .filter(item => item.quantity > 0)
+      .reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
 
     // Low stock alerts (quantity <= lowStockThreshold but > outOfStockThreshold)
-    const lowStockCount = mockInventoryData
-      .filter(item => item.status === "active" && item.quantity <= lowStockThreshold && item.quantity > outOfStockThreshold)
+    const lowStockCount = inventoryData
+      .filter(item => {
+        const qty = parseInt(item.quantity) || 0;
+        return qty <= lowStockThreshold && qty > outOfStockThreshold;
+      })
       .length;
 
     // Recent additions (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const recentAdditions = mockInventoryData
+    const recentAdditions = inventoryData
       .filter(item => {
-        const itemDate = new Date(item.dateAdded);
-        return itemDate >= sevenDaysAgo && item.status === "active";
+        const itemDate = new Date(item.created_at || item.last_updated || '1970-01-01');
+        return itemDate >= sevenDaysAgo && (parseInt(item.quantity) || 0) > 0;
       })
-      .reduce((sum, item) => sum + item.quantity, 0);
+      .reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
 
-    // Archived batches count
-    const archivedBatches = mockBatchData
-      .filter(batch => batch.status === "archived")
+    // Completed/bottled batches count
+    const completedBatches = batchesData
+      .filter(batch => batch.status === "bottled" || batch.status === "completed")
       .length;
 
     // Most popular wine type
-    const typeQuantities = mockInventoryData
-      .filter(item => item.status === "active")
+    const typeQuantities = inventoryData
+      .filter(item => (parseInt(item.quantity) || 0) > 0)
       .reduce((acc, item) => {
-        acc[item.type] = (acc[item.type] || 0) + item.quantity;
+        const type = item.type || "Unknown";
+        acc[type] = (acc[type] || 0) + (parseInt(item.quantity) || 0);
         return acc;
       }, {} as Record<string, number>);
 
     const mostPopularType = Object.entries(typeQuantities)
-      .sort(([,a], [,b]) => b - a)[0]?.[0] || "Red";
+      .sort(([,a], [,b]) => b - a)[0]?.[0] || "No data";
 
     // Calculate wine type percentages
     const totalActiveQuantity = Object.values(typeQuantities).reduce((sum, qty) => sum + qty, 0);
@@ -194,16 +209,18 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
       }));
 
     // Format top 3 types for display
-    const wineTypeBreakdown = typePercentages
-      .slice(0, 3)
-      .map(item => `${item.type} ${item.percentage}%`)
-      .join(", ");
+    const wineTypeBreakdown = typePercentages.length > 0
+      ? typePercentages
+          .slice(0, 3)
+          .map(item => `${item.type} ${item.percentage}%`)
+          .join(", ")
+      : "No inventory data";
 
     return {
       totalInventory,
       lowStockCount,
       recentAdditions,
-      archivedBatches,
+      archivedBatches: completedBatches,
       mostPopularType,
       wineTypeBreakdown
     };
