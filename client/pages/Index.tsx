@@ -16,6 +16,9 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function Index() {
   const { toast } = useToast();
+  const [wines, setWines] = useState<Wine[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterOptions>({
     types: [],
@@ -190,7 +193,7 @@ export default function Index() {
               KB Winery
             </div>
             <h1 className="font-playfair text-4xl sm:text-6xl font-bold mb-6">
-              Sip Happens �� Find Your Vintage
+              Sip Happens — Find Your Vintage
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-wine-100 max-w-3xl mx-auto">
               Curated collection of premium wines from renowned vineyards around the world. 
