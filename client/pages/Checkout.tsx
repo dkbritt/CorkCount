@@ -204,10 +204,47 @@ export default function Checkout() {
         description: `Your order ${orderNumber} has been submitted.`,
       });
 
-      // Also save to localStorage as backup
-      const existingOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-      existingOrders.unshift(orderData);
-      localStorage.setItem("corkCountOrders", JSON.stringify(existingOrders));
+      // Also save to localStorage as backup (minimized and bounded)
+      const minimizeOrderForStorage = (o: typeof orderData) => ({
+        orderNumber: o.orderNumber,
+        customerName: o.customerName,
+        email: o.email,
+        phone: o.phone || null,
+        pickupDate: o.pickupDate,
+        pickupTime: o.pickupTime,
+        paymentMethod: o.paymentMethod,
+        status: o.status,
+        orderDate: o.orderDate,
+        orderNotes: o.orderNotes || null,
+        totalPrice: o.totalPrice,
+        items: o.items.map((ci: CartItem) => ({
+          quantity: ci.quantity,
+          wine: {
+            name: ci.wine.name,
+            vintage: ci.wine.vintage,
+            price: ci.wine.price
+          }
+        }))
+      });
+
+      try {
+        const existing = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const pruned = existing.slice(0, 49); // keep at most 50
+        pruned.unshift(minimizeOrderForStorage(orderData));
+        localStorage.setItem("corkCountOrders", JSON.stringify(pruned));
+      } catch (e1: any) {
+        // Try with a much smaller list
+        try {
+          const fallbackList = [minimizeOrderForStorage(orderData)];
+          localStorage.setItem("corkCountOrders", JSON.stringify(fallbackList));
+        } catch (e2) {
+          console.warn("Skipping local backup of orders due to storage limits:", e2);
+          toast({
+            title: "Order saved",
+            description: "Local backup not saved due to storage limits. This will not affect your order.",
+          });
+        }
+      }
 
       // Clear cart
       localStorage.removeItem("corkCountCart");
