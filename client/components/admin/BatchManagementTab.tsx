@@ -465,6 +465,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
     });
     setEditingBatch(batch);
     setShowForm(true);
+    window.scrollTo(0, 0);
   };
 
   const handleDelete = async (batchId: string) => {
