@@ -283,7 +283,8 @@ export default function Checkout() {
         }
       }
 
-      // Clear cart
+      // Clear cart (new + legacy keys)
+      localStorage.removeItem("kbCart");
       localStorage.removeItem("corkCountCart");
 
       // Navigate to confirmation
