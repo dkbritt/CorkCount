@@ -158,7 +158,7 @@ export function OrdersTab() {
             quantity: bottle.quantity,
             price: bottle.price_per_bottle
           })),
-          total: parseFloat(order.total_amount) || 0,
+          total: computeOrderTotal(order),
           status: order.status || "pending",
           orderDate: order.created_at,
           pickupDate: order.pickup_date,
@@ -286,6 +286,16 @@ export function OrdersTab() {
 
   const getTotalBottles = (items: Order['items']) => {
     return items.reduce((sum, item) => sum + item.quantity, 0);
+  };
+
+  const computeOrderTotal = (order: any) => {
+    const direct = (order as any).total_amount ?? (order as any).total_price;
+    if (direct != null && direct !== '') return parseFloat(direct);
+    const bottles = (order as any).bottles_ordered || [];
+    return bottles.reduce((sum: number, b: any) => {
+      const perBottle = parseFloat(b.total_price) || (parseFloat(b.price_per_bottle) || 0) * (parseInt(b.quantity) || 0);
+      return sum + perBottle;
+    }, 0);
   };
 
   const handleViewOrder = (order: Order) => {
