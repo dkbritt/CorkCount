@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Settings } from "lucide-react";
+import { X, Settings, RefreshCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { updateExistingWineryNames } from "@/lib/updateWinery";
 
 export interface InventorySettings {
   lowStockThreshold: number;
