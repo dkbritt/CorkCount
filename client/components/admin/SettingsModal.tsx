@@ -22,9 +22,11 @@ export function SettingsModal({
   onSave, 
   currentSettings 
 }: SettingsModalProps) {
+  const { toast } = useToast();
   const [lowStockThreshold, setLowStockThreshold] = useState(currentSettings.lowStockThreshold.toString());
   const [outOfStockThreshold, setOutOfStockThreshold] = useState(currentSettings.outOfStockThreshold.toString());
   const [errors, setErrors] = useState<{ lowStock?: string; outOfStock?: string }>({});
+  const [isUpdatingWinery, setIsUpdatingWinery] = useState(false);
 
   // Update form when currentSettings change
   useEffect(() => {
