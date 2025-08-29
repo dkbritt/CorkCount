@@ -295,7 +295,7 @@ export default function Index() {
               
               {(searchQuery || filters.types.length > 0 || filters.inStockOnly) && (
                 <Badge variant="secondary">
-                  {filteredWines.length} of {mockWines.length} wines
+                  {filteredWines.length} of {wines.length} wines
                 </Badge>
               )}
             </div>
