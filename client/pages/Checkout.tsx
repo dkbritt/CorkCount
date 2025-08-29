@@ -46,8 +46,8 @@ const paymentMethods = [
 ];
 
 const paymentInstructions: Record<string, string> = {
-  zelle: "Send payment to corkcount@zelle.com before pickup.",
-  cashapp: "Send payment to $CorkCount before pickup.",
+  zelle: "Send payment to kbwinery@zelle.com before pickup.",
+  cashapp: "Send payment to $KBWinery before pickup.",
   cash: "Please bring exact change to pickup."
 };
 
