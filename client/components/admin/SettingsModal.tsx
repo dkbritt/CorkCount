@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Settings, RefreshCw } from "lucide-react";
+import { X, Settings, RefreshCw, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { updateExistingWineryNames } from "@/lib/updateWinery";
+import { batchAutoTagInventory } from "@/lib/batchAutoTag";
 
 export interface InventorySettings {
   lowStockThreshold: number;
@@ -27,6 +28,7 @@ export function SettingsModal({
   const [outOfStockThreshold, setOutOfStockThreshold] = useState(currentSettings.outOfStockThreshold.toString());
   const [errors, setErrors] = useState<{ lowStock?: string; outOfStock?: string }>({});
   const [isUpdatingWinery, setIsUpdatingWinery] = useState(false);
+  const [isAutoTagging, setIsAutoTagging] = useState(false);
 
   // Update form when currentSettings change
   useEffect(() => {
@@ -226,6 +228,40 @@ export function SettingsModal({
                       <>
                         <RefreshCw className="h-4 w-4 mr-2" />
                         Update Winery Names
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <Tag className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">
+                    Auto-Tag Wine Inventory
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Automatically generates flavor tags for all wines based on their flavor notes and descriptions.
+                    Tags include: Berry, Earthy, Citrus, Floral, Chocolate, Vanilla, Spicy, Buttery, Nutty, Herbal.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAutoTagInventory}
+                    disabled={isAutoTagging}
+                    className="bg-white"
+                  >
+                    {isAutoTagging ? (
+                      <>
+                        <Tag className="h-4 w-4 mr-2 animate-spin" />
+                        Processing Tags...
+                      </>
+                    ) : (
+                      <>
+                        <Tag className="h-4 w-4 mr-2" />
+                        Generate Auto-Tags
                       </>
                     )}
                   </Button>
