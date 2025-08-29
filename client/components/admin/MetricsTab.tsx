@@ -60,7 +60,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
         // Fetch inventory data
         const { data: inventory, error: inventoryError } = await supabase
-          .from('inventory')
+          .from('Inventory')
           .select('*');
 
         if (inventoryError) {
@@ -71,7 +71,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
         // Fetch orders data
         const { data: orders, error: ordersError } = await supabase
-          .from('orders')
+          .from('Orders')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -83,7 +83,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
         // Fetch batches data
         const { data: batches, error: batchesError } = await supabase
-          .from('batches')
+          .from('Batches')
           .select('*');
 
         if (batchesError) {
