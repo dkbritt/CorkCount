@@ -514,8 +514,39 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
     setShowAddForm(true);
   };
 
-  const handleDeleteItem = (itemId: string) => {
-    setInventory(inventory.filter(item => item.id !== itemId));
+  const handleDeleteItem = async (itemId: string) => {
+    try {
+      const { error } = await supabase
+        .from('inventory')
+        .delete()
+        .eq('id', itemId);
+
+      if (error) {
+        console.error('Error deleting inventory item:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete inventory item. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update local state
+      setInventory(inventory.filter(item => item.id !== itemId));
+
+      toast({
+        title: "Success",
+        description: "Inventory item deleted successfully.",
+      });
+
+    } catch (err) {
+      console.error('Error deleting inventory item:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while deleting item.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleInputChange = (field: keyof AddInventoryForm, value: string) => {
