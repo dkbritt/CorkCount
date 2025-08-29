@@ -127,7 +127,7 @@ export function OrdersTab() {
         setLoading(true);
 
         const { data: supabaseOrders, error } = await supabase
-          .from('orders')
+          .from('Orders')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -304,7 +304,7 @@ export function OrdersTab() {
     try {
       // Update in Supabase first
       const { error } = await supabase
-        .from('orders')
+        .from('Orders')
         .update({ status: newStatus })
         .eq('id', orderId);
 
