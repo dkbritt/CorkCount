@@ -332,10 +332,27 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
         {/* Wine Type Breakdown Pie Chart */}
         {(() => {
-          const typeQuantities = mockInventoryData
-            .filter(item => item.status === "active")
+          if (loading) {
+            return (
+              <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                    <Loader2 className="h-6 w-6 text-white animate-spin" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-600">Wine Type Breakdown</p>
+                  <p className="text-lg text-gray-500">Loading...</p>
+                </div>
+              </div>
+            );
+          }
+
+          const typeQuantities = inventoryData
+            .filter(item => (parseInt(item.quantity) || 0) > 0)
             .reduce((acc, item) => {
-              acc[item.type] = (acc[item.type] || 0) + item.quantity;
+              const type = item.type || "Unknown";
+              acc[type] = (acc[type] || 0) + (parseInt(item.quantity) || 0);
               return acc;
             }, {} as Record<string, number>);
 
