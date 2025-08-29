@@ -52,14 +52,7 @@ interface BatchItem {
   name: string;
 }
 
-// Mock batch data for linking
-const mockBatches: BatchItem[] = [
-  { id: "batch-001", name: "2023 Bordeaux Reserve" },
-  { id: "batch-002", name: "2022 Burgundy Collection" },
-  { id: "batch-003", name: "2021 Napa Valley Cabernet" },
-  { id: "batch-004", name: "2023 Loire Valley Whites" },
-  { id: "batch-005", name: "2022 Champagne Selection" }
-];
+// Batch data will be fetched from Supabase
 
 const mockInventory: InventoryItem[] = [
   {
@@ -201,9 +194,17 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
     image: ""
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
+  const [availableBatches, setAvailableBatches] = useState<BatchItem[]>([]);
 
-  // Fetch inventory from Supabase
+  // Fetch inventory and batches from Supabase
   useEffect(() => {
+    const fetchData = async () => {
+      // Fetch inventory
+      await fetchInventory();
+      // Fetch batches
+      await fetchBatches();
+    };
+
     const fetchInventory = async () => {
       try {
         setLoading(true);
@@ -253,7 +254,28 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       }
     };
 
-    fetchInventory();
+    const fetchBatches = async () => {
+      try {
+        const { data: batches, error } = await supabase
+          .from('Batches')
+          .select('id, name')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching batches:', error.message || error);
+        } else {
+          const batchItems: BatchItem[] = (batches || []).map((batch: any) => ({
+            id: batch.id,
+            name: batch.name || 'Unnamed Batch'
+          }));
+          setAvailableBatches(batchItems);
+        }
+      } catch (err) {
+        console.error('Error fetching batches:', err);
+      }
+    };
+
+    fetchData();
   }, [toast]);
 
   // Set up floating action button callback
@@ -758,7 +780,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
                 >
                   <option value="">Select a batch (optional)</option>
-                  {mockBatches.map((batch) => (
+                  {availableBatches.map((batch) => (
                     <option key={batch.id} value={batch.id}>
                       {batch.name}
                     </option>
