@@ -298,26 +298,59 @@ export function OrdersTab() {
     }));
   };
 
-  const handleUpdateStatus = (orderId: string) => {
+  const handleUpdateStatus = async (orderId: string) => {
     const newStatus = statusUpdates[orderId];
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, status: newStatus as Order['status'] }
-        : order
-    ));
-    
-    // Update localStorage if this is a checkout order
+
     try {
-      const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-      const updatedCheckoutOrders = checkoutOrders.map((order: any) => {
-        const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
-        return orderId_normalized === orderId 
-          ? { ...order, status: newStatus }
-          : order;
+      // Update in Supabase first
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: newStatus })
+        .eq('id', orderId);
+
+      if (error) {
+        console.error('Error updating order status in Supabase:', error);
+        // Still update locally but show warning
+        toast({
+          title: "Warning",
+          description: "Status updated locally but failed to sync with database.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Order status updated successfully.",
+        });
+      }
+
+      // Update local state
+      setOrders(prev => prev.map(order =>
+        order.id === orderId
+          ? { ...order, status: newStatus as Order['status'] }
+          : order
+      ));
+
+      // Update localStorage as backup
+      try {
+        const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const updatedCheckoutOrders = checkoutOrders.map((order: any) => {
+          const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          return orderId_normalized === orderId
+            ? { ...order, status: newStatus }
+            : order;
+        });
+        localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
+      } catch (error) {
+        console.error('Error updating order status in localStorage:', error);
+      }
+
+    } catch (err) {
+      console.error('Error updating order status:', err);
+      toast({
+        title: "Error",
+        description: "Failed to update order status. Please try again.",
+        variant: "destructive",
       });
-      localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
-    } catch (error) {
-      console.error('Error updating order status in localStorage:', error);
     }
   };
 
