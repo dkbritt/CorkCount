@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { formatError } from "@/lib/errors";
 
 export default function Index() {
   const { toast } = useToast();
@@ -56,11 +57,11 @@ export default function Index() {
           .gte('quantity', 1); // Only fetch items that are in stock
 
         if (supabaseError) {
-          console.error('Supabase error:', supabaseError.message || supabaseError);
+          console.error('Supabase error:', formatError(supabaseError));
           setError('Failed to load wine inventory');
           toast({
             title: "Error",
-            description: `Failed to load wine inventory: ${supabaseError.message || 'Please try again.'}`,
+            description: `Failed to load wine inventory: ${formatError(supabaseError)}` ,
             variant: "destructive",
           });
           return;
@@ -92,7 +93,7 @@ export default function Index() {
         }
 
       } catch (err) {
-        console.error('Error fetching inventory:', err);
+        console.error('Error fetching inventory:', formatError(err));
         setError('An unexpected error occurred');
         toast({
           title: "Error",
