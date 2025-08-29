@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Wine,
@@ -7,8 +8,11 @@ import {
   WineOff,
   PieChart,
   Calendar,
-  Activity
+  Activity,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 interface MetricCard {
   title: string;
