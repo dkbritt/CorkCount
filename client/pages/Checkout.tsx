@@ -183,7 +183,6 @@ export default function Checkout() {
             status: 'pending',
             notes: formData.orderNotes || null,
             bottles_ordered: bottlesOrdered,
-            total_amount: totalPrice,
             created_at: new Date().toISOString()
           }
         ])
