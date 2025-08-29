@@ -235,7 +235,7 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
 
         {/* Wine Type Badge */}
         <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Badge className={`text-xs px-3 py-1 rounded-full ${getWineTypeColor(wine.type)}`}>
+          <Badge variant="outline" className={`text-xs px-3 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}>
             {wine.type}
           </Badge>
         </div>
