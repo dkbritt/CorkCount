@@ -16,6 +16,7 @@ import {
 import { CartItem } from "@/components/CartModal";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { formatError } from "@/lib/errors";
 
 interface CheckoutFormData {
   customerName: string;
@@ -190,7 +191,7 @@ export default function Checkout() {
         .single();
 
       if (supabaseError) {
-        console.error('Supabase error:', supabaseError);
+        console.error('Supabase error:', formatError(supabaseError));
         toast({
           title: "Order failed",
           description: "There was an error processing your order. Please try again.",
@@ -219,7 +220,7 @@ export default function Checkout() {
       });
 
     } catch (error) {
-      console.error('Error submitting order:', error);
+      console.error('Error submitting order:', formatError(error));
       toast({
         title: "Order failed",
         description: "An unexpected error occurred. Please try again.",
