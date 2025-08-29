@@ -877,8 +877,8 @@ export function OrdersTab() {
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Bottle List</h3>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[500px]">
+                  <div className="overflow-hidden">
+                    <table className="w-full">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
