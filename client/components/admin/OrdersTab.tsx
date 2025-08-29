@@ -402,12 +402,49 @@ export function OrdersTab() {
         });
       }
 
+      // Find the order being updated for email
+      const orderBeingUpdated = orders.find(order => order.id === orderId);
+      const oldStatus = orderBeingUpdated?.status || 'pending';
+
       // Update local state
       setOrders(prev => prev.map(order =>
         order.id === orderId
           ? { ...order, status: newStatus as Order['status'] }
           : order
       ));
+
+      // Send status update email if database update was successful and customer email exists
+      if (!error && orderBeingUpdated?.customer?.email) {
+        try {
+          const emailResult = await sendStatusUpdateEmail({
+            orderNumber: orderBeingUpdated.orderNumber,
+            customerName: orderBeingUpdated.customer.name,
+            customerEmail: orderBeingUpdated.customer.email,
+            oldStatus,
+            newStatus
+          });
+
+          if (emailResult.success) {
+            toast({
+              title: "Status updated & email sent!",
+              description: `Customer has been notified of the status change.`,
+            });
+          } else {
+            toast({
+              title: "Status updated",
+              description: "Status updated but customer email notification failed to send.",
+              variant: "destructive",
+            });
+          }
+        } catch (emailError) {
+          console.warn('Status update email failed:', emailError);
+          toast({
+            title: "Status updated",
+            description: "Status updated but customer email notification failed to send.",
+            variant: "destructive",
+          });
+        }
+      }
 
       // Update localStorage as backup
       try {
