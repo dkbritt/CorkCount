@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+
 // Create a safe stub client when env vars are missing to avoid crashing the app
 function createStubClient() {
   const notConfiguredError = new Error(
@@ -40,7 +42,7 @@ function createStubClient() {
 }
 
 // Create Supabase client (or stub if envs are missing)
-export const supabase: any = (supabaseUrl && supabaseAnonKey)
+export const supabase: any = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : (() => {
       if (typeof console !== 'undefined') {
