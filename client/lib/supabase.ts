@@ -5,6 +5,7 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+export const isSupabaseInsecureUrl = Boolean(supabaseUrl && String(supabaseUrl).startsWith('http://'))
 
 // Create a safe stub client when env vars are missing to avoid crashing the app
 function createStubClient() {
@@ -52,6 +53,12 @@ export const supabase: any = isSupabaseConfigured
       }
       return createStubClient()
     })()
+
+if (isSupabaseConfigured && isSupabaseInsecureUrl) {
+  console.warn(
+    'VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL.'
+  )
+}
 
 // Declare global window interface for TypeScript
 declare global {
