@@ -336,68 +336,131 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
     return Object.keys(errors).length === 0;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
-    // Convert form status to inventory status
-    const getInventoryStatus = (status: string): "in-stock" | "low-stock" | "out-of-stock" => {
-      switch (status) {
-        case "Low Stock":
-          return "low-stock";
-        case "Archived":
-          return "out-of-stock";
-        default:
-          return "in-stock";
-      }
-    };
+    setFormLoading(true);
 
-    if (editingItem) {
-      // Update existing item
-      const updatedItem: InventoryItem = {
-        ...editingItem,
-        name: formData.bottleName,
-        vintage: parseInt(formData.vintage),
-        type: formData.type,
-        quantity: parseInt(formData.quantity),
-        price: parseFloat(formData.price),
-        status: getInventoryStatus(formData.status),
-        lastUpdated: new Date().toISOString().split('T')[0],
-        flavorNotes: formData.flavorNotes,
-        batchId: formData.batchLink,
-        location: formData.location,
-        image: formData.image
-      };
-
-      setInventory(inventory.map(item =>
-        item.id === editingItem.id ? updatedItem : item
-      ));
-    } else {
-      // Add new item
-      const newItem: InventoryItem = {
-        id: `inv-${Date.now()}`,
+    try {
+      const quantity = parseInt(formData.quantity);
+      const inventoryData = {
         name: formData.bottleName,
         winery: "CorkCount Winery", // Default winery
         vintage: parseInt(formData.vintage),
         type: formData.type,
-        quantity: parseInt(formData.quantity),
+        quantity: quantity,
         price: parseFloat(formData.price),
-        status: getInventoryStatus(formData.status),
-        lastUpdated: new Date().toISOString().split('T')[0],
-        flavorNotes: formData.flavorNotes,
-        batchId: formData.batchLink,
+        flavor_notes: formData.flavorNotes,
+        batch_id: formData.batchLink || null,
         location: formData.location,
-        image: formData.image
+        image_url: formData.image,
+        last_updated: new Date().toISOString()
       };
 
-      setInventory([...inventory, newItem]);
-    }
+      if (editingItem) {
+        // Update existing item
+        const { data, error } = await supabase
+          .from('inventory')
+          .update(inventoryData)
+          .eq('id', editingItem.id)
+          .select()
+          .single();
 
-    // Reset form
-    resetForm();
+        if (error) {
+          console.error('Error updating inventory:', error);
+          toast({
+            title: "Error",
+            description: "Failed to update inventory item. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Update local state
+        const updatedItem: InventoryItem = {
+          ...editingItem,
+          name: formData.bottleName,
+          vintage: parseInt(formData.vintage),
+          type: formData.type,
+          quantity: quantity,
+          price: parseFloat(formData.price),
+          status: getInventoryStatus(quantity),
+          lastUpdated: new Date().toISOString().split('T')[0],
+          flavorNotes: formData.flavorNotes,
+          batchId: formData.batchLink,
+          location: formData.location,
+          image: formData.image
+        };
+
+        setInventory(inventory.map(item =>
+          item.id === editingItem.id ? updatedItem : item
+        ));
+
+        toast({
+          title: "Success",
+          description: "Inventory item updated successfully.",
+        });
+
+      } else {
+        // Add new item
+        const { data, error } = await supabase
+          .from('inventory')
+          .insert([inventoryData])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error adding inventory:', error);
+          toast({
+            title: "Error",
+            description: "Failed to add inventory item. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Add to local state
+        const newItem: InventoryItem = {
+          id: data.id,
+          name: formData.bottleName,
+          winery: "CorkCount Winery",
+          vintage: parseInt(formData.vintage),
+          type: formData.type,
+          quantity: quantity,
+          price: parseFloat(formData.price),
+          status: getInventoryStatus(quantity),
+          lastUpdated: new Date().toISOString().split('T')[0],
+          flavorNotes: formData.flavorNotes,
+          batchId: formData.batchLink,
+          location: formData.location,
+          image: formData.image
+        };
+
+        setInventory([...inventory, newItem]);
+
+        toast({
+          title: "Success",
+          description: "Inventory item added successfully.",
+        });
+      }
+
+      // Reset form
+      resetForm();
+
+    } catch (err) {
+      console.error('Error submitting form:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   const resetForm = () => {
