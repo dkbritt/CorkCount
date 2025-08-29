@@ -467,8 +467,39 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
     setShowForm(true);
   };
 
-  const handleDelete = (batchId: string) => {
-    setBatches(prev => prev.filter(batch => batch.id !== batchId));
+  const handleDelete = async (batchId: string) => {
+    try {
+      const { error } = await supabase
+        .from('batches')
+        .delete()
+        .eq('id', batchId);
+
+      if (error) {
+        console.error('Error deleting batch:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete batch. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update local state
+      setBatches(prev => prev.filter(batch => batch.id !== batchId));
+
+      toast({
+        title: "Success",
+        description: "Batch deleted successfully.",
+      });
+
+    } catch (err) {
+      console.error('Error deleting batch:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while deleting batch.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatDate = (dateString: string) => {
