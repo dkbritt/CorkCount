@@ -29,10 +29,24 @@ export default function Index() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    // Load cart from localStorage on initialization
+    // Load cart from localStorage on initialization, migrate legacy key
     try {
-      const savedCart = localStorage.getItem("corkCountCart");
-      return savedCart ? JSON.parse(savedCart) : [];
+      const NEW_KEY = "kbCart";
+      const OLD_KEY = "corkCountCart";
+      const savedNew = localStorage.getItem(NEW_KEY);
+      if (savedNew) {
+        return JSON.parse(savedNew);
+      }
+      const savedOld = localStorage.getItem(OLD_KEY);
+      if (savedOld) {
+        const parsed = JSON.parse(savedOld);
+        try {
+          localStorage.setItem(NEW_KEY, JSON.stringify(parsed));
+          localStorage.removeItem(OLD_KEY);
+        } catch {}
+        return parsed;
+      }
+      return [];
     } catch (error) {
       console.error("Error loading cart from localStorage:", error);
       return [];
@@ -108,12 +122,38 @@ export default function Index() {
     fetchInventory();
   }, [toast]);
 
-  // Save cart to localStorage whenever cartItems changes
+  // Save cart to localStorage whenever cartItems changes (minimized + bounded)
   useEffect(() => {
+    const NEW_KEY = "kbCart";
+    const minimizeCart = (items: CartItem[]) =>
+      items.map((ci) => ({
+        id: ci.id,
+        quantity: ci.quantity,
+        wine: {
+          id: ci.wine.id,
+          name: ci.wine.name,
+          winery: ci.wine.winery,
+          vintage: ci.wine.vintage,
+          type: ci.wine.type,
+          price: ci.wine.price,
+          inStock: ci.wine.inStock,
+          image: ci.wine.image,
+        },
+      }));
+
     try {
-      localStorage.setItem("corkCountCart", JSON.stringify(cartItems));
+      const payload = JSON.stringify(minimizeCart(cartItems));
+      localStorage.setItem(NEW_KEY, payload);
+      // Clean up legacy key
+      localStorage.removeItem("corkCountCart");
     } catch (error) {
-      console.error("Error saving cart to localStorage:", error);
+      // Attempt with a smaller list
+      try {
+        const pruned = cartItems.slice(-20);
+        localStorage.setItem(NEW_KEY, JSON.stringify(minimizeCart(pruned)));
+      } catch (e2) {
+        console.warn("Skipping cart save due to storage limits:", e2);
+      }
     }
   }, [cartItems]);
 
