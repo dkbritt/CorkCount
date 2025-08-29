@@ -64,7 +64,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           .select('*');
 
         if (inventoryError) {
-          console.error('Error fetching inventory:', inventoryError);
+          console.error('Error fetching inventory:', inventoryError.message || inventoryError);
         } else {
           setInventoryData(inventory || []);
         }
@@ -76,7 +76,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           .order('created_at', { ascending: false });
 
         if (ordersError) {
-          console.error('Error fetching orders:', ordersError);
+          console.error('Error fetching orders:', ordersError.message || ordersError);
         } else {
           setOrdersData(orders || []);
         }
@@ -87,7 +87,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           .select('*');
 
         if (batchesError) {
-          console.error('Error fetching batches:', batchesError);
+          console.error('Error fetching batches:', batchesError.message || batchesError);
         } else {
           setBatchesData(batches || []);
         }
@@ -106,10 +106,15 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
         // Check for any errors
         if (inventoryError || ordersError || batchesError) {
+          const errorDetails = [
+            inventoryError && `Inventory: ${inventoryError.message || 'Unknown error'}`,
+            ordersError && `Orders: ${ordersError.message || 'Unknown error'}`,
+            batchesError && `Batches: ${batchesError.message || 'Unknown error'}`
+          ].filter(Boolean).join('; ');
           setError('Some data could not be loaded');
           toast({
             title: "Warning",
-            description: "Some metrics data could not be loaded from the database.",
+            description: `Some metrics data could not be loaded: ${errorDetails}`,
             variant: "destructive",
           });
         }
