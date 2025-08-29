@@ -241,8 +241,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
         setInventory(inventoryItems);
 
-      } catch (err) {
-        console.error('Error fetching inventory:', err);
+      } catch (err: any) {
+        console.error('Error fetching inventory:', err.message || err);
         toast({
           title: "Error",
           description: "An unexpected error occurred while loading inventory.",
@@ -371,7 +371,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .single();
 
         if (error) {
-          console.error('Error updating inventory:', error);
+          console.error('Error updating inventory:', error.message || error);
           toast({
             title: "Error",
             description: "Failed to update inventory item. Please try again.",
@@ -414,7 +414,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .single();
 
         if (error) {
-          console.error('Error adding inventory:', error);
+          console.error('Error adding inventory:', error.message || error);
           toast({
             title: "Error",
             description: "Failed to add inventory item. Please try again.",
@@ -451,8 +451,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       // Reset form
       resetForm();
 
-    } catch (err) {
-      console.error('Error submitting form:', err);
+    } catch (err: any) {
+      console.error('Error submitting form:', err.message || err);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -522,7 +522,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         .eq('id', itemId);
 
       if (error) {
-        console.error('Error deleting inventory item:', error);
+        console.error('Error deleting inventory item:', error.message || error);
         toast({
           title: "Error",
           description: "Failed to delete inventory item. Please try again.",
@@ -539,8 +539,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         description: "Inventory item deleted successfully.",
       });
 
-    } catch (err) {
-      console.error('Error deleting inventory item:', err);
+    } catch (err: any) {
+      console.error('Error deleting inventory item:', err.message || err);
       toast({
         title: "Error",
         description: "An unexpected error occurred while deleting item.",
