@@ -331,8 +331,41 @@ export default function Index() {
           )}
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Loader2 className="w-12 h-12 text-gray-400 animate-spin" />
+            </div>
+            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+              Loading wines...
+            </h3>
+            <p className="text-gray-600">
+              Fetching our finest selection for you
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-12 h-12 text-red-400" />
+            </div>
+            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+              Unable to load wines
+            </h3>
+            <p className="text-gray-600 mb-4">
+              {error}
+            </p>
+            <Button variant="accent" onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </div>
+        )}
+
         {/* Wine Grid/List */}
-        {filteredWines.length > 0 ? (
+        {!loading && !error && filteredWines.length > 0 && (
           <div className={
             viewMode === "grid"
               ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -349,7 +382,10 @@ export default function Index() {
               />
             ))}
           </div>
-        ) : (
+        )}
+
+        {/* No Results State */}
+        {!loading && !error && filteredWines.length === 0 && wines.length > 0 && (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <SlidersHorizontal className="w-12 h-12 text-gray-400" />
@@ -366,6 +402,21 @@ export default function Index() {
             }}>
               Clear All Filters
             </Button>
+          </div>
+        )}
+
+        {/* Empty Inventory State */}
+        {!loading && !error && wines.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <SlidersHorizontal className="w-12 h-12 text-gray-400" />
+            </div>
+            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+              No wines available
+            </h3>
+            <p className="text-gray-600">
+              Our wine inventory is currently empty. Please check back later.
+            </p>
           </div>
         )}
       </div>
