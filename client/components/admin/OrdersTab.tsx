@@ -14,7 +14,10 @@ import {
   CheckCircle,
   Package,
   XCircle,
-  Loader2
+  Loader2,
+  Search,
+  Filter,
+  Trash2
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
@@ -119,6 +122,9 @@ export function OrdersTab() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   // Fetch orders from Supabase
   useEffect(() => {
