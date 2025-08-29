@@ -22,6 +22,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
+import { sendStatusUpdateEmail } from "@/lib/email";
 
 interface Order {
   id: string;
