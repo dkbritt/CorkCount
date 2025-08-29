@@ -771,6 +771,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                 variant="cancel"
                 onClick={resetForm}
                 className="flex-1"
+                disabled={formLoading}
               >
                 Cancel
               </Button>
@@ -778,9 +779,17 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                 type="submit"
                 variant="accent"
                 className="flex-1 gap-2"
+                disabled={formLoading}
               >
-                <Save className="h-4 w-4" />
-                {editingBatch ? "Update Batch" : "Add Batch"}
+                {formLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                {formLoading
+                  ? (editingBatch ? "Updating..." : "Adding...")
+                  : (editingBatch ? "Update Batch" : "Add Batch")
+                }
               </Button>
             </div>
           </form>
