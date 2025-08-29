@@ -93,7 +93,12 @@ export default function Index() {
           inStock: parseInt(item.quantity) || 0,
           rating: 0, // Not displayed on shop page
           description: item.description || item.flavor_notes || 'A wonderful wine experience',
-          flavorNotes: item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced'],
+          flavorNotes: (
+            // Use auto-generated tags if available, otherwise parse flavor_notes
+            item.tags && Array.isArray(item.tags) && item.tags.length > 0
+              ? item.tags.map((tag: string) => tag.charAt(0).toUpperCase() + tag.slice(1))
+              : item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced']
+          ),
           image: item.image_url || item.image || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
         }));
 
