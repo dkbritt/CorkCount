@@ -10,7 +10,9 @@ import { AdminLoginModal } from "@/components/AdminLoginModal";
 import { WineDetailsModal } from "@/components/WineDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SlidersHorizontal, Grid, List } from "lucide-react";
+import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock wine data
 const mockWines: Wine[] = [
