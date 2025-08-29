@@ -260,7 +260,7 @@ export default function Index() {
               Sip Happens — Find Your Vintage
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-wine-100 max-w-3xl mx-auto">
-              Curated collection of premium wines from renowned vineyards around the world. 
+              Curated collection of premium wines from KB Winery.
               From everyday favorites to rare vintages.
             </p>
             
