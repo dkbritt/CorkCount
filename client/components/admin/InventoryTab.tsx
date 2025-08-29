@@ -208,7 +208,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .from('inventory')
+          .from('Inventory')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -364,7 +364,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       if (editingItem) {
         // Update existing item
         const { data, error } = await supabase
-          .from('inventory')
+          .from('Inventory')
           .update(inventoryData)
           .eq('id', editingItem.id)
           .select()
@@ -408,7 +408,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       } else {
         // Add new item
         const { data, error } = await supabase
-          .from('inventory')
+          .from('Inventory')
           .insert([inventoryData])
           .select()
           .single();
@@ -517,7 +517,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
   const handleDeleteItem = async (itemId: string) => {
     try {
       const { error } = await supabase
-        .from('inventory')
+        .from('Inventory')
         .delete()
         .eq('id', itemId);
 
