@@ -138,13 +138,13 @@ export default function Checkout() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     const orderNumber = generateOrderNumber();
     const orderData = {
       orderNumber,
@@ -154,20 +154,78 @@ export default function Checkout() {
       orderDate: new Date().toISOString(),
       status: "pending"
     };
-    
-    // Save to localStorage (simulating backend)
-    const existingOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-    existingOrders.unshift(orderData);
-    localStorage.setItem("corkCountOrders", JSON.stringify(existingOrders));
-    
-    // Clear cart
-    localStorage.removeItem("corkCountCart");
-    
-    // Navigate to confirmation
-    navigate("/checkout/confirmation", { 
-      state: { orderData },
-      replace: true 
-    });
+
+    try {
+      // Prepare bottles_ordered data for Supabase
+      const bottlesOrdered = cartItems.map(item => ({
+        wine_id: item.wine.id,
+        wine_name: item.wine.name,
+        wine_vintage: item.wine.vintage,
+        wine_winery: item.wine.winery,
+        quantity: item.quantity,
+        price_per_bottle: item.wine.price,
+        total_price: item.wine.price * item.quantity
+      }));
+
+      // Insert order into Supabase
+      const { data: supabaseOrder, error: supabaseError } = await supabase
+        .from('orders')
+        .insert([
+          {
+            order_number: orderNumber,
+            customer_name: formData.customerName,
+            email: formData.email,
+            phone: formData.phone || null,
+            pickup_date: formData.pickupDate,
+            pickup_time: formData.pickupTime,
+            payment_method: formData.paymentMethod,
+            status: 'pending',
+            notes: formData.orderNotes || null,
+            bottles_ordered: bottlesOrdered,
+            total_amount: totalPrice,
+            created_at: new Date().toISOString()
+          }
+        ])
+        .select()
+        .single();
+
+      if (supabaseError) {
+        console.error('Supabase error:', supabaseError);
+        toast({
+          title: "Order failed",
+          description: "There was an error processing your order. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Order placed successfully!",
+        description: `Your order ${orderNumber} has been submitted.`,
+      });
+
+      // Also save to localStorage as backup
+      const existingOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+      existingOrders.unshift(orderData);
+      localStorage.setItem("corkCountOrders", JSON.stringify(existingOrders));
+
+      // Clear cart
+      localStorage.removeItem("corkCountCart");
+
+      // Navigate to confirmation
+      navigate("/checkout/confirmation", {
+        state: { orderData },
+        replace: true
+      });
+
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      toast({
+        title: "Order failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCancel = () => {
