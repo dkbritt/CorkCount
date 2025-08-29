@@ -253,10 +253,10 @@ export default function Index() {
       <div className="bg-gradient-to-r from-wine to-wine/90 text-white">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center">
-            <div className="font-playfair text-2xl sm:text-3xl italic text-wine-100 mb-4 font-medium">
+            <div className="font-script text-5xl sm:text-7xl text-wine-100 mb-4 font-semibold">
               KB Winery
             </div>
-            <h1 className="font-playfair text-4xl sm:text-6xl font-bold mb-6">
+            <h1 className="font-playfair text-3xl sm:text-5xl font-bold mb-6">
               Sip Happens — Find Your Vintage
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-wine-100 max-w-3xl mx-auto">
