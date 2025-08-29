@@ -930,8 +930,20 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         </div>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <Loader2 className="h-12 w-12 text-gray-400 animate-spin mx-auto mb-4" />
+          <h3 className="font-playfair text-lg font-medium text-gray-900 mb-2">
+            Loading inventory...
+          </h3>
+          <p className="text-gray-600">Please wait while we fetch your wine collection.</p>
+        </div>
+      )}
+
       {/* Inventory Table - Desktop */}
-      <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+      {!loading && (
+        <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px]">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -1056,10 +1068,12 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
             </tbody>
           </table>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Inventory Cards - Mobile/Tablet */}
-      <div className="lg:hidden space-y-4">
+      {!loading && (
+        <div className="lg:hidden space-y-4">
         {filteredInventory.map((item) => (
           <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-start justify-between mb-3">
@@ -1120,7 +1134,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
             )}
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Results Summary */}
       <div className="text-sm text-gray-500">
