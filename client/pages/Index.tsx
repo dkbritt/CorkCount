@@ -43,6 +43,70 @@ export default function Index() {
   const [isWineDetailsModalOpen, setIsWineDetailsModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Fetch inventory from Supabase
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data: inventory, error: supabaseError } = await supabase
+          .from('inventory')
+          .select('*')
+          .gte('quantity', 1); // Only fetch items that are in stock
+
+        if (supabaseError) {
+          console.error('Supabase error:', supabaseError);
+          setError('Failed to load wine inventory');
+          toast({
+            title: "Error",
+            description: "Failed to load wine inventory. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Convert Supabase inventory data to Wine format
+        const winesData: Wine[] = (inventory || []).map((item: any) => ({
+          id: item.id,
+          name: item.name || 'Unnamed Wine',
+          winery: item.winery || 'Unknown Winery',
+          vintage: item.vintage || new Date().getFullYear(),
+          region: item.region || 'Unknown Region',
+          type: item.type || 'Red Wine',
+          price: parseFloat(item.price) || 0,
+          inStock: parseInt(item.quantity) || 0,
+          rating: parseFloat(item.rating) || 4.0,
+          description: item.description || item.flavor_notes || 'A wonderful wine experience',
+          flavorNotes: item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced'],
+          image: item.image_url || item.image || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
+        }));
+
+        setWines(winesData);
+
+        if (winesData.length === 0) {
+          toast({
+            title: "No wines available",
+            description: "The wine inventory is currently empty. Please check back later.",
+          });
+        }
+
+      } catch (err) {
+        console.error('Error fetching inventory:', err);
+        setError('An unexpected error occurred');
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred while loading wines.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventory();
+  }, [toast]);
+
   // Save cart to localStorage whenever cartItems changes
   useEffect(() => {
     try {
