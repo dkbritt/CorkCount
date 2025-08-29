@@ -22,66 +22,6 @@ interface MetricCard {
   color: string;
 }
 
-// Mock inventory data for calculations
-const mockInventoryData = [
-  { id: 1, name: "Château Margaux", type: "Red", quantity: 12, status: "active", dateAdded: "2024-01-10" },
-  { id: 2, name: "Dom Pérignon", type: "Sparkling", quantity: 3, status: "active", dateAdded: "2024-01-12" },
-  { id: 3, name: "Sancerre", type: "White", quantity: 25, status: "active", dateAdded: "2024-01-08" },
-  { id: 4, name: "Barolo", type: "Red", quantity: 2, status: "active", dateAdded: "2024-01-15" },
-  { id: 5, name: "Whispering Angel", type: "Rosé", quantity: 18, status: "active", dateAdded: "2024-01-14" },
-  { id: 6, name: "Opus One", type: "Red", quantity: 8, status: "active", dateAdded: "2024-01-11" },
-  { id: 7, name: "Vintage Port", type: "Dessert", quantity: 1, status: "active", dateAdded: "2024-01-09" },
-  { id: 8, name: "Aged Bordeaux", type: "Red", quantity: 6, status: "archived", dateAdded: "2023-12-20" },
-  { id: 9, name: "Reserve Chardonnay", type: "White", quantity: 14, status: "active", dateAdded: "2024-01-13" }
-];
-
-const mockBatchData = [
-  { id: 1, name: "2023 Bordeaux Reserve", status: "active" },
-  { id: 2, name: "2022 Burgundy Collection", status: "archived" },
-  { id: 3, name: "2021 Napa Valley Cabernet", status: "active" },
-  { id: 4, name: "2020 Loire Valley Whites", status: "archived" },
-  { id: 5, name: "2022 Champagne Selection", status: "active" }
-];
-
-
-const recentActivity = [
-  {
-    id: 1,
-    action: "New order #ORD-2024-0156",
-    user: "Sarah Wilson",
-    time: "2 minutes ago",
-    status: "pending"
-  },
-  {
-    id: 2,
-    action: "Inventory updated: Château Margaux 2015",
-    user: "Admin",
-    time: "15 minutes ago",
-    status: "completed"
-  },
-  {
-    id: 3,
-    action: "Low stock alert: Dom Pérignon Vintage",
-    user: "System",
-    time: "1 hour ago",
-    status: "warning"
-  },
-  {
-    id: 4,
-    action: "Batch added: Napa Valley Collection",
-    user: "Admin",
-    time: "2 hours ago",
-    status: "completed"
-  },
-  {
-    id: 5,
-    action: "Order #ORD-2024-0155 shipped",
-    user: "John Smith",
-    time: "3 hours ago",
-    status: "completed"
-  }
-];
-
 interface MetricsTabProps {
   settings?: {
     lowStockThreshold: number;
@@ -91,6 +31,120 @@ interface MetricsTabProps {
 
 export function MetricsTab({ settings }: MetricsTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
+  const { toast } = useToast();
+
+  // State for Supabase data
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [ordersData, setOrdersData] = useState<any[]>([]);
+  const [batchesData, setBatchesData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Recent activity data (can be expanded to pull from multiple tables)
+  const [recentActivity, setRecentActivity] = useState([
+    {
+      id: 1,
+      action: "Loading recent activity...",
+      user: "System",
+      time: "Now",
+      status: "pending"
+    }
+  ]);
+
+  // Fetch data from Supabase
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch inventory data
+        const { data: inventory, error: inventoryError } = await supabase
+          .from('inventory')
+          .select('*');
+
+        if (inventoryError) {
+          console.error('Error fetching inventory:', inventoryError);
+        } else {
+          setInventoryData(inventory || []);
+        }
+
+        // Fetch orders data
+        const { data: orders, error: ordersError } = await supabase
+          .from('orders')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (ordersError) {
+          console.error('Error fetching orders:', ordersError);
+        } else {
+          setOrdersData(orders || []);
+        }
+
+        // Fetch batches data
+        const { data: batches, error: batchesError } = await supabase
+          .from('batches')
+          .select('*');
+
+        if (batchesError) {
+          console.error('Error fetching batches:', batchesError);
+        } else {
+          setBatchesData(batches || []);
+        }
+
+        // Generate recent activity from recent orders
+        if (orders && orders.length > 0) {
+          const recentOrders = orders.slice(0, 5).map((order: any, index: number) => ({
+            id: index + 1,
+            action: `New order ${order.order_number}`,
+            user: order.customer_name,
+            time: getRelativeTime(order.created_at),
+            status: order.status || "pending"
+          }));
+          setRecentActivity(recentOrders);
+        }
+
+        // Check for any errors
+        if (inventoryError || ordersError || batchesError) {
+          setError('Some data could not be loaded');
+          toast({
+            title: "Warning",
+            description: "Some metrics data could not be loaded from the database.",
+            variant: "destructive",
+          });
+        }
+
+      } catch (err) {
+        console.error('Error fetching metrics data:', err);
+        setError('Failed to load metrics data');
+        toast({
+          title: "Error",
+          description: "Failed to load metrics data from the database.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast]);
+
+  // Helper function to get relative time
+  const getRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+  };
 
   // Calculate metrics from mock data
   const calculateMetrics = () => {
