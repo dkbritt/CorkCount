@@ -53,6 +53,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const cartItems: CartItem[] = location.state?.cartItems || [];
+  const { toast } = useToast();
   
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: "",
