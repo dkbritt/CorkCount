@@ -202,6 +202,60 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
 
+  // Fetch inventory from Supabase
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('inventory')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching inventory:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load inventory. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Convert Supabase data to InventoryItem format
+        const inventoryItems: InventoryItem[] = (data || []).map((item: any) => ({
+          id: item.id,
+          name: item.name || 'Unnamed Wine',
+          winery: item.winery || 'Unknown Winery',
+          vintage: item.vintage || new Date().getFullYear(),
+          type: item.type || 'Red Wine',
+          quantity: parseInt(item.quantity) || 0,
+          price: parseFloat(item.price) || 0,
+          status: getInventoryStatus(item.quantity),
+          lastUpdated: item.last_updated || item.created_at || new Date().toISOString().split('T')[0],
+          flavorNotes: item.flavor_notes || '',
+          batchId: item.batch_id || '',
+          location: item.location || '',
+          image: item.image_url || item.image || ''
+        }));
+
+        setInventory(inventoryItems);
+
+      } catch (err) {
+        console.error('Error fetching inventory:', err);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred while loading inventory.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventory();
+  }, [toast]);
+
   // Set up floating action button callback
   useEffect(() => {
     if (onSetAddCallback) {
@@ -211,6 +265,13 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       });
     }
   }, [onSetAddCallback]);
+
+  // Helper function to determine status based on quantity
+  const getInventoryStatus = (quantity: number): "in-stock" | "low-stock" | "out-of-stock" => {
+    if (quantity <= outOfStockThreshold) return "out-of-stock";
+    if (quantity <= lowStockThreshold) return "low-stock";
+    return "in-stock";
+  };
 
   const getStatusBadge = (item: InventoryItem) => {
     // Use dynamic thresholds to determine status
