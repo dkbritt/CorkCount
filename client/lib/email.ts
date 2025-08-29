@@ -245,14 +245,14 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
     const emailRequests = [
       // Email to customer
       {
-        from: 'KB Winery <orders@kbwinery.com>',
+        from: 'KB Winery <orders@resend.dev>',
         to: [orderData.customerEmail],
-        subject: `Order Confirmation - ${orderData.orderNumber}`,
+        subject: 'Your KB Winery Order Confirmation',
         html: emailHTML,
       },
       // Email to FIL
       {
-        from: 'KB Winery <orders@kbwinery.com>',
+        from: 'KB Winery <orders@resend.dev>',
         to: [FIL_EMAIL],
         subject: `New Order Received - ${orderData.orderNumber}`,
         html: emailHTML,
@@ -317,9 +317,9 @@ export async function sendStatusUpdateEmail(data: StatusUpdateEmailData): Promis
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'KB Winery <orders@kbwinery.com>',
+        from: 'KB Winery <orders@resend.dev>',
         to: [data.customerEmail],
-        subject: `Order Update - ${data.orderNumber} (${getStatusDisplayName(data.newStatus)})`,
+        subject: generateStatusSubject(data.newStatus),
         html: emailHTML,
       }),
     });
