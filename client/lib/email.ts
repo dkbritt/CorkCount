@@ -23,10 +23,12 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-const RESEND_API_KEY = import.meta.env.VITE_RESEND_API_KEY;
-const FIL_EMAIL = "daishakb@gmail.com"; // Your FIL's email
+const FIL_EMAIL = "daishakb@gmail.com"; // FIL's email
 
-export const isEmailConfigured = Boolean(RESEND_API_KEY);
+const getEmailApiEndpoint = () => {
+  const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
+  return `${base}/api/email`;
+};
 
 // Helper function to format currency
 const formatCurrency = (amount: number): string => {
@@ -248,11 +250,6 @@ const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
 
 // Send order confirmation email
 export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Promise<{ success: boolean; error?: string }> {
-  if (!isEmailConfigured) {
-    console.warn('Email not configured. Set VITE_RESEND_API_KEY to enable emails.');
-    return { success: false, error: 'Email service not configured' };
-  }
-
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
     
@@ -273,36 +270,24 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
       }
     ];
 
-    const results = await Promise.allSettled(
-      emailRequests.map(async (email) => {
-        const response = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${RESEND_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(email),
-        });
+    const response = await fetch(getEmailApiEndpoint(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: emailRequests }),
+    });
 
-        if (!response.ok) {
-          const errorData = await response.text();
-          throw new Error(`Email API error: ${response.status} - ${errorData}`);
-        }
-
-        return await response.json();
-      })
-    );
-
-    const failures = results.filter(result => result.status === 'rejected');
-    
-    if (failures.length > 0) {
-      console.error('Some emails failed to send:', failures);
-      return { 
-        success: failures.length < results.length, // Partial success if some emails sent
-        error: `${failures.length} of ${results.length} emails failed to send`
-      };
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(text || `Email service error: ${response.status}`);
     }
 
+    const result = await response.json();
+    if (!result.success) {
+      const detail = Array.isArray(result.failures)
+        ? result.failures.map((f: any) => `#${f.index + 1}: ${f.reason}`).join('; ')
+        : (result.error || 'Unknown error');
+      return { success: false, error: detail };
+    }
     return { success: true };
     
   } catch (error) {
@@ -316,31 +301,33 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
 
 // Send status update email
 export async function sendStatusUpdateEmail(data: StatusUpdateEmailData): Promise<{ success: boolean; error?: string }> {
-  if (!isEmailConfigured) {
-    console.warn('Email not configured. Set VITE_RESEND_API_KEY to enable emails.');
-    return { success: false, error: 'Email service not configured' };
-  }
-
   try {
     const emailHTML = generateStatusUpdateHTML(data);
     
-    const response = await fetch('https://api.resend.com/emails', {
+    const response = await fetch(getEmailApiEndpoint(), {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'KB Winery <orders@resend.dev>',
-        to: [data.customerEmail],
-        subject: generateStatusSubject(data.newStatus),
-        html: emailHTML,
+        messages: [{
+          from: 'KB Winery <orders@resend.dev>',
+          to: [data.customerEmail],
+          subject: generateStatusSubject(data.newStatus),
+          html: emailHTML,
+        }],
       }),
     });
 
     if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(`Email API error: ${response.status} - ${errorData}`);
+      const text = await response.text().catch(() => '');
+      throw new Error(text || `Email service error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      const detail = Array.isArray(result.failures)
+        ? result.failures.map((f: any) => f.reason).join('; ')
+        : (result.error || 'Unknown error');
+      return { success: false, error: detail };
     }
 
     return { success: true };
