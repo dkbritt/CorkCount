@@ -132,7 +132,7 @@ export function OrdersTab() {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching orders from Supabase:', error);
+          console.error('Error fetching orders from Supabase:', error.message || error);
           // Fallback to localStorage if Supabase fails
           loadOrdersFromStorage();
           return;
@@ -178,11 +178,11 @@ export function OrdersTab() {
         });
         setStatusUpdates(initialStatusUpdates);
 
-      } catch (err) {
-        console.error('Error in fetchOrders:', err);
+      } catch (err: any) {
+        console.error('Error in fetchOrders:', err.message || err);
         toast({
           title: "Error",
-          description: "Failed to load orders. Showing local data only.",
+          description: `Failed to load orders: ${err.message || 'Unknown error'}. Showing local data only.`,
           variant: "destructive",
         });
         // Fallback to localStorage
@@ -218,8 +218,8 @@ export function OrdersTab() {
           phone: checkoutOrder.phone,
           orderNotes: checkoutOrder.orderNotes
         }));
-      } catch (error) {
-        console.error('Error loading orders from localStorage:', error);
+      } catch (error: any) {
+        console.error('Error loading orders from localStorage:', error.message || error);
         return mockOrders;
       }
     };
@@ -309,7 +309,7 @@ export function OrdersTab() {
         .eq('id', orderId);
 
       if (error) {
-        console.error('Error updating order status in Supabase:', error);
+        console.error('Error updating order status in Supabase:', error.message || error);
         // Still update locally but show warning
         toast({
           title: "Warning",
@@ -340,12 +340,12 @@ export function OrdersTab() {
             : order;
         });
         localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
-      } catch (error) {
-        console.error('Error updating order status in localStorage:', error);
+      } catch (error: any) {
+        console.error('Error updating order status in localStorage:', error.message || error);
       }
 
-    } catch (err) {
-      console.error('Error updating order status:', err);
+    } catch (err: any) {
+      console.error('Error updating order status:', err.message || err);
       toast({
         title: "Error",
         description: "Failed to update order status. Please try again.",
