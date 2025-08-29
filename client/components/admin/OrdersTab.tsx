@@ -741,9 +741,11 @@ export function OrdersTab() {
       </div>
 
       {/* Results Summary */}
-      <div className="text-sm text-gray-500">
-        Showing {orders.length} order{orders.length !== 1 ? 's' : ''}
-      </div>
+      {!searchQuery && statusFilter === "all" && (
+        <div className="text-sm text-gray-500">
+          Showing {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''}
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && (
