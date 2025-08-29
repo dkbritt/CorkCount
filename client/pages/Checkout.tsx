@@ -169,7 +169,7 @@ export default function Checkout() {
 
       // Insert order into Supabase
       const { data: supabaseOrder, error: supabaseError } = await supabase
-        .from('orders')
+        .from('Orders')
         .insert([
           {
             order_number: orderNumber,
