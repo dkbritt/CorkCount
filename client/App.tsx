@@ -47,7 +47,7 @@ const App = () => (
             path="/about"
             element={
               <PlaceholderPage
-                title="About CorkCount"
+                title="About KB Winery"
                 description="Learn about our passion for wine and our mission to bring you the finest selections."
                 userRole="customer"
               />
@@ -70,7 +70,7 @@ const App = () => (
             element={
               <PlaceholderPage
                 title="Admin Dashboard"
-                description="Welcome to the CorkCount administration panel. Manage your wine inventory and orders."
+                description="Welcome to the KB Winery administration panel. Manage your wine inventory and orders."
                 userRole="admin"
               />
             }
