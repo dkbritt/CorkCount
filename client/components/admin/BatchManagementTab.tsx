@@ -137,7 +137,10 @@ interface BatchManagementTabProps {
 
 export function BatchManagementTab({ settings, onSetAddCallback }: BatchManagementTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
-  const [batches, setBatches] = useState<BatchItem[]>(mockBatches);
+  const { toast } = useToast();
+  const [batches, setBatches] = useState<BatchItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingBatch, setEditingBatch] = useState<BatchItem | null>(null);
   const [formData, setFormData] = useState<BatchFormData>({
