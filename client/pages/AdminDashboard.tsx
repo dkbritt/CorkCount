@@ -141,7 +141,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex flex-col">
                 <span className="font-playfair font-bold text-lg text-wine">
-                  CorkCount
+                  KB Winery
                 </span>
                 <span className="text-xs text-gray-500 -mt-1">
                   Admin Dashboard
