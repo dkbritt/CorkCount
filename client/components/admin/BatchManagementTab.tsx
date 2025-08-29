@@ -162,7 +162,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .from('batches')
+          .from('Batches')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -350,7 +350,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
       if (editingBatch) {
         // Update existing batch
         const { data, error } = await supabase
-          .from('batches')
+          .from('Batches')
           .update(batchData)
           .eq('id', editingBatch.id)
           .select()
@@ -388,7 +388,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
       } else {
         // Add new batch
         const { data, error } = await supabase
-          .from('batches')
+          .from('Batches')
           .insert([{
             ...batchData,
             status: "primary-fermentation"
@@ -470,7 +470,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
   const handleDelete = async (batchId: string) => {
     try {
       const { error } = await supabase
-        .from('batches')
+        .from('Batches')
         .delete()
         .eq('id', batchId);
 
