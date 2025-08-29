@@ -304,6 +304,67 @@ export function OrdersTab() {
     }));
   };
 
+  // Filter orders based on search and status
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = searchQuery === "" ||
+      order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customer.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleDeleteOrder = async (orderId: string) => {
+    try {
+      // Delete from Supabase
+      const { error } = await supabase
+        .from('Orders')
+        .delete()
+        .eq('id', orderId);
+
+      if (error) {
+        console.error('Error deleting order from Supabase:', error.message || error);
+        toast({
+          title: "Warning",
+          description: "Order deleted locally but failed to sync with database.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Order deleted successfully.",
+        });
+      }
+
+      // Update local state
+      setOrders(prev => prev.filter(order => order.id !== orderId));
+
+      // Also remove from localStorage backup
+      try {
+        const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const updatedCheckoutOrders = checkoutOrders.filter((order: any) => {
+          const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          return orderId_normalized !== orderId;
+        });
+        localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
+      } catch (error: any) {
+        console.error('Error updating localStorage:', error.message || error);
+      }
+
+    } catch (err: any) {
+      console.error('Error deleting order:', err.message || err);
+      toast({
+        title: "Error",
+        description: "Failed to delete order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setShowDeleteConfirm(null);
+    }
+  };
+
   const handleUpdateStatus = async (orderId: string) => {
     const newStatus = statusUpdates[orderId];
 
@@ -433,6 +494,47 @@ export function OrdersTab() {
           View and manage customer pickup orders
         </p>
       </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Search orders by order #, customer name, or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+            />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal appearance-none bg-white"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="ready-for-pickup">Ready for Pickup</option>
+              <option value="picked-up">Picked Up</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Results summary */}
+      {(searchQuery || statusFilter !== "all") && (
+        <div className="text-sm text-gray-600">
+          Showing {filteredOrders.length} of {orders.length} orders
+          {searchQuery && ` matching "${searchQuery}"`}
+          {statusFilter !== "all" && ` with status "${statusFilter}"`}
+        </div>
+      )}
 
       {/* Orders Table - Desktop */}
       <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
