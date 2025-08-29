@@ -118,7 +118,7 @@ export default function Index() {
 
   // Filter and search logic
   const filteredWines = useMemo(() => {
-    return mockWines.filter(wine => {
+    return wines.filter(wine => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -137,7 +137,7 @@ export default function Index() {
 
       return true;
     });
-  }, [searchQuery, filters]);
+  }, [wines, searchQuery, filters]);
 
   const handleAddToCart = (wine: Wine, quantity: number) => {
     setCartItems(prev => {
