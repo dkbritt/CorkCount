@@ -113,7 +113,9 @@ const paymentMethodLabels: Record<string, string> = {
 };
 
 export function OrdersTab() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const { toast } = useToast();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
