@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { formatError } from "@/lib/errors";
 
 interface Order {
   id: string;
@@ -138,7 +139,7 @@ export function OrdersTab() {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching orders from Supabase:', error.message || error);
+          console.error('Error fetching orders from Supabase:', formatError(error));
           // Fallback to localStorage if Supabase fails
           loadOrdersFromStorage();
           return;
@@ -185,10 +186,10 @@ export function OrdersTab() {
         setStatusUpdates(initialStatusUpdates);
 
       } catch (err: any) {
-        console.error('Error in fetchOrders:', err.message || err);
+        console.error('Error in fetchOrders:', formatError(err));
         toast({
           title: "Error",
-          description: `Failed to load orders: ${err.message || 'Unknown error'}. Showing local data only.`,
+          description: `Failed to load orders: ${formatError(err)}. Showing local data only.`,
           variant: "destructive",
         });
         // Fallback to localStorage
@@ -325,7 +326,7 @@ export function OrdersTab() {
         .eq('id', orderId);
 
       if (error) {
-        console.error('Error deleting order from Supabase:', error.message || error);
+        console.error('Error deleting order from Supabase:', formatError(error));
         toast({
           title: "Warning",
           description: "Order deleted locally but failed to sync with database.",
@@ -350,11 +351,11 @@ export function OrdersTab() {
         });
         localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
       } catch (error: any) {
-        console.error('Error updating localStorage:', error.message || error);
+        console.error('Error updating localStorage:', formatError(error));
       }
 
     } catch (err: any) {
-      console.error('Error deleting order:', err.message || err);
+      console.error('Error deleting order:', formatError(err));
       toast({
         title: "Error",
         description: "Failed to delete order. Please try again.",
@@ -376,7 +377,7 @@ export function OrdersTab() {
         .eq('id', orderId);
 
       if (error) {
-        console.error('Error updating order status in Supabase:', error.message || error);
+        console.error('Error updating order status in Supabase:', formatError(error));
         // Still update locally but show warning
         toast({
           title: "Warning",
@@ -408,11 +409,11 @@ export function OrdersTab() {
         });
         localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
       } catch (error: any) {
-        console.error('Error updating order status in localStorage:', error.message || error);
+        console.error('Error updating order status in localStorage:', formatError(error));
       }
 
     } catch (err: any) {
-      console.error('Error updating order status:', err.message || err);
+      console.error('Error updating order status:', formatError(err));
       toast({
         title: "Error",
         description: "Failed to update order status. Please try again.",
