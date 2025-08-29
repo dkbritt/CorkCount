@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { formatError } from "@/lib/errors";
 
 interface MetricCard {
   title: string;
@@ -64,7 +65,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           .select('*');
 
         if (inventoryError) {
-          console.error('Error fetching inventory:', inventoryError.message || inventoryError);
+          console.error('Error fetching inventory:', formatError(inventoryError));
         } else {
           setInventoryData(inventory || []);
         }
@@ -76,7 +77,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           .order('created_at', { ascending: false });
 
         if (ordersError) {
-          console.error('Error fetching orders:', ordersError.message || ordersError);
+          console.error('Error fetching orders:', formatError(ordersError));
         } else {
           setOrdersData(orders || []);
         }
@@ -87,7 +88,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           .select('*');
 
         if (batchesError) {
-          console.error('Error fetching batches:', batchesError.message || batchesError);
+          console.error('Error fetching batches:', formatError(batchesError));
         } else {
           setBatchesData(batches || []);
         }
@@ -167,9 +168,9 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         // Check for any errors
         if (inventoryError || ordersError || batchesError) {
           const errorDetails = [
-            inventoryError && `Inventory: ${inventoryError.message || 'Unknown error'}`,
-            ordersError && `Orders: ${ordersError.message || 'Unknown error'}`,
-            batchesError && `Batches: ${batchesError.message || 'Unknown error'}`
+            inventoryError && `Inventory: ${formatError(inventoryError)}`,
+            ordersError && `Orders: ${formatError(ordersError)}`,
+            batchesError && `Batches: ${formatError(batchesError)}`
           ].filter(Boolean).join('; ');
           setError('Some data could not be loaded');
           toast({
@@ -180,7 +181,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         }
 
       } catch (err) {
-        console.error('Error fetching metrics data:', err);
+        console.error('Error fetching metrics data:', formatError(err));
         setError('Failed to load metrics data');
         toast({
           title: "Error",
