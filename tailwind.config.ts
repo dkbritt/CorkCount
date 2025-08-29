@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         'playfair': ['Playfair Display', 'serif'],
         'inter': ['Inter', 'sans-serif'],
-        'script': ['Dancing Script', 'cursive'],
+        'script': ['Italianno', 'sans-serif'],
       },
       colors: {
         wine: {
