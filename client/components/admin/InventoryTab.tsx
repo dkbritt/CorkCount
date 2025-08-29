@@ -18,6 +18,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
+import { autoTagWine, sanitizeTags } from "@/lib/autoTagger";
 
 interface InventoryItem {
   id: string;
@@ -33,6 +34,7 @@ interface InventoryItem {
   batchId?: string;
   location?: string;
   image?: string;
+  tags?: string[];
 }
 
 interface AddInventoryForm {
@@ -238,7 +240,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           flavorNotes: item.flavor_notes || '',
           batchId: item.batch_id || '',
           location: item.location || '',
-          image: item.image_url || item.image || ''
+          image: item.image_url || item.image || '',
+          tags: item.tags || []
         }));
 
         setInventory(inventoryItems);
@@ -370,6 +373,16 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
     try {
       const quantity = parseInt(formData.quantity);
+
+      // Generate auto-tags from flavor notes and wine data
+      const autoTags = autoTagWine({
+        flavorNotes: formData.flavorNotes,
+        description: '', // No description field in current form
+        name: formData.bottleName,
+        type: formData.type
+      });
+      const sanitizedTags = sanitizeTags(autoTags);
+
       const inventoryData = {
         name: formData.bottleName,
         winery: "KB Winery", // Default winery
@@ -381,6 +394,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         batch_id: formData.batchLink || null,
         location: formData.location,
         image_url: formData.image,
+        tags: sanitizedTags, // Add auto-generated tags
         last_updated: new Date().toISOString()
       };
 
@@ -416,7 +430,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           flavorNotes: formData.flavorNotes,
           batchId: formData.batchLink,
           location: formData.location,
-          image: formData.image
+          image: formData.image,
+          tags: sanitizedTags
         };
 
         setInventory(inventory.map(item =>
@@ -460,7 +475,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           flavorNotes: formData.flavorNotes,
           batchId: formData.batchLink,
           location: formData.location,
-          image: formData.image
+          image: formData.image,
+          tags: sanitizedTags
         };
 
         setInventory([...inventory, newItem]);
