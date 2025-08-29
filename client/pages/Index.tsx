@@ -72,11 +72,11 @@ export default function Index() {
           name: item.name || 'Unnamed Wine',
           winery: item.winery || 'Unknown Winery',
           vintage: item.vintage || new Date().getFullYear(),
-          region: item.region || 'Unknown Region',
+          region: '', // Not displayed on shop page
           type: item.type || 'Red Wine',
           price: parseFloat(item.price) || 0,
           inStock: parseInt(item.quantity) || 0,
-          rating: parseFloat(item.rating) || 4.0,
+          rating: 0, // Not displayed on shop page
           description: item.description || item.flavor_notes || 'A wonderful wine experience',
           flavorNotes: item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced'],
           image: item.image_url || item.image || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
