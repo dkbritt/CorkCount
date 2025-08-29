@@ -1,4 +1,5 @@
 import "./global.css";
+import "./lib/supabase"; // Initialize Supabase globally
 
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
