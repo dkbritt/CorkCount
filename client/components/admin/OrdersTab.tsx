@@ -428,8 +428,8 @@ export function OrdersTab() {
         </p>
       </div>
 
-      {/* Orders Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      {/* Orders Table - Desktop */}
+      <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -533,6 +533,81 @@ export function OrdersTab() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Orders Cards - Mobile/Tablet */}
+      <div className="lg:hidden space-y-4">
+        {orders.map((order) => (
+          <div key={order.id} className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-gray-900 font-mono text-sm">
+                  {order.orderNumber}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {order.customer.name}
+                </p>
+                <div className="mt-2">{getStatusBadge(order.status)}</div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleViewOrder(order)}
+                className="h-8 w-8 p-0 flex-shrink-0"
+                title="View order details"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+              <div>
+                <span className="text-gray-500">Order Date:</span>
+                <div className="font-medium">{formatDate(order.orderDate)}</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Bottles:</span>
+                <div className="font-medium">{getTotalBottles(order.items)} bottles</div>
+              </div>
+              <div>
+                <span className="text-gray-500">Pickup:</span>
+                <div className="font-medium text-xs">
+                  {formatPickupDateTime(order.pickupDate, order.pickupTime)}
+                </div>
+              </div>
+              <div>
+                <span className="text-gray-500">Payment:</span>
+                <div className="font-medium text-xs">
+                  {order.paymentMethod ? paymentMethodLabels[order.paymentMethod] || order.paymentMethod : "Not specified"}
+                </div>
+              </div>
+            </div>
+
+            {/* Status Update - Mobile */}
+            <div className="flex items-center gap-2">
+              <select
+                value={statusUpdates[order.id] || order.status}
+                onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                className="flex-1 text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <Button
+                size="sm"
+                variant="accent"
+                onClick={() => handleUpdateStatus(order.id)}
+                disabled={statusUpdates[order.id] === order.status}
+                className="px-3 py-1 text-xs"
+              >
+                Update
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Results Summary */}
