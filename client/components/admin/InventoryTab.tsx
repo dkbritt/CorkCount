@@ -213,10 +213,10 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching inventory:', error);
+          console.error('Error fetching inventory:', error.message || error);
           toast({
             title: "Error",
-            description: "Failed to load inventory. Please try again.",
+            description: `Failed to load inventory: ${error.message || 'Please try again.'}`,
             variant: "destructive",
           });
           return;
