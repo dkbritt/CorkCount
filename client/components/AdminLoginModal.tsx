@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdminLoginModalProps {
@@ -28,6 +28,15 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!isSupabaseConfigured) {
+      setError("Admin login is disabled until Supabase is configured.");
+      toast({
+        title: "Supabase not configured",
+        description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable admin login.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -37,7 +46,6 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
       });
 
       if (authError) {
-        console.error('Supabase auth error:', authError);
         setError(authError.message || "Invalid email or password");
         toast({
           title: "Login failed",
@@ -60,7 +68,6 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
       }
 
     } catch (err) {
-      console.error('Login error:', err);
       setError("An unexpected error occurred. Please try again.");
       toast({
         title: "Login error",
@@ -147,10 +154,23 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
           </div>
 
           {/* Auth Info */}
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-xs">
-            <p className="font-medium mb-1">Admin Access:</p>
-            <p>Use your Supabase admin credentials to sign in.</p>
-            <p>Ensure your email is registered in the Supabase Auth system.</p>
+          <div className="p-3 rounded-lg text-xs border" style={{
+            backgroundColor: isSupabaseConfigured ? '#EFF6FF' : '#FEF2F2',
+            borderColor: isSupabaseConfigured ? '#BFDBFE' : '#FECACA',
+            color: isSupabaseConfigured ? '#1D4ED8' : '#B91C1C'
+          }}>
+            {isSupabaseConfigured ? (
+              <>
+                <p className="font-medium mb-1">Admin Access:</p>
+                <p>Use your Supabase admin credentials to sign in.</p>
+                <p>Ensure your email is registered in the Supabase Auth system.</p>
+              </>
+            ) : (
+              <>
+                <p className="font-medium mb-1">Supabase not configured</p>
+                <p>Admin login is disabled. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable authentication.</p>
+              </>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -168,7 +188,7 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
               type="submit"
               variant="accent"
               className="flex-1 gap-2"
-              disabled={isLoading}
+              disabled={isLoading || !isSupabaseConfigured}
             >
               {isLoading ? (
                 <>
