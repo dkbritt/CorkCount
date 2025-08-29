@@ -14,123 +14,8 @@ import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-reac
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock wine data
-const mockWines: Wine[] = [
-  {
-    id: "wine-001",
-    name: "Château Margaux 2015",
-    winery: "Château Margaux",
-    vintage: 2015,
-    region: "Bordeaux",
-    type: "Red Wine",
-    price: 450.00,
-    inStock: 12,
-    rating: 4.8,
-    description: "A legendary Bordeaux blend with exceptional complexity, featuring notes of blackcurrant, cedar, and violet. This wine showcases the perfect harmony between power and elegance.",
-    flavorNotes: ["Blackcurrant", "Cedar", "Violet", "Dark Chocolate", "Tobacco"],
-    image: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-002",
-    name: "Dom Pérignon Vintage",
-    winery: "Dom Pérignon",
-    vintage: 2012,
-    region: "Champagne",
-    type: "Sparkling",
-    price: 280.00,
-    inStock: 8,
-    rating: 4.9,
-    description: "The epitome of luxury Champagne, with fine bubbles and complex flavors of brioche, citrus, and toasted almonds. A celebration in every sip.",
-    flavorNotes: ["Brioche", "Citrus", "Toasted Almonds", "Honey", "Minerality"],
-    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-003",
-    name: "Opus One",
-    winery: "Opus One Winery",
-    vintage: 2018,
-    region: "Napa Valley",
-    type: "Red Wine",
-    price: 380.00,
-    inStock: 15,
-    rating: 4.7,
-    description: "A Bordeaux-style blend from Napa Valley, combining Cabernet Sauvignon with Merlot and other varietals. Rich, full-bodied with layers of dark fruit and spice.",
-    flavorNotes: ["Blackberry", "Cassis", "Vanilla", "Oak", "Dark Spices"],
-    image: "https://images.unsplash.com/photo-1566995147102-a84a5b4b8b0a?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-004",
-    name: "Barolo Brunate",
-    winery: "Giuseppe Mascarello",
-    vintage: 2017,
-    region: "Tuscany",
-    type: "Red Wine",
-    price: 120.00,
-    inStock: 24,
-    rating: 4.6,
-    description: "Classic Barolo with intense garnet color and complex aromas of tar, roses, and dark cherries. A wine of great structure and aging potential.",
-    flavorNotes: ["Tar", "Roses", "Dark Cherry", "Leather", "Truffle"],
-    image: "https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-005",
-    name: "Sancerre Les Monts Damnés",
-    winery: "Henri Bourgeois",
-    vintage: 2020,
-    region: "Loire Valley",
-    type: "White Wine",
-    price: 85.00,
-    inStock: 36,
-    rating: 4.4,
-    description: "Crisp and mineral-driven Sauvignon Blanc with notes of citrus, gooseberry, and wet stone. Perfect expression of Loire Valley terroir.",
-    flavorNotes: ["Citrus", "Gooseberry", "Wet Stone", "Green Herbs", "Minerality"],
-    image: "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-006",
-    name: "Châteauneuf-du-Pape",
-    winery: "Château de Beaucastel",
-    vintage: 2019,
-    region: "Rhône Valley",
-    type: "Red Wine",
-    price: 95.00,
-    inStock: 18,
-    rating: 4.5,
-    description: "A rich and powerful blend showcasing the diversity of Rhône varieties. Deep, concentrated flavors of dark fruit, herbs, and spice.",
-    flavorNotes: ["Dark Fruit", "Herbs", "Spice", "Garrigue", "Pepper"],
-    image: "https://images.unsplash.com/photo-1574282248091-7e8bfcef9e8d?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-007",
-    name: "Whispering Angel Rosé",
-    winery: "Château d'Esclans",
-    vintage: 2022,
-    region: "Provence",
-    type: "Rosé",
-    price: 25.00,
-    inStock: 48,
-    rating: 4.2,
-    description: "Pale pink Provence rosé with delicate flavors of strawberry, peach, and citrus. Light, fresh, and perfect for warm weather enjoyment.",
-    flavorNotes: ["Strawberry", "Peach", "Citrus", "Melon", "Fresh Herbs"],
-    image: "https://images.unsplash.com/photo-1569235186275-626cb8f3c7be?w=400&h=600&fit=crop"
-  },
-  {
-    id: "wine-008",
-    name: "Riesling Spätlese",
-    winery: "Dr. Loosen",
-    vintage: 2021,
-    region: "Mosel",
-    type: "Dessert Wine",
-    price: 45.00,
-    inStock: 0,
-    rating: 4.3,
-    description: "Late harvest Riesling with beautiful balance of sweetness and acidity. Notes of honey, apricot, and mineral undertones.",
-    flavorNotes: ["Honey", "Apricot", "Minerality", "Lime", "Petrol"],
-    image: "https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400&h=600&fit=crop"
-  }
-];
-
 export default function Index() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterOptions>({
     types: [],
@@ -305,7 +190,7 @@ export default function Index() {
               KB Winery
             </div>
             <h1 className="font-playfair text-4xl sm:text-6xl font-bold mb-6">
-              Sip Happens — Find Your Vintage
+              Sip Happens �� Find Your Vintage
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-wine-100 max-w-3xl mx-auto">
               Curated collection of premium wines from renowned vineyards around the world. 
