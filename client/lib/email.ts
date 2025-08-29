@@ -57,6 +57,20 @@ const getStatusDisplayName = (status: string): string => {
   return statusNames[status] || status;
 };
 
+// Generate appropriate subject line for status updates
+const generateStatusSubject = (newStatus: string): string => {
+  switch (newStatus) {
+    case 'ready-for-pickup':
+      return 'Your KB Winery Order is Ready for Pickup';
+    case 'picked-up':
+      return 'Your KB Winery Order has been Picked Up';
+    case 'cancelled':
+      return 'Your KB Winery Order has been Cancelled';
+    default:
+      return 'Your KB Winery Order Status Update';
+  }
+};
+
 // Generate order confirmation email content
 const generateOrderConfirmationHTML = (data: OrderEmailData): string => {
   const itemsHTML = data.items.map(item => `
