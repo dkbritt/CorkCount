@@ -167,7 +167,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching batches:', error);
+          console.error('Error fetching batches:', error.message || error);
           toast({
             title: "Error",
             description: "Failed to load batches. Please try again.",
@@ -194,8 +194,8 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
 
         setBatches(batchItems);
 
-      } catch (err) {
-        console.error('Error fetching batches:', err);
+      } catch (err: any) {
+        console.error('Error fetching batches:', err.message || err);
         toast({
           title: "Error",
           description: "An unexpected error occurred while loading batches.",
@@ -357,7 +357,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           .single();
 
         if (error) {
-          console.error('Error updating batch:', error);
+          console.error('Error updating batch:', error.message || error);
           toast({
             title: "Error",
             description: "Failed to update batch. Please try again.",
@@ -397,7 +397,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           .single();
 
         if (error) {
-          console.error('Error adding batch:', error);
+          console.error('Error adding batch:', error.message || error);
           toast({
             title: "Error",
             description: "Failed to add batch. Please try again.",
@@ -424,8 +424,8 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
 
       resetForm();
 
-    } catch (err) {
-      console.error('Error submitting batch form:', err);
+    } catch (err: any) {
+      console.error('Error submitting batch form:', err.message || err);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -475,7 +475,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
         .eq('id', batchId);
 
       if (error) {
-        console.error('Error deleting batch:', error);
+        console.error('Error deleting batch:', error.message || error);
         toast({
           title: "Error",
           description: "Failed to delete batch. Please try again.",
@@ -492,8 +492,8 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
         description: "Batch deleted successfully.",
       });
 
-    } catch (err) {
-      console.error('Error deleting batch:', err);
+    } catch (err: any) {
+      console.error('Error deleting batch:', err.message || err);
       toast({
         title: "Error",
         description: "An unexpected error occurred while deleting batch.",
