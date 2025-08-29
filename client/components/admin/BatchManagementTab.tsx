@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { formatError } from "@/lib/errors";
 
 interface BatchItem {
   id: string;
@@ -167,7 +168,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching batches:', error.message || error);
+          console.error('Error fetching batches:', formatError(error));
           toast({
             title: "Error",
             description: "Failed to load batches. Please try again.",
@@ -195,7 +196,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
         setBatches(batchItems);
 
       } catch (err: any) {
-        console.error('Error fetching batches:', err.message || err);
+        console.error('Error fetching batches:', formatError(err));
         toast({
           title: "Error",
           description: "An unexpected error occurred while loading batches.",
@@ -357,7 +358,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           .single();
 
         if (error) {
-          console.error('Error updating batch:', error.message || error);
+          console.error('Error updating batch:', formatError(error));
           toast({
             title: "Error",
             description: "Failed to update batch. Please try again.",
@@ -397,7 +398,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           .single();
 
         if (error) {
-          console.error('Error adding batch:', error.message || error);
+          console.error('Error adding batch:', formatError(error));
           toast({
             title: "Error",
             description: "Failed to add batch. Please try again.",
@@ -425,7 +426,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
       resetForm();
 
     } catch (err: any) {
-      console.error('Error submitting batch form:', err.message || err);
+      console.error('Error submitting batch form:', formatError(err));
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -476,7 +477,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
         .eq('id', batchId);
 
       if (error) {
-        console.error('Error deleting batch:', error.message || error);
+        console.error('Error deleting batch:', formatError(error));
         toast({
           title: "Error",
           description: "Failed to delete batch. Please try again.",
@@ -494,7 +495,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
       });
 
     } catch (err: any) {
-      console.error('Error deleting batch:', err.message || err);
+      console.error('Error deleting batch:', formatError(err));
       toast({
         title: "Error",
         description: "An unexpected error occurred while deleting batch.",
