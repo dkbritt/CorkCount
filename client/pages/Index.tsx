@@ -277,7 +277,7 @@ export default function Index() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 pb-20 md:pb-8">
         {/* Filters and Controls */}
         <div className="mb-8 space-y-4">
           {/* Filter Toggle & View Mode */}
