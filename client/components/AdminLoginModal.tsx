@@ -167,10 +167,17 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
             <Button
               type="submit"
               variant="accent"
-              className="flex-1"
+              className="flex-1 gap-2"
               disabled={isLoading}
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </Button>
           </div>
         </form>
