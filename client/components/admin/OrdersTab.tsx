@@ -645,7 +645,7 @@ export function OrdersTab() {
 
       {/* Orders Cards - Mobile/Tablet */}
       <div className="lg:hidden space-y-4">
-        {orders.map((order) => (
+        {filteredOrders.map((order) => (
           <div key={order.id} className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1 min-w-0">
