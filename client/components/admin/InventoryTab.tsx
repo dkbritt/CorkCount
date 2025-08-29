@@ -178,13 +178,16 @@ interface InventoryTabProps {
 
 export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<keyof InventoryItem>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
-  const [inventory, setInventory] = useState<InventoryItem[]>(mockInventory);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const [formData, setFormData] = useState<AddInventoryForm>({
     bottleName: "",
     type: "",
