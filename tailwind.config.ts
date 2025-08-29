@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         'playfair': ['Playfair Display', 'serif'],
         'inter': ['Inter', 'sans-serif'],
-        'script': ['Italianno', 'sans-serif'],
+        'script': ['Jacques Francois', 'serif'],
       },
       colors: {
         wine: {
