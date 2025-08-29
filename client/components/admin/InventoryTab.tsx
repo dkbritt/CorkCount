@@ -372,7 +372,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       const quantity = parseInt(formData.quantity);
       const inventoryData = {
         name: formData.bottleName,
-        winery: "CorkCount Winery", // Default winery
+        winery: "KB Winery", // Default winery
         vintage: parseInt(formData.vintage),
         type: formData.type,
         quantity: quantity,
