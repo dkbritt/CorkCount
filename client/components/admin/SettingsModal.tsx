@@ -194,6 +194,45 @@ export function SettingsModal({
               Bottles with quantity at or below this number will be marked as "Out of Stock"
             </p>
           </div>
+
+          {/* Data Utilities */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Data Utilities</h3>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <RefreshCw className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900 mb-1">
+                    Update Winery Names
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Updates any existing "CorkCount Winery" entries in the inventory to "KB Winery".
+                    This is a one-time utility to rebrand existing data.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleUpdateWineryNames}
+                    disabled={isUpdatingWinery}
+                    className="bg-white"
+                  >
+                    {isUpdatingWinery ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Update Winery Names
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}
