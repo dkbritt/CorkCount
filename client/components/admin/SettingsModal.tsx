@@ -77,6 +77,34 @@ export function SettingsModal({
     setErrors({});
   };
 
+  const handleUpdateWineryNames = async () => {
+    setIsUpdatingWinery(true);
+    try {
+      const result = await updateExistingWineryNames();
+
+      if (result.success) {
+        toast({
+          title: "Success!",
+          description: `Updated ${result.updated} inventory records to "KB Winery"`,
+        });
+      } else {
+        toast({
+          title: "Update failed",
+          description: result.error || "Failed to update winery names",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Update failed",
+        description: "An unexpected error occurred while updating winery names",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingWinery(false);
+    }
+  };
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
