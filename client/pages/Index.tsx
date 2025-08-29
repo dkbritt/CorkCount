@@ -326,7 +326,7 @@ export default function Index() {
             <FilterBar
               onFiltersChange={handleFiltersChange}
               onClearFilters={clearFilters}
-              availableTypes={Array.from(new Set(mockWines.map(w => w.type)))}
+              availableTypes={Array.from(new Set(wines.map(w => w.type)))}
             />
           )}
         </div>
