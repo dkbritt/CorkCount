@@ -51,7 +51,7 @@ export default function Index() {
         setError(null);
 
         const { data: inventory, error: supabaseError } = await supabase
-          .from('inventory')
+          .from('Inventory')
           .select('*')
           .gte('quantity', 1); // Only fetch items that are in stock
 
