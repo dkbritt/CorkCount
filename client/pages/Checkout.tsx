@@ -2,18 +2,20 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calendar, 
-  Clock, 
-  CreditCard, 
-  User, 
-  Mail, 
-  Phone, 
+import {
+  Calendar,
+  Clock,
+  CreditCard,
+  User,
+  Mail,
+  Phone,
   FileText,
   ArrowLeft,
   CheckCircle
 } from "lucide-react";
 import { CartItem } from "@/components/CartModal";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 interface CheckoutFormData {
   customerName: string;
