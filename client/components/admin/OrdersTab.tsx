@@ -120,14 +120,84 @@ export function OrdersTab() {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
 
-  // Load orders from localStorage on component mount
+  // Fetch orders from Supabase
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+
+        const { data: supabaseOrders, error } = await supabase
+          .from('orders')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching orders from Supabase:', error);
+          // Fallback to localStorage if Supabase fails
+          loadOrdersFromStorage();
+          return;
+        }
+
+        // Convert Supabase orders to admin order format
+        const convertedOrders = (supabaseOrders || []).map((order: any) => ({
+          id: order.id,
+          orderNumber: order.order_number,
+          customer: {
+            name: order.customer_name,
+            email: order.email
+          },
+          items: (order.bottles_ordered || []).map((bottle: any) => ({
+            name: `${bottle.wine_name} ${bottle.wine_vintage || ''}`,
+            quantity: bottle.quantity,
+            price: bottle.price_per_bottle
+          })),
+          total: parseFloat(order.total_amount) || 0,
+          status: order.status || "pending",
+          orderDate: order.created_at,
+          pickupDate: order.pickup_date,
+          pickupTime: order.pickup_time,
+          paymentMethod: order.payment_method,
+          phone: order.phone,
+          orderNotes: order.notes
+        }));
+
+        // Also load from localStorage as backup and merge
+        const localOrders = loadOrdersFromStorage();
+
+        // Merge orders (Supabase first, then local ones not already in Supabase)
+        const allOrderNumbers = new Set(convertedOrders.map(o => o.orderNumber));
+        const uniqueLocalOrders = localOrders.filter(o => !allOrderNumbers.has(o.orderNumber));
+
+        const allOrders = [...convertedOrders, ...uniqueLocalOrders];
+        setOrders(allOrders);
+
+        // Initialize status updates for all orders
+        const initialStatusUpdates: Record<string, string> = {};
+        allOrders.forEach(order => {
+          initialStatusUpdates[order.id] = order.status;
+        });
+        setStatusUpdates(initialStatusUpdates);
+
+      } catch (err) {
+        console.error('Error in fetchOrders:', err);
+        toast({
+          title: "Error",
+          description: "Failed to load orders. Showing local data only.",
+          variant: "destructive",
+        });
+        // Fallback to localStorage
+        loadOrdersFromStorage();
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const loadOrdersFromStorage = () => {
       try {
         const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-        
+
         // Convert checkout orders to admin order format
-        const convertedOrders = checkoutOrders.map((checkoutOrder: any) => ({
+        return checkoutOrders.map((checkoutOrder: any) => ({
           id: checkoutOrder.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-'),
           orderNumber: checkoutOrder.orderNumber,
           customer: {
@@ -135,7 +205,7 @@ export function OrdersTab() {
             email: checkoutOrder.email
           },
           items: checkoutOrder.items.map((item: any) => ({
-            name: `${item.wine.name} ${item.wine.vintage}`,
+            name: `${item.wine.name} ${item.wine.vintage || ''}`,
             quantity: item.quantity,
             price: item.wine.price
           })),
@@ -148,32 +218,14 @@ export function OrdersTab() {
           phone: checkoutOrder.phone,
           orderNotes: checkoutOrder.orderNotes
         }));
-        
-        // Merge with mock orders, with checkout orders first
-        const allOrders = [...convertedOrders, ...mockOrders];
-        setOrders(allOrders);
-        
-        // Initialize status updates for all orders
-        const initialStatusUpdates: Record<string, string> = {};
-        allOrders.forEach(order => {
-          initialStatusUpdates[order.id] = order.status;
-        });
-        setStatusUpdates(initialStatusUpdates);
       } catch (error) {
         console.error('Error loading orders from localStorage:', error);
-        setOrders(mockOrders);
-        
-        // Initialize status updates for mock orders
-        const initialStatusUpdates: Record<string, string> = {};
-        mockOrders.forEach(order => {
-          initialStatusUpdates[order.id] = order.status;
-        });
-        setStatusUpdates(initialStatusUpdates);
+        return mockOrders;
       }
     };
-    
-    loadOrdersFromStorage();
-  }, []);
+
+    fetchOrders();
+  }, [toast]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
