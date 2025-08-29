@@ -745,6 +745,44 @@ export function OrdersTab() {
         Showing {orders.length} order{orders.length !== 1 ? 's' : ''}
       </div>
 
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <Trash2 className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Delete Order</h3>
+                  <p className="text-sm text-gray-600">This action cannot be undone.</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to delete this order? This will permanently remove the order from both the database and local storage.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteConfirm(null)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDeleteOrder(showDeleteConfirm)}
+                  className="flex-1"
+                >
+                  Delete Order
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Order Details Modal */}
       {showOrderModal && selectedOrder && (
         <div
