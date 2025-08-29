@@ -56,11 +56,11 @@ export default function Index() {
           .gte('quantity', 1); // Only fetch items that are in stock
 
         if (supabaseError) {
-          console.error('Supabase error:', supabaseError);
+          console.error('Supabase error:', supabaseError.message || supabaseError);
           setError('Failed to load wine inventory');
           toast({
             title: "Error",
-            description: "Failed to load wine inventory. Please try again.",
+            description: `Failed to load wine inventory: ${supabaseError.message || 'Please try again.'}`,
             variant: "destructive",
           });
           return;
