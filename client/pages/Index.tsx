@@ -297,10 +297,10 @@ export default function Index() {
             <div className="font-script text-5xl sm:text-7xl text-wine-100 mb-4 font-semibold">
               KB Winery
             </div>
-            <h1 className="font-playfair text-3xl sm:text-5xl font-bold mb-6">
+            <h1 className="font-playfair text-2xl sm:text-4xl font-bold mb-6">
               Sip Happens — Find Your Vintage
             </h1>
-            <p className="text-xl sm:text-2xl mb-8 text-wine-100 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl mb-8 text-wine-100 max-w-3xl mx-auto">
               Curated collection of premium wines from KB Winery.
               From everyday favorites to rare vintages.
             </p>
