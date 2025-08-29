@@ -101,10 +101,8 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
                 </p>
               </div>
 
-              {/* Region & Wine Type */}
+              {/* Wine Type */}
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span>{wine.region}</span>
-                <span>•</span>
                 <Badge className={`text-xs px-2 py-1 rounded-full ${getWineTypeColor(wine.type)}`}>
                   {wine.type}
                 </Badge>
@@ -235,10 +233,8 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
           </p>
         </div>
 
-        {/* Region & Wine Type Badge */}
+        {/* Wine Type Badge */}
         <div className="flex items-center gap-2 text-sm text-gray-500">
-          <span>{wine.region}</span>
-          <span>•</span>
           <Badge className={`text-xs px-3 py-1 rounded-full ${getWineTypeColor(wine.type)}`}>
             {wine.type}
           </Badge>
