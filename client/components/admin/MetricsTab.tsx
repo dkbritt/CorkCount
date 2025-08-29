@@ -311,7 +311,11 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`w-12 h-12 ${metric.color} rounded-lg flex items-center justify-center shadow-sm`}>
-                  <Icon className="h-6 w-6 text-white" />
+                  {loading ? (
+                    <Loader2 className="h-6 w-6 text-white animate-spin" />
+                  ) : (
+                    <Icon className="h-6 w-6 text-white" />
+                  )}
                 </div>
               </div>
 
@@ -320,7 +324,11 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                   {metric.title}
                 </p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {metric.value}
+                  {loading ? (
+                    <span className="animate-pulse bg-gray-200 rounded h-8 w-16 block"></span>
+                  ) : (
+                    metric.value
+                  )}
                 </p>
                 <p className="text-sm text-gray-500">
                   {metric.subtext}
