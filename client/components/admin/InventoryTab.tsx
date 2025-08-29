@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { formatError } from "@/lib/errors";
 
 interface InventoryItem {
   id: string;
@@ -214,10 +215,10 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching inventory:', error.message || error);
+          console.error('Error fetching inventory:', formatError(error));
           toast({
             title: "Error",
-            description: `Failed to load inventory: ${error.message || 'Please try again.'}`,
+            description: `Failed to load inventory: ${formatError(error)}` ,
             variant: "destructive",
           });
           return;
@@ -243,7 +244,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         setInventory(inventoryItems);
 
       } catch (err: any) {
-        console.error('Error fetching inventory:', err.message || err);
+        console.error('Error fetching inventory:', formatError(err));
         toast({
           title: "Error",
           description: "An unexpected error occurred while loading inventory.",
@@ -262,7 +263,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching batches:', error.message || error);
+          console.error('Error fetching batches:', formatError(error));
         } else {
           const batchItems: BatchItem[] = (batches || []).map((batch: any) => ({
             id: batch.id,
@@ -271,7 +272,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           setAvailableBatches(batchItems);
         }
       } catch (err) {
-        console.error('Error fetching batches:', err);
+        console.error('Error fetching batches:', formatError(err));
       }
     };
 
@@ -393,7 +394,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .single();
 
         if (error) {
-          console.error('Error updating inventory:', error.message || error);
+          console.error('Error updating inventory:', formatError(error));
           toast({
             title: "Error",
             description: "Failed to update inventory item. Please try again.",
@@ -436,7 +437,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           .single();
 
         if (error) {
-          console.error('Error adding inventory:', error.message || error);
+          console.error('Error adding inventory:', formatError(error));
           toast({
             title: "Error",
             description: "Failed to add inventory item. Please try again.",
@@ -474,7 +475,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       resetForm();
 
     } catch (err: any) {
-      console.error('Error submitting form:', err.message || err);
+      console.error('Error submitting form:', formatError(err));
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -545,7 +546,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         .eq('id', itemId);
 
       if (error) {
-        console.error('Error deleting inventory item:', error.message || error);
+        console.error('Error deleting inventory item:', formatError(error));
         toast({
           title: "Error",
           description: "Failed to delete inventory item. Please try again.",
@@ -563,7 +564,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       });
 
     } catch (err: any) {
-      console.error('Error deleting inventory item:', err.message || err);
+      console.error('Error deleting inventory item:', formatError(err));
       toast({
         title: "Error",
         description: "An unexpected error occurred while deleting item.",
