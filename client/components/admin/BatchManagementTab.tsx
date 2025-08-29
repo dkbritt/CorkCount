@@ -326,40 +326,114 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
-    if (editingBatch) {
-      // Update existing batch
-      setBatches(prev => prev.map(batch => 
-        batch.id === editingBatch.id 
-          ? { 
-              ...batch, 
-              ...formData,
-              // Keep original dates when editing
-              dateAdded: batch.dateAdded,
-              status: batch.status,
-              estimatedBottling: batch.estimatedBottling
-            }
-          : batch
-      ));
-    } else {
-      // Add new batch
-      const newBatch: BatchItem = {
-        id: `batch-${Date.now()}`,
-        ...formData,
-        dateAdded: new Date().toISOString().split('T')[0],
-        status: "primary-fermentation",
-        estimatedBottling: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-      };
-      setBatches(prev => [newBatch, ...prev]);
-    }
+    setFormLoading(true);
 
-    resetForm();
+    try {
+      const batchData = {
+        name: formData.name,
+        type: formData.type,
+        vintage: formData.vintage,
+        quantity: formData.quantity,
+        aging_notes: formData.agingNotes,
+        date_started: formData.dateStarted,
+        estimated_aging_time: formData.estimatedAgingTime,
+        estimated_aging_unit: formData.estimatedAgingUnit
+      };
+
+      if (editingBatch) {
+        // Update existing batch
+        const { data, error } = await supabase
+          .from('batches')
+          .update(batchData)
+          .eq('id', editingBatch.id)
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error updating batch:', error);
+          toast({
+            title: "Error",
+            description: "Failed to update batch. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Update local state
+        setBatches(prev => prev.map(batch =>
+          batch.id === editingBatch.id
+            ? {
+                ...batch,
+                ...formData,
+                // Keep original dates when editing
+                dateAdded: batch.dateAdded,
+                status: batch.status,
+                estimatedBottling: batch.estimatedBottling
+              }
+            : batch
+        ));
+
+        toast({
+          title: "Success",
+          description: "Batch updated successfully.",
+        });
+
+      } else {
+        // Add new batch
+        const { data, error } = await supabase
+          .from('batches')
+          .insert([{
+            ...batchData,
+            status: "primary-fermentation"
+          }])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error adding batch:', error);
+          toast({
+            title: "Error",
+            description: "Failed to add batch. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Add to local state
+        const newBatch: BatchItem = {
+          id: data.id,
+          ...formData,
+          dateAdded: new Date().toISOString().split('T')[0],
+          status: "primary-fermentation",
+          estimatedBottling: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        };
+        setBatches(prev => [newBatch, ...prev]);
+
+        toast({
+          title: "Success",
+          description: "Batch added successfully.",
+        });
+      }
+
+      resetForm();
+
+    } catch (err) {
+      console.error('Error submitting batch form:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   const resetForm = () => {
