@@ -534,6 +534,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
     });
     setEditingItem(item);
     setShowAddForm(true);
+    window.scrollTo(0, 0);
   };
 
   const handleDeleteItem = async (itemId: string) => {
