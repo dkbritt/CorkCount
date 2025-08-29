@@ -156,6 +156,59 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
   const [formErrors, setFormErrors] = useState<Partial<BatchFormData>>({});
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
+  // Fetch batches from Supabase
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('batches')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching batches:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load batches. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Convert Supabase data to BatchItem format
+        const batchItems: BatchItem[] = (data || []).map((item: any) => ({
+          id: item.id,
+          name: item.name || 'Unnamed Batch',
+          type: item.type || 'Red Wine',
+          vintage: item.vintage || new Date().getFullYear(),
+          quantity: parseInt(item.quantity) || 0,
+          agingNotes: item.aging_notes || '',
+          dateAdded: item.created_at ? item.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+          dateStarted: item.date_started || new Date().toISOString().split('T')[0],
+          estimatedAgingTime: parseInt(item.estimated_aging_time) || 12,
+          estimatedAgingUnit: item.estimated_aging_unit || "weeks",
+          status: item.status || "primary-fermentation",
+          estimatedBottling: item.estimated_bottling || ''
+        }));
+
+        setBatches(batchItems);
+
+      } catch (err) {
+        console.error('Error fetching batches:', err);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred while loading batches.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBatches();
+  }, [toast]);
+
   // Set up floating action button callback
   useEffect(() => {
     if (onSetAddCallback) {
