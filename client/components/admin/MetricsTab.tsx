@@ -92,16 +92,76 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           setBatchesData(batches || []);
         }
 
-        // Generate recent activity from recent orders
+        // Generate recent activity from multiple sources
+        const allActivity = [];
+
+        // Add recent orders
         if (orders && orders.length > 0) {
-          const recentOrders = orders.slice(0, 5).map((order: any, index: number) => ({
-            id: index + 1,
+          const recentOrders = orders.slice(0, 10).map((order: any) => ({
+            id: `order-${order.id}`,
             action: `New order ${order.order_number}`,
-            user: order.customer_name,
+            user: order.customer_name || 'Unknown Customer',
             time: getRelativeTime(order.created_at),
-            status: order.status || "pending"
+            status: order.status || "pending",
+            type: 'order',
+            timestamp: new Date(order.created_at).getTime()
           }));
-          setRecentActivity(recentOrders);
+          allActivity.push(...recentOrders);
+        }
+
+        // Add recent inventory additions/updates
+        if (inventory && inventory.length > 0) {
+          const recentInventory = inventory
+            .filter(item => item.created_at)
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .slice(0, 10)
+            .map((item: any) => ({
+              id: `inventory-${item.id}`,
+              action: `Added ${item.name || 'wine'} to inventory`,
+              user: 'Admin',
+              time: getRelativeTime(item.created_at),
+              status: 'completed',
+              type: 'inventory',
+              timestamp: new Date(item.created_at).getTime()
+            }));
+          allActivity.push(...recentInventory);
+        }
+
+        // Add recent batch additions/updates
+        if (batches && batches.length > 0) {
+          const recentBatches = batches
+            .filter(batch => batch.created_at)
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .slice(0, 10)
+            .map((batch: any) => ({
+              id: `batch-${batch.id}`,
+              action: `Created batch ${batch.name || 'Unnamed Batch'}`,
+              user: 'Admin',
+              time: getRelativeTime(batch.created_at),
+              status: batch.status || 'primary-fermentation',
+              type: 'batch',
+              timestamp: new Date(batch.created_at).getTime()
+            }));
+          allActivity.push(...recentBatches);
+        }
+
+        // Sort by timestamp (most recent first) and take top 10
+        const sortedActivity = allActivity
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, 10)
+          .map((item, index) => ({ ...item, id: index + 1 }));
+
+        if (sortedActivity.length > 0) {
+          setRecentActivity(sortedActivity);
+        } else {
+          setRecentActivity([{
+            id: 1,
+            action: "No recent activity",
+            user: "System",
+            time: "--",
+            status: "info",
+            type: 'system'
+          }]);
         }
 
         // Check for any errors
