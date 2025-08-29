@@ -30,18 +30,46 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
     setError("");
     setIsLoading(true);
 
-    // Mock validation
-    if (email === "admin@corkcount.com" && password === "admin123") {
-      // Simulate loading
-      await new Promise(resolve => setTimeout(resolve, 500));
-      onLogin();
-      onClose();
-      resetForm();
-    } else {
-      setError("Invalid email or password. Use admin@corkcount.com / admin123");
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password
+      });
+
+      if (authError) {
+        console.error('Supabase auth error:', authError);
+        setError(authError.message || "Invalid email or password");
+        toast({
+          title: "Login failed",
+          description: authError.message || "Invalid email or password",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Login successful",
+          description: "Welcome to the CorkCount admin dashboard!",
+        });
+        onLogin();
+        onClose();
+        resetForm();
+      } else {
+        setError("Authentication failed. Please try again.");
+      }
+
+    } catch (err) {
+      console.error('Login error:', err);
+      setError("An unexpected error occurred. Please try again.");
+      toast({
+        title: "Login error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const resetForm = () => {
