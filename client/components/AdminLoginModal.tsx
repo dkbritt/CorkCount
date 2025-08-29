@@ -146,11 +146,11 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
             />
           </div>
 
-          {/* Demo Credentials Hint */}
+          {/* Auth Info */}
           <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-xs">
-            <p className="font-medium mb-1">Demo Credentials:</p>
-            <p>Email: admin@corkcount.com</p>
-            <p>Password: admin123</p>
+            <p className="font-medium mb-1">Admin Access:</p>
+            <p>Use your Supabase admin credentials to sign in.</p>
+            <p>Ensure your email is registered in the Supabase Auth system.</p>
           </div>
 
           {/* Action Buttons */}
