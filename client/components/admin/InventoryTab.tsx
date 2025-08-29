@@ -885,12 +885,20 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 variant="outline"
                 onClick={handleFormCancel}
                 className="bg-smoke hover:bg-gray-100"
+                disabled={formLoading}
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="accent" className="gap-2">
-                <Save className="h-4 w-4" />
-                {editingItem ? "Update Bottle" : "Add Bottle"}
+              <Button type="submit" variant="accent" className="gap-2" disabled={formLoading}>
+                {formLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                {formLoading
+                  ? (editingItem ? "Updating..." : "Adding...")
+                  : (editingItem ? "Update Bottle" : "Add Bottle")
+                }
               </Button>
             </div>
           </form>
