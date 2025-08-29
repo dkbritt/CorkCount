@@ -38,7 +38,7 @@ export function Navigation({
                 <Wine className="h-5 w-5 text-white" />
               </div>
               <span className="font-playfair font-bold text-xl text-wine">
-                CorkCount
+                KB Winery
               </span>
             </Link>
 
