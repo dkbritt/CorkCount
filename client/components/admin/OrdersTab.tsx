@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Eye, 
+import {
+  Eye,
   Calendar,
   User,
   Mail,
@@ -13,8 +13,11 @@ import {
   Clock,
   CheckCircle,
   Package,
-  XCircle
+  XCircle,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 interface Order {
   id: string;
