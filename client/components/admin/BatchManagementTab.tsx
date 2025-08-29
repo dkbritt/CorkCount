@@ -796,16 +796,39 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
         </div>
       )}
 
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <Loader2 className="h-12 w-12 text-gray-400 animate-spin mx-auto mb-4" />
+          <h3 className="font-playfair text-lg font-medium text-gray-900 mb-2">
+            Loading batches...
+          </h3>
+          <p className="text-gray-600">Please wait while we fetch your wine batches.</p>
+        </div>
+      )}
+
       {/* Batches List */}
-      <div className="bg-white rounded-lg border border-gray-200">
+      {!loading && (
+        <div className="bg-white rounded-lg border border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <h2 className="font-playfair text-xl font-semibold text-gray-900">
             Current Batches
           </h2>
         </div>
         
-        <div className="divide-y divide-gray-200">
-          {batches.map((batch) => (
+          {batches.length === 0 ? (
+            <div className="p-12 text-center">
+              <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+                No batches yet
+              </h3>
+              <p className="text-gray-600">
+                Start your winemaking journey by adding your first batch.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {batches.map((batch) => (
             <div key={batch.id} className="p-6 hover:bg-gray-50 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -956,9 +979,11 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
                 </div>
               </div>
             </div>
-          ))}
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
