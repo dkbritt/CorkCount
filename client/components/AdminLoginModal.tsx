@@ -58,7 +58,7 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
       if (data.user) {
         toast({
           title: "Login successful",
-          description: "Welcome to the CorkCount admin dashboard!",
+          description: "Welcome to the KB Winery admin dashboard!",
         });
         onLogin();
         onClose();
@@ -132,7 +132,7 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="admin@corkcount.com"
+              placeholder="admin@kbwinery.com"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors"
             />
           </div>
