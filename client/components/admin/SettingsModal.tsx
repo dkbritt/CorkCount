@@ -107,6 +107,34 @@ export function SettingsModal({
     }
   };
 
+  const handleAutoTagInventory = async () => {
+    setIsAutoTagging(true);
+    try {
+      const result = await batchAutoTagInventory();
+      if (result.success) {
+        toast({
+          title: "Auto-tagging Complete",
+          description: `Successfully processed ${result.processed} wines. Generated flavor tags based on descriptions.`,
+        });
+      } else {
+        toast({
+          title: "Auto-tagging Issues",
+          description: `Processed ${result.processed} wines, but ${result.failed} failed. Check console for details.`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Auto-tagging error:', error);
+      toast({
+        title: "Error",
+        description: "Auto-tagging failed. Make sure the database has a 'tags' column in the Inventory table.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAutoTagging(false);
+    }
+  };
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
