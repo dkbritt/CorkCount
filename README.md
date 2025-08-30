@@ -10,6 +10,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 ## 🌟 Features
 
 ### Customer Experience
+
 - **Wine Catalog**: Browse and filter wines by type, price, and availability
 - **Smart Search**: Find wines by name, type, or flavor characteristics
 - **Shopping Cart**: Persistent cart with localStorage backup
@@ -17,6 +18,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 - **Order Tracking**: Real-time order status updates
 
 ### Admin Dashboard
+
 - **Inventory Management**: Add, edit, and track wine inventory
 - **Order Processing**: View and update order statuses
 - **Batch Management**: Track wine batches and production runs
@@ -24,6 +26,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 - **Auto-Tagging**: AI-powered flavor tag generation
 
 ### Advanced Features
+
 - **Automated Email System**: Order confirmations and status updates via Resend
 - **Intelligent Wine Tagging**: Automatic flavor profile extraction
 - **Real-time Updates**: Live inventory and order synchronization
@@ -33,6 +36,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18** with TypeScript
 - **Vite** for build tooling and development
 - **React Router 6** for SPA routing
@@ -42,18 +46,21 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 - **React Query** for data fetching
 
 ### Backend
+
 - **Express.js** server with TypeScript
 - **Supabase** for database and real-time features
 - **Resend** for transactional emails
 - **Zod** for runtime type validation
 
 ### Development Tools
+
 - **TypeScript** for type safety
 - **Vitest** for testing
 - **Prettier** for code formatting
 - **PNPM** for package management
 
 ### Deployment
+
 - **Netlify** for hosting and serverless functions
 - **Supabase** for managed database
 - **Environment-based configuration**
@@ -62,7 +69,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 
 ```
 ├── client/                    # React frontend
-│   ├── components/           
+│   ├── components/
 │   │   ├── admin/            # Admin dashboard components
 │   │   ├── ui/               # Reusable UI components
 │   │   └── ...               # Feature components
@@ -83,23 +90,27 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - PNPM (recommended) or npm
 - Supabase project
 - Resend account (for emails)
 
 ### 1. Clone the Repository
+
 ```bash
 git clone <repository-url>
 cd corkcount-winery
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### 3. Environment Setup
+
 Create a `.env` file in the root directory:
 
 ```env
@@ -118,6 +129,7 @@ VITE_ADMIN_PASSWORD=your_secure_password
 ```
 
 ### 4. Database Setup
+
 Run the SQL migrations in your Supabase SQL Editor:
 
 ```bash
@@ -127,11 +139,13 @@ cat sql_migrations/add_tags_to_inventory.sql
 ```
 
 Create the required tables:
+
 - `Inventory` - Wine inventory
-- `Orders` - Customer orders  
+- `Orders` - Customer orders
 - `Batches` - Wine batch tracking
 
 ### 5. Start Development Server
+
 ```bash
 pnpm dev
 ```
@@ -141,6 +155,7 @@ The application will be available at `http://localhost:8080`
 ## 📊 Database Schema
 
 ### Inventory Table
+
 ```sql
 CREATE TABLE "Inventory" (
   id SERIAL PRIMARY KEY,
@@ -156,6 +171,7 @@ CREATE TABLE "Inventory" (
 ```
 
 ### Orders Table
+
 ```sql
 CREATE TABLE "Orders" (
   id SERIAL PRIMARY KEY,
@@ -173,8 +189,9 @@ CREATE TABLE "Orders" (
 The application features an intelligent wine tagging system that automatically generates flavor profiles:
 
 ### Supported Tag Categories
+
 - **Berry**: strawberry, raspberry, blackberry, cherry
-- **Citrus**: lemon, lime, orange, grapefruit  
+- **Citrus**: lemon, lime, orange, grapefruit
 - **Earthy**: mineral, terroir, mushroom, soil
 - **Floral**: rose, violet, lavender, jasmine
 - **Chocolate**: chocolate, cocoa, mocha
@@ -183,14 +200,15 @@ The application features an intelligent wine tagging system that automatically g
 - **Herbal**: basil, thyme, mint, tobacco
 
 ### Usage
+
 ```typescript
-import { autoTagWine } from '@/lib/autoTagger';
+import { autoTagWine } from "@/lib/autoTagger";
 
 const tags = autoTagWine({
   flavorNotes: "Rich dark berries with earthy undertones",
   description: "Full-bodied red wine with chocolate notes",
   name: "Cabernet Sauvignon",
-  type: "Red Wine"
+  type: "Red Wine",
 });
 // Returns: ["berry", "earthy", "chocolate"]
 ```
@@ -200,6 +218,7 @@ For detailed documentation, see [AUTO_TAGGING_GUIDE.md](docs/AUTO_TAGGING_GUIDE.
 ## 🔧 Development
 
 ### Available Scripts
+
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
@@ -210,6 +229,7 @@ pnpm format.fix   # Format code
 ```
 
 ### API Endpoints
+
 - `GET /api/ping` - Health check
 - `POST /api/email` - Send transactional emails
 - `GET /api/demo` - Demo endpoint
@@ -217,17 +237,20 @@ pnpm format.fix   # Format code
 ### Adding Features
 
 #### New API Route
+
 1. Create route handler in `server/routes/`
 2. Register in `server/index.ts`
 3. Add shared types in `shared/api.ts`
 
 #### New Page
+
 1. Create component in `client/pages/`
 2. Add route in `client/App.tsx`
 
 ## 🚀 Deployment
 
 ### Netlify (Recommended)
+
 The project is configured for Netlify deployment:
 
 1. Connect your repository to Netlify
@@ -235,6 +258,7 @@ The project is configured for Netlify deployment:
 3. Deploy automatically on push
 
 ### Manual Deployment
+
 ```bash
 pnpm build
 # Deploy dist/spa/ folder to static hosting
@@ -251,7 +275,9 @@ The application uses a comprehensive design system built with:
 - **Responsive design** patterns
 
 ### Theme Customization
+
 Modify colors and typography in:
+
 - `tailwind.config.ts` - Tailwind configuration
 - `client/global.css` - CSS variables and global styles
 
@@ -263,6 +289,7 @@ pnpm test:watch  # Watch mode
 ```
 
 Tests are written with Vitest and cover:
+
 - Utility functions
 - Component rendering
 - API endpoints
@@ -271,6 +298,7 @@ Tests are written with Vitest and cover:
 ## 📈 Performance
 
 ### Optimization Features
+
 - **Code splitting** with React Router
 - **Lazy loading** for heavy components
 - **Optimized images** and assets
@@ -278,6 +306,7 @@ Tests are written with Vitest and cover:
 - **Database indexing** for queries
 
 ### Monitoring
+
 - Error tracking with structured logging
 - Performance metrics
 - Database query optimization
@@ -286,6 +315,7 @@ Tests are written with Vitest and cover:
 ## 🔒 Security
 
 ### Implementation
+
 - **Environment variables** for secrets
 - **Input validation** with Zod
 - **SQL injection prevention**
@@ -293,6 +323,7 @@ Tests are written with Vitest and cover:
 - **Secure admin authentication**
 
 ### Best Practices
+
 - Regular dependency updates
 - Security headers
 - Data sanitization
@@ -301,6 +332,7 @@ Tests are written with Vitest and cover:
 ## 🤝 Contributing
 
 ### Development Setup
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -308,12 +340,14 @@ Tests are written with Vitest and cover:
 5. Submit a pull request
 
 ### Code Style
+
 - Follow TypeScript best practices
 - Use Prettier for formatting
 - Write meaningful commit messages
 - Add JSDoc for complex functions
 
 ### Pull Request Process
+
 1. Ensure tests pass
 2. Update documentation
 3. Follow the PR template
@@ -326,11 +360,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 ### Documentation
+
 - [Auto-Tagging Guide](docs/AUTO_TAGGING_GUIDE.md)
 - [API Documentation](docs/API.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
 
 ### Getting Help
+
 - Check existing [GitHub Issues](../../issues)
 - Create a new issue for bugs or feature requests
 - Join our community discussions
