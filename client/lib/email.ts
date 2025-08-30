@@ -23,7 +23,7 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-const FIL_EMAIL = "daishakb@gmail.com"; // FIL's email
+const FIL_EMAIL = "kelvinb1@gmail.com"; // FIL's email
 
 const getEmailApiEndpoint = () => {
   const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
