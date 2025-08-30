@@ -23,7 +23,7 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-const FIL_EMAIL = "kelvinb1@gmail.com"; // FIL's email
+const FIL_EMAIL = import.meta.env.VITE_FIL_EMAIL || "kelvinb1@gmail.com"; // FIL's email - fallback for development
 
 const getEmailApiEndpoint = () => {
   const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
@@ -256,14 +256,14 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
     const emailRequests = [
       // Email to customer
       {
-        from: 'KB Winery <orders@resend.dev>',
+        from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
         to: [orderData.customerEmail],
         subject: 'Your KB Winery Order Confirmation',
         html: emailHTML,
       },
       // Email to FIL
       {
-        from: 'KB Winery <orders@resend.dev>',
+        from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
         to: [FIL_EMAIL],
         subject: `New Order Received - ${orderData.orderNumber}`,
         html: emailHTML,
@@ -309,7 +309,7 @@ export async function sendStatusUpdateEmail(data: StatusUpdateEmailData): Promis
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: [{
-          from: 'KB Winery <orders@resend.dev>',
+          from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
           to: [data.customerEmail],
           subject: generateStatusSubject(data.newStatus),
           html: emailHTML,
