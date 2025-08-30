@@ -27,7 +27,8 @@ export function createServer() {
         return res.status(500).json({ success: false, error: "Email service not configured" });
       }
 
-      const defaultFrom = "KB Winery <orders@resend.dev>";
+      const fromEmail = process.env.VITE_FROM_EMAIL || "orders@resend.dev";
+      const defaultFrom = `KB Winery <${fromEmail}>`;
       const { messages } = req.body as { messages: Array<{ to: string[]; subject: string; html: string; from?: string }>; };
       if (!Array.isArray(messages) || messages.length === 0) {
         return res.status(400).json({ success: false, error: "No messages provided" });
