@@ -121,7 +121,8 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # Email Configuration
 RESEND_API_KEY=your_resend_api_key
-VITE_FROM_EMAIL=noreply@yourdomain.com
+VITE_FROM_EMAIL=orders@yourdomain.com
+VITE_FIL_EMAIL=admin@yourdomain.com
 
 # Admin Authentication
 VITE_ADMIN_USERNAME=admin
