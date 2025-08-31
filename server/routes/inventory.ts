@@ -12,11 +12,40 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
-// Get available inventory (wines with quantity >= 1)
+// Get all inventory for admin dashboard
+export async function getAllInventory() {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { data: inventory, error } = await supabase
+      .from('Inventory')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to fetch inventory'
+      };
+    }
+
+    return {
+      success: true,
+      inventory: inventory || []
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: 'An unexpected error occurred while fetching inventory'
+    };
+  }
+}
+
+// Get available inventory (wines with quantity >= 1) for shop
 export async function getAvailableInventory() {
   try {
     const supabase = getSupabaseClient();
-    
+
     const { data: inventory, error } = await supabase
       .from('Inventory')
       .select('*')
@@ -98,6 +127,102 @@ export async function updateInventoryQuantities(updates: Array<{ id: string, new
     return {
       success: false,
       error: 'An unexpected error occurred while updating inventory'
+    };
+  }
+}
+
+// Add single inventory item
+export async function addInventoryItem(itemData: any) {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { data: newItem, error } = await supabase
+      .from('Inventory')
+      .insert([{
+        ...itemData,
+        created_at: new Date().toISOString(),
+        last_updated: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to add inventory item'
+      };
+    }
+
+    return {
+      success: true,
+      item: newItem
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: 'An unexpected error occurred while adding inventory item'
+    };
+  }
+}
+
+// Update single inventory item
+export async function updateInventoryItem(itemId: string, itemData: any) {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { data: updatedItem, error } = await supabase
+      .from('Inventory')
+      .update({
+        ...itemData,
+        last_updated: new Date().toISOString()
+      })
+      .eq('id', itemId)
+      .select()
+      .single();
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to update inventory item'
+      };
+    }
+
+    return {
+      success: true,
+      item: updatedItem
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: 'An unexpected error occurred while updating inventory item'
+    };
+  }
+}
+
+// Delete single inventory item
+export async function deleteInventoryItem(itemId: string) {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('Inventory')
+      .delete()
+      .eq('id', itemId);
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to delete inventory item'
+      };
+    }
+
+    return {
+      success: true
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: 'An unexpected error occurred while deleting inventory item'
     };
   }
 }
