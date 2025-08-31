@@ -11,6 +11,37 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // Configuration endpoints
+  app.get("/api/config/supabase", (_req, res) => {
+    const url = process.env.VITE_SUPABASE_URL;
+    const key = process.env.VITE_SUPABASE_ANON_KEY;
+
+    res.json({
+      isConfigured: Boolean(url && key),
+      isInsecureUrl: Boolean(url && String(url).startsWith("http://")),
+      url: url ? url : undefined, // Only send URL if configured
+      anonKey: key ? key : undefined // Only send key if configured
+    });
+  });
+
+  app.get("/api/config/email", (_req, res) => {
+    const fromEmail = process.env.VITE_FROM_EMAIL;
+    const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
+    const isProductionReady = hasVerifiedDomain && process.env.NODE_ENV === "production";
+
+    res.json({
+      isConfigured: Boolean(fromEmail),
+      hasVerifiedDomain,
+      isProductionReady,
+      isDevelopment: !isProductionReady,
+      status: !fromEmail
+        ? "Email not configured"
+        : !isProductionReady
+          ? "Development mode - emails redirected to test address"
+          : "Production mode - emails sent to actual recipients"
+    });
+  });
+
   // Example API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
