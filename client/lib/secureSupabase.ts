@@ -110,56 +110,113 @@ function createQueryBuilder(tableName: string) {
       return queryBuilder;
     },
 
+    // DELETE
+    delete: () => {
+      queryBuilder._delete = true;
+      return queryBuilder;
+    },
+
     // Execute the query
     async then(resolve: any, reject: any) {
       try {
         let result;
-        
+
         if (tableName === "Inventory" && queryBuilder._select) {
           // Handle inventory fetching
           const response = await api.fetch("/inventory");
           const apiResult = await response.json();
-          
+
           if (!response.ok || !apiResult.success) {
             result = {
               data: null,
-              error: { message: apiResult.error || "Failed to fetch inventory" }
+              error: { message: apiResult.error || "Failed to fetch inventory" },
             };
           } else {
-            result = {
-              data: apiResult.wines,
-              error: null
-            };
+            result = { data: apiResult.wines, error: null };
           }
         } else if (tableName === "Orders" && queryBuilder._select) {
           // Handle orders fetching
           const response = await api.fetch("/orders");
           const apiResult = await response.json();
-          
+
           if (!response.ok || !apiResult.success) {
             result = {
               data: null,
-              error: { message: apiResult.error || "Failed to fetch orders" }
+              error: { message: apiResult.error || "Failed to fetch orders" },
             };
           } else {
-            result = {
-              data: apiResult.orders,
-              error: null
-            };
+            result = { data: apiResult.orders, error: null };
+          }
+        } else if (tableName === "Batches") {
+          // CRUD for batches
+          if (queryBuilder._insert) {
+            const payload = Array.isArray(queryBuilder._insert)
+              ? queryBuilder._insert[0]
+              : queryBuilder._insert;
+            const response = await api.fetch("/batches", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            const apiResult = await response.json();
+            if (!response.ok || !apiResult.success) {
+              result = { data: null, error: { message: apiResult.error || "Failed to create batch" } };
+            } else {
+              result = { data: apiResult.batch, error: null };
+            }
+          } else if (queryBuilder._update) {
+            const idFilter = (queryBuilder._filters || []).find((f: any) => f.type === "eq" && f.column === "id");
+            const id = idFilter?.value;
+            if (!id) {
+              result = { data: null, error: { message: "Missing id for update" } };
+            } else {
+              const response = await api.fetch(`/batches/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(queryBuilder._update),
+              });
+              const apiResult = await response.json();
+              if (!response.ok || !apiResult.success) {
+                result = { data: null, error: { message: apiResult.error || "Failed to update batch" } };
+              } else {
+                result = { data: apiResult.batch, error: null };
+              }
+            }
+          } else if (queryBuilder._delete) {
+            const idFilter = (queryBuilder._filters || []).find((f: any) => f.type === "eq" && f.column === "id");
+            const id = idFilter?.value;
+            if (!id) {
+              result = { data: null, error: { message: "Missing id for delete" } };
+            } else {
+              const response = await api.fetch(`/batches/${id}`, { method: "DELETE" });
+              const apiResult = await response.json().catch(() => ({}));
+              if (!response.ok || (apiResult.success === false)) {
+                result = { data: null, error: { message: (apiResult && apiResult.error) || "Failed to delete batch" } };
+              } else {
+                result = { data: { id }, error: null };
+              }
+            }
+          } else if (queryBuilder._select) {
+            const response = await api.fetch("/batches");
+            const apiResult = await response.json();
+            if (!response.ok || !apiResult.success) {
+              result = { data: null, error: { message: apiResult.error || "Failed to fetch batches" } };
+            } else {
+              result = { data: apiResult.batches, error: null };
+            }
+          } else {
+            result = { data: null, error: { message: `Unsupported operation on ${tableName}` } };
           }
         } else {
           result = {
             data: null,
-            error: { message: `Unsupported operation on ${tableName}` }
+            error: { message: `Unsupported operation on ${tableName}` },
           };
         }
 
         resolve(result);
       } catch (error) {
-        reject({
-          data: null,
-          error: { message: "Network error" }
-        });
+        reject({ data: null, error: { message: "Network error" } });
       }
     },
 
@@ -175,11 +232,13 @@ function createQueryBuilder(tableName: string) {
       return queryBuilder;
     },
 
+    // DELETE already defined
+
     // SELECT single result
     single: () => {
       queryBuilder._single = true;
       return queryBuilder;
-    }
+    },
   };
 
   return queryBuilder;
