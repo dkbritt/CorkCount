@@ -27,28 +27,9 @@ async function loadEmailConfig(): Promise<EmailConfig> {
   } catch (error) {
     console.warn("⚠️ Failed to load email configuration from server:", error);
 
-    // Fallback to environment variables if server is not available (development mode)
-    const fallbackFromEmail = (import.meta.env as any).VITE_FROM_EMAIL;
-
-    if (fallbackFromEmail) {
-      console.log("🔧 Using fallback email configuration");
-      const hasVerifiedDomain = !fallbackFromEmail.includes("resend.dev");
-      const isProductionReady =
-        hasVerifiedDomain && (import.meta.env as any).PROD;
-
-      emailConfig = {
-        isConfigured: true,
-        hasVerifiedDomain,
-        isProductionReady,
-        isDevelopment: !isProductionReady,
-        status: !isProductionReady
-          ? "Development mode - emails redirected to test address"
-          : "Production mode - emails sent to actual recipients",
-      };
-    } else {
-      console.log("❌ No email configuration available");
-      emailConfig = getDefaultEmailConfig();
-    }
+    // Server not available - use default configuration
+    console.log("❌ Email server not available");
+    emailConfig = getDefaultEmailConfig();
     return emailConfig;
   }
 }
