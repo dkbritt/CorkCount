@@ -14,7 +14,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import { CartItem } from "@/components/CartModal";
-import { supabase } from "@/lib/supabase";
+// Note: Using secure API endpoints instead of direct Supabase client
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 import { sendOrderConfirmationEmail } from "@/lib/email";
