@@ -253,14 +253,19 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
 
-    // In development/test mode, send all emails to verified address
-    const isDevelopment = import.meta.env.DEV || !import.meta.env.PROD;
-    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email
+    // Check if we're in production mode with a verified domain
+    const fromEmail = import.meta.env.VITE_FROM_EMAIL;
+    const hasVerifiedDomain = fromEmail && !fromEmail.includes('resend.dev');
+    const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
+    const isDevelopment = !isProductionReady;
+    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
+
+    console.log(`Email mode: ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'}, fromEmail: ${fromEmail}, hasVerifiedDomain: ${hasVerifiedDomain}`);
 
     const emailRequests = [
       // Email to customer (or test override)
       {
-        from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
+        from: `KB Winery <${fromEmail || 'orders@resend.dev'}>`,
         to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
         subject: isDevelopment
           ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
@@ -271,7 +276,7 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
       },
       // Email to FIL (or test override)
       {
-        from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
+        from: `KB Winery <${fromEmail || 'orders@resend.dev'}>`,
         to: [isDevelopment ? testEmailOverride : FIL_EMAIL],
         subject: isDevelopment
           ? `[TEST] New Order for ${orderData.customerEmail} - ${orderData.orderNumber}`
