@@ -23,16 +23,10 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-// Prevent bundler optimization by accessing env indirectly
-const getFilEmail = () => {
-  const envVars = import.meta.env;
-  return envVars.VITE_FIL_EMAIL;
-};
-const FIL_EMAIL = getFilEmail();
-
+// Get email API endpoint
 const getEmailApiEndpoint = () => {
-  const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
-  return `${base}/api/email`;
+  // Use Netlify functions in production, direct server in development
+  return import.meta.env.DEV ? "/api/email" : "/.netlify/functions/api/api/email";
 };
 
 // Helper function to format currency
@@ -47,7 +41,7 @@ const formatCurrency = (amount: number): string => {
 const formatPaymentMethod = (method: string): string => {
   const methods: Record<string, string> = {
     zelle: "Zelle",
-    cashapp: "CashApp",
+    cashapp: "CashApp", 
     cash: "Cash",
   };
   return methods[method] || method;
@@ -57,7 +51,7 @@ const formatPaymentMethod = (method: string): string => {
 const getStatusDisplayName = (status: string): string => {
   const statusNames: Record<string, string> = {
     pending: "Pending",
-    "ready-for-pickup": "Ready for Pickup",
+    "ready-for-pickup": "Ready for Pickup", 
     "picked-up": "Picked Up",
     cancelled: "Cancelled",
   };
@@ -286,64 +280,26 @@ const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
   `;
 };
 
-// Send order confirmation email
+// Send order confirmation email - now relies entirely on server-side configuration
 export async function sendOrderConfirmationEmail(
   orderData: OrderEmailData,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
 
-    // Check if required environment variables are set (prevent bundler optimization)
-    const envVars = import.meta.env;
-    const fromEmail = envVars.VITE_FROM_EMAIL;
-    if (!fromEmail || fromEmail === "") {
-      return {
-        success: false,
-        error: "Email service not configured - missing VITE_FROM_EMAIL",
-      };
-    }
-
-    // Check if we're in production mode with a verified domain
-    const hasVerifiedDomain = !fromEmail.includes("resend.dev");
-    const isProductionReady = hasVerifiedDomain && envVars.PROD;
-    const isDevelopment = !isProductionReady;
-    const testEmailOverride = envVars.VITE_TEST_EMAIL;
-
-    // Validate test email override for development
-    if (isDevelopment && !testEmailOverride) {
-      return {
-        success: false,
-        error: "Development mode requires VITE_TEST_EMAIL to be set",
-      };
-    }
-
-    const emailRequests = [];
-
-    // Email to customer
-    emailRequests.push({
-      from: `KB Winery <${fromEmail}>`,
-      to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
-      subject: isDevelopment
-        ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
-        : "Your KB Winery Order Confirmation",
-      html: isDevelopment
-        ? `<p><strong>TEST EMAIL - Original recipient: ${orderData.customerEmail}</strong></p>${emailHTML}`
-        : emailHTML,
-    });
-
-    // Email to admin (only if configured)
-    if (FIL_EMAIL) {
-      emailRequests.push({
-        from: `KB Winery <${fromEmail}>`,
-        to: [isDevelopment ? testEmailOverride : FIL_EMAIL],
-        subject: isDevelopment
-          ? `[TEST] New Order for ${orderData.customerEmail} - ${orderData.orderNumber}`
-          : `New Order Received - ${orderData.orderNumber}`,
-        html: isDevelopment
-          ? `<p><strong>TEST EMAIL - Original recipient: ${FIL_EMAIL}</strong></p>${emailHTML}`
-          : emailHTML,
-      });
-    }
+    // Build email requests on client side, server will handle configuration
+    const emailRequests = [
+      {
+        type: 'order_confirmation',
+        to: orderData.customerEmail,
+        subject: "Your KB Winery Order Confirmation", 
+        html: emailHTML,
+        orderData: {
+          orderNumber: orderData.orderNumber,
+          customerEmail: orderData.customerEmail
+        }
+      }
+    ];
 
     const response = await fetch(getEmailApiEndpoint(), {
       method: "POST",
@@ -375,36 +331,12 @@ export async function sendOrderConfirmationEmail(
   }
 }
 
-// Send status update email
+// Send status update email - now relies entirely on server-side configuration
 export async function sendStatusUpdateEmail(
   data: StatusUpdateEmailData,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const emailHTML = generateStatusUpdateHTML(data);
-
-    // Check if required environment variables are set (prevent bundler optimization)
-    const envVars = import.meta.env;
-    const fromEmail = envVars.VITE_FROM_EMAIL;
-    if (!fromEmail || fromEmail === "") {
-      return {
-        success: false,
-        error: "Email service not configured - missing VITE_FROM_EMAIL",
-      };
-    }
-
-    // Check if we're in production mode with a verified domain
-    const hasVerifiedDomain = !fromEmail.includes("resend.dev");
-    const isProductionReady = hasVerifiedDomain && envVars.PROD;
-    const isDevelopment = !isProductionReady;
-    const testEmailOverride = envVars.VITE_TEST_EMAIL;
-
-    // Validate test email override for development
-    if (isDevelopment && !testEmailOverride) {
-      return {
-        success: false,
-        error: "Development mode requires VITE_TEST_EMAIL to be set",
-      };
-    }
 
     const response = await fetch(getEmailApiEndpoint(), {
       method: "POST",
@@ -412,14 +344,14 @@ export async function sendStatusUpdateEmail(
       body: JSON.stringify({
         messages: [
           {
-            from: `KB Winery <${fromEmail}>`,
-            to: [isDevelopment ? testEmailOverride : data.customerEmail],
-            subject: isDevelopment
-              ? `[TEST] Status Update for ${data.customerEmail} - ${data.orderNumber}`
-              : generateStatusSubject(data.newStatus),
-            html: isDevelopment
-              ? `<p><strong>TEST EMAIL - Original recipient: ${data.customerEmail}</strong></p>${emailHTML}`
-              : emailHTML,
+            type: 'status_update',
+            to: data.customerEmail,
+            subject: generateStatusSubject(data.newStatus),
+            html: emailHTML,
+            orderData: {
+              orderNumber: data.orderNumber,
+              customerEmail: data.customerEmail
+            }
           },
         ],
       }),
