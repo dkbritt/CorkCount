@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle, Loader2 } from "lucide-react";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { secureSupabase, isSupabaseConfigured } from "@/lib/secureSupabase";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdminLoginModalProps {
