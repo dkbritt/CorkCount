@@ -11,7 +11,7 @@ import { WineDetailsModal } from "@/components/WineDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-react";
-import { secureSupabase } from "@/lib/secureSupabase";
+import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 
@@ -65,25 +65,23 @@ export default function Index() {
         setLoading(true);
         setError(null);
 
-        const { data: winesData, error: inventoryError } = await secureSupabase
-          .from('Inventory')
-          .select('*')
-          .gte('quantity', 1);
+        const response = await apiFetch('/inventory');
+        const result = await response.json();
 
-        if (inventoryError) {
-          console.error('Inventory API error:', formatError(inventoryError));
+        if (!response.ok || !result.success) {
+          console.error('Inventory API error:', result.error);
           setError('Failed to load wine inventory');
           toast({
             title: "Error",
-            description: `Failed to load wine inventory: ${formatError(inventoryError)}`,
+            description: `Failed to load wine inventory: ${result.error}`,
             variant: "destructive",
           });
           return;
         }
 
-        setWines(winesData);
+        setWines(result.wines);
 
-        if (winesData.length === 0) {
+        if (result.wines.length === 0) {
           toast({
             title: "No wines available",
             description: "The wine inventory is currently empty. Please check back later.",
