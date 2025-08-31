@@ -19,7 +19,7 @@ import {
   Filter,
   Trash2,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 import { sendStatusUpdateEmail } from "@/lib/email";
@@ -138,23 +138,21 @@ export function OrdersTab() {
       try {
         setLoading(true);
 
-        const { data: supabaseOrders, error } = await supabase
-          .from("Orders")
-          .select("*")
-          .order("created_at", { ascending: false });
+        const response = await apiFetch("/orders");
+        const result = await response.json();
 
-        if (error) {
+        if (!response.ok || !result.success) {
           console.error(
-            "Error fetching orders from Supabase:",
-            formatError(error),
+            "Error fetching orders from API:",
+            result.error,
           );
-          // Fallback to localStorage if Supabase fails
+          // Fallback to localStorage if API fails
           loadOrdersFromStorage();
           return;
         }
 
-        // Convert Supabase orders to admin order format
-        const convertedOrders = (supabaseOrders || []).map((order: any) => ({
+        // Convert API orders to admin order format
+        const convertedOrders = (result.orders || []).map((order: any) => ({
           id: order.id,
           orderNumber: order.order_number,
           customer: {
@@ -439,17 +437,17 @@ export function OrdersTab() {
       let supabaseErr: any = null;
       try {
         if (isUuid(orderId)) {
-          const { error } = await supabase
-            .from("Orders")
-            .delete()
-            .eq("id", orderId);
-          supabaseErr = error || null;
+          const response = await apiFetch(`/orders/${orderId}`, {
+            method: "DELETE",
+          });
+          const result = await response.json().catch(() => ({}));
+          supabaseErr = (!response.ok || result.success === false) ? (result.error || "Failed to delete order") : null;
         } else if (targetOrder?.orderNumber) {
-          const { error } = await supabase
-            .from("Orders")
-            .delete()
-            .eq("order_number", targetOrder.orderNumber);
-          supabaseErr = error || null;
+          const response = await apiFetch(`/orders/by-number/${encodeURIComponent(targetOrder.orderNumber)}`, {
+            method: "DELETE",
+          });
+          const result = await response.json().catch(() => ({}));
+          supabaseErr = (!response.ok || result.success === false) ? (result.error || "Failed to delete order") : null;
         }
       } catch (e: any) {
         supabaseErr = e;
@@ -530,15 +528,23 @@ export function OrdersTab() {
       let error: any = null;
       try {
         if (isUuid(orderId)) {
-          ({ error } = await supabase
-            .from("Orders")
-            .update({ status: newStatus })
-            .eq("id", orderId));
+          const response = await apiFetch(`/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+          const result = await response.json();
+          error = (!response.ok || !result.success) ? (result.error || "Failed to update order status") : null;
         } else if (targetOrder?.orderNumber) {
-          ({ error } = await supabase
-            .from("Orders")
-            .update({ status: newStatus })
-            .eq("order_number", targetOrder.orderNumber));
+          // For non-UUID orders, we need to find by order number first
+          // This is a more complex operation, so we'll use the same endpoint approach
+          const response = await apiFetch(`/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+          const result = await response.json();
+          error = (!response.ok || !result.success) ? (result.error || "Failed to update order status") : null;
         }
       } catch (e: any) {
         error = e;
