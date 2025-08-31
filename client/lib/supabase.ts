@@ -55,57 +55,38 @@ function createStubClient() {
     "Database is not configured. Please contact administrator to configure the database connection."
   );
 
-  // Create a comprehensive query builder stub
-  const createQueryBuilder = () => {
-    const errorResult = Promise.resolve({ data: null, error: notConfiguredError });
+  // Create a comprehensive query builder stub that maintains proper chaining
+  const createQueryBuilder = (): any => {
+    const errorResult = { data: null, error: notConfiguredError };
     
-    const queryBuilder: any = {
-      // Query methods
-      select: (...args: any[]) => createQueryBuilder(),
-      insert: (...args: any[]) => createQueryBuilder(),
-      update: (...args: any[]) => createQueryBuilder(),
-      delete: (...args: any[]) => createQueryBuilder(),
-      upsert: (...args: any[]) => createQueryBuilder(),
-      
-      // Filter methods
-      eq: (...args: any[]) => createQueryBuilder(),
-      neq: (...args: any[]) => createQueryBuilder(),
-      gt: (...args: any[]) => createQueryBuilder(),
-      gte: (...args: any[]) => createQueryBuilder(),
-      lt: (...args: any[]) => createQueryBuilder(),
-      lte: (...args: any[]) => createQueryBuilder(),
-      like: (...args: any[]) => createQueryBuilder(),
-      ilike: (...args: any[]) => createQueryBuilder(),
-      is: (...args: any[]) => createQueryBuilder(),
-      in: (...args: any[]) => createQueryBuilder(),
-      contains: (...args: any[]) => createQueryBuilder(),
-      containedBy: (...args: any[]) => createQueryBuilder(),
-      rangeGt: (...args: any[]) => createQueryBuilder(),
-      rangeGte: (...args: any[]) => createQueryBuilder(),
-      rangeLt: (...args: any[]) => createQueryBuilder(),
-      rangeLte: (...args: any[]) => createQueryBuilder(),
-      rangeAdjacent: (...args: any[]) => createQueryBuilder(),
-      overlaps: (...args: any[]) => createQueryBuilder(),
-      textSearch: (...args: any[]) => createQueryBuilder(),
-      match: (...args: any[]) => createQueryBuilder(),
-      not: (...args: any[]) => createQueryBuilder(),
-      or: (...args: any[]) => createQueryBuilder(),
-      filter: (...args: any[]) => createQueryBuilder(),
-      
-      // Modifier methods
-      order: (...args: any[]) => createQueryBuilder(),
-      limit: (...args: any[]) => createQueryBuilder(),
-      range: (...args: any[]) => createQueryBuilder(),
-      single: () => createQueryBuilder(),
-      maybeSingle: () => createQueryBuilder(),
-      csv: () => createQueryBuilder(),
-      geojson: () => createQueryBuilder(),
-      explain: (...args: any[]) => createQueryBuilder(),
-      
-      // Promise methods - these should return the actual error result
-      then: (onfulfilled?: any, onrejected?: any) => errorResult.then(onfulfilled, onrejected),
-      catch: (onrejected?: any) => errorResult.catch(onrejected),
-      finally: (onfinally?: any) => errorResult.finally(onfinally),
+    const queryBuilder: any = {};
+    
+    // All Supabase query builder methods
+    const queryMethods = [
+      'select', 'insert', 'update', 'delete', 'upsert',
+      'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in',
+      'contains', 'containedBy', 'rangeGt', 'rangeGte', 'rangeLt', 'rangeLte',
+      'rangeAdjacent', 'overlaps', 'textSearch', 'match', 'not', 'or', 'filter',
+      'order', 'limit', 'range', 'single', 'maybeSingle', 'csv', 'geojson', 'explain'
+    ];
+    
+    // Add all methods that return chainable query builders
+    queryMethods.forEach(method => {
+      queryBuilder[method] = (...args: any[]) => {
+        console.warn(`🔴 Stub client: Method "${method}" called but database is not configured`);
+        return createQueryBuilder(); // Return new chainable builder
+      };
+    });
+    
+    // Promise methods should return the actual error result
+    queryBuilder.then = (onfulfilled?: any, onrejected?: any) => {
+      return Promise.resolve(errorResult).then(onfulfilled, onrejected);
+    };
+    queryBuilder.catch = (onrejected?: any) => {
+      return Promise.resolve(errorResult).catch(onrejected);
+    };
+    queryBuilder.finally = (onfinally?: any) => {
+      return Promise.resolve(errorResult).finally(onfinally);
     };
     
     return queryBuilder;
@@ -160,7 +141,7 @@ export async function getSupabaseClient() {
   return supabaseClient;
 }
 
-// Create a much simpler proxy that just forwards to the real client
+// Create a simpler, more direct proxy implementation
 function createSupabaseProxy() {
   let clientPromise: Promise<any> | null = null;
   
@@ -174,67 +155,80 @@ function createSupabaseProxy() {
     return clientPromise;
   };
 
-  // Create a simple forwarding proxy
   const proxy: any = {
     from: (table: string) => {
-      // Return a promise that resolves to the actual query builder
-      const clientQuery = getClient().then(client => {
-        try {
-          const query = client.from(table);
-          console.log(`🔍 Created query for table "${table}":`, {
-            hasSelect: typeof query.select === 'function',
-            hasGte: typeof query.gte === 'function',
-            hasEq: typeof query.eq === 'function',
-            hasOrder: typeof query.order === 'function',
-            methods: Object.getOwnPropertyNames(query)
-          });
-          return query;
-        } catch (error) {
-          console.error(`❌ Error creating query for table "${table}":`, error);
-          return createStubClient().from(table);
-        }
+      console.log(`🔍 Creating query for table: ${table}`);
+      
+      // Create a promise that resolves to the real query builder
+      const queryBuilderPromise = getClient().then(client => {
+        const queryBuilder = client.from(table);
+        console.log(`✅ Got query builder for ${table}:`, {
+          hasSelect: typeof queryBuilder.select === 'function',
+          hasGte: typeof queryBuilder.gte === 'function',
+          hasEq: typeof queryBuilder.eq === 'function',
+          hasOrder: typeof queryBuilder.order === 'function'
+        });
+        return queryBuilder;
+      }).catch(error => {
+        console.error(`❌ Error getting query builder for ${table}:`, error);
+        return createStubClient().from(table);
       });
 
-      // Create a proxy that forwards all method calls to the real query object
-      const queryProxy: any = new Proxy({}, {
-        get(target, prop, receiver) {
-          if (prop === 'then' || prop === 'catch' || prop === 'finally') {
-            // Handle Promise methods directly
-            return (...args: any[]) => clientQuery.then(query => query)[prop as string](...args);
-          }
+      // Create a synchronous-looking object that forwards all method calls
+      const proxyQuery: any = {};
+      
+      // All possible Supabase query methods
+      const allMethods = [
+        'select', 'insert', 'update', 'delete', 'upsert',
+        'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in',
+        'contains', 'containedBy', 'rangeGt', 'rangeGte', 'rangeLt', 'rangeLte',
+        'rangeAdjacent', 'overlaps', 'textSearch', 'match', 'not', 'or', 'filter',
+        'order', 'limit', 'range', 'single', 'maybeSingle', 'csv', 'geojson', 'explain'
+      ];
+      
+      // Add all methods to the proxy
+      allMethods.forEach(methodName => {
+        proxyQuery[methodName] = (...args: any[]) => {
+          console.log(`🔧 Calling ${methodName} with args:`, args);
           
-          // Handle query builder methods
-          return (...args: any[]) => {
-            const nextQuery = clientQuery.then(query => {
-              if (typeof query[prop as string] === 'function') {
-                const result = query[prop as string](...args);
-                console.log(`🔧 Called ${String(prop)} on query, result type:`, typeof result);
-                return result;
-              } else {
-                console.error(`❌ Method ${String(prop)} not found on query object:`, Object.getOwnPropertyNames(query));
-                throw new Error(`Query method ${String(prop)} is not available`);
-              }
-            }).catch(error => {
-              console.error(`❌ Error calling ${String(prop)}:`, error);
-              return { data: null, error };
-            });
-            
-            // Return a new proxy for method chaining
-            return createQueryProxy(nextQuery);
-          };
-        }
+          const nextQueryPromise = queryBuilderPromise.then(queryBuilder => {
+            if (typeof queryBuilder[methodName] === 'function') {
+              const result = queryBuilder[methodName](...args);
+              console.log(`✅ ${methodName} successful, result type:`, typeof result);
+              return result;
+            } else {
+              const availableMethods = Object.getOwnPropertyNames(queryBuilder).filter(name => typeof queryBuilder[name] === 'function');
+              console.error(`❌ Method ${methodName} not found. Available methods:`, availableMethods);
+              throw new Error(`Query method ${methodName} is not available`);
+            }
+          }).catch(error => {
+            console.error(`❌ Error in ${methodName}:`, error);
+            return { data: null, error };
+          });
+          
+          // Create a new proxy for the next step in the chain
+          return createChainedProxy(nextQueryPromise);
+        };
       });
       
-      return queryProxy;
+      // Add Promise methods for final execution
+      proxyQuery.then = (onfulfilled?: any, onrejected?: any) => {
+        return queryBuilderPromise.then(onfulfilled, onrejected);
+      };
+      proxyQuery.catch = (onrejected?: any) => {
+        return queryBuilderPromise.catch(onrejected);
+      };
+      proxyQuery.finally = (onfinally?: any) => {
+        return queryBuilderPromise.finally(onfinally);
+      };
+      
+      return proxyQuery;
     },
     
     auth: {
       signInWithPassword: async (credentials: any) => {
         try {
           const client = await getClient();
-          if (!client.auth || typeof client.auth.signInWithPassword !== 'function') {
-            throw new Error("Auth not available");
-          }
           return await client.auth.signInWithPassword(credentials);
         } catch (error) {
           console.error("Auth sign in error:", error);
@@ -248,9 +242,6 @@ function createSupabaseProxy() {
       getUser: async () => {
         try {
           const client = await getClient();
-          if (!client.auth || typeof client.auth.getUser !== 'function') {
-            throw new Error("Auth not available");
-          }
           return await client.auth.getUser();
         } catch (error) {
           console.error("Auth get user error:", error);
@@ -264,9 +255,6 @@ function createSupabaseProxy() {
       signOut: async () => {
         try {
           const client = await getClient();
-          if (!client.auth || typeof client.auth.signOut !== 'function') {
-            throw new Error("Auth not available");
-          }
           return await client.auth.signOut();
         } catch (error) {
           console.error("Auth sign out error:", error);
@@ -281,34 +269,52 @@ function createSupabaseProxy() {
   return proxy;
 }
 
-// Helper to create query proxy for chained promises
-function createQueryProxy(queryPromise: Promise<any>): any {
-  return new Proxy({}, {
-    get(target, prop, receiver) {
-      if (prop === 'then' || prop === 'catch' || prop === 'finally') {
-        // Handle Promise methods
-        return (...args: any[]) => queryPromise[prop as string](...args);
-      }
+// Helper to create chained proxy for continued method calls
+function createChainedProxy(queryPromise: Promise<any>): any {
+  const chainedProxy: any = {};
+  
+  const allMethods = [
+    'select', 'insert', 'update', 'delete', 'upsert',
+    'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in',
+    'contains', 'containedBy', 'rangeGt', 'rangeGte', 'rangeLt', 'rangeLte',
+    'rangeAdjacent', 'overlaps', 'textSearch', 'match', 'not', 'or', 'filter',
+    'order', 'limit', 'range', 'single', 'maybeSingle', 'csv', 'geojson', 'explain'
+  ];
+  
+  allMethods.forEach(methodName => {
+    chainedProxy[methodName] = (...args: any[]) => {
+      console.log(`🔗 Chaining ${methodName} with args:`, args);
       
-      // Handle query builder methods
-      return (...args: any[]) => {
-        const nextQuery = queryPromise.then(query => {
-          if (query && typeof query[prop as string] === 'function') {
-            return query[prop as string](...args);
-          } else {
-            console.error(`❌ Method ${String(prop)} not available on query result:`, query);
-            throw new Error(`Query method ${String(prop)} is not available`);
-          }
-        }).catch(error => {
-          console.error(`❌ Error in query chain for ${String(prop)}:`, error);
-          return { data: null, error };
-        });
-        
-        // Return a new proxy for continued chaining
-        return createQueryProxy(nextQuery);
-      };
-    }
+      const nextQueryPromise = queryPromise.then(query => {
+        if (query && typeof query[methodName] === 'function') {
+          const result = query[methodName](...args);
+          console.log(`✅ Chained ${methodName} successful`);
+          return result;
+        } else {
+          console.error(`❌ Chained method ${methodName} not available on:`, query);
+          throw new Error(`Query method ${methodName} is not available`);
+        }
+      }).catch(error => {
+        console.error(`❌ Error in chained ${methodName}:`, error);
+        return { data: null, error };
+      });
+      
+      return createChainedProxy(nextQueryPromise);
+    };
   });
+  
+  // Promise methods for final execution
+  chainedProxy.then = (onfulfilled?: any, onrejected?: any) => {
+    return queryPromise.then(onfulfilled, onrejected);
+  };
+  chainedProxy.catch = (onrejected?: any) => {
+    return queryPromise.catch(onrejected);
+  };
+  chainedProxy.finally = (onfinally?: any) => {
+    return queryPromise.finally(onfinally);
+  };
+  
+  return chainedProxy;
 }
 
 // Export the proxy as the main supabase client
