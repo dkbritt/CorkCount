@@ -41,14 +41,18 @@ export function AdminLoginModal({
     e.preventDefault();
     setError("");
 
-    if (!isSupabaseConfigured) {
+    if (supabaseConfigured === false) {
       setError("Admin login is disabled until Supabase is configured.");
       toast({
         title: "Supabase not configured",
-        description:
-          "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable admin login.",
+        description: "Database connection is not available. Please contact the administrator.",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (supabaseConfigured === null) {
+      setError("Checking configuration...");
       return;
     }
 
