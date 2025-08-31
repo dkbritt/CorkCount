@@ -65,42 +65,21 @@ export default function Index() {
         setLoading(true);
         setError(null);
 
-        const { data: inventory, error: supabaseError } = await supabase
+        const { data: winesData, error: inventoryError } = await secureSupabase
           .from('Inventory')
           .select('*')
-          .gte('quantity', 1); // Only fetch items that are in stock
+          .gte('quantity', 1);
 
-        if (supabaseError) {
-          console.error('Supabase error:', formatError(supabaseError));
+        if (inventoryError) {
+          console.error('Inventory API error:', formatError(inventoryError));
           setError('Failed to load wine inventory');
           toast({
             title: "Error",
-            description: `Failed to load wine inventory: ${formatError(supabaseError)}` ,
+            description: `Failed to load wine inventory: ${formatError(inventoryError)}`,
             variant: "destructive",
           });
           return;
         }
-
-        // Convert Supabase inventory data to Wine format
-        const winesData: Wine[] = (inventory || []).map((item: any) => ({
-          id: item.id,
-          name: item.name || 'Unnamed Wine',
-          winery: item.winery || 'Unknown Winery',
-          vintage: item.vintage || new Date().getFullYear(),
-          region: '', // Not displayed on shop page
-          type: item.type || 'Red Wine',
-          price: parseFloat(item.price) || 0,
-          inStock: parseInt(item.quantity) || 0,
-          rating: 0, // Not displayed on shop page
-          description: item.description || item.flavor_notes || 'A wonderful wine experience',
-          flavorNotes: (
-            // Use auto-generated tags if available, otherwise parse flavor_notes
-            item.tags && Array.isArray(item.tags) && item.tags.length > 0
-              ? item.tags.map((tag: string) => tag.charAt(0).toUpperCase() + tag.slice(1))
-              : item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced']
-          ),
-          image: item.image_url || item.image || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
-        }));
 
         setWines(winesData);
 
