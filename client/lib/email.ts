@@ -370,6 +370,16 @@ export async function sendStatusUpdateEmail(
   data: StatusUpdateEmailData,
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Check if server is available first
+    const serverAvailable = await checkServerAvailability();
+    if (!serverAvailable) {
+      console.warn("Email server not available, status update email will be skipped");
+      return {
+        success: false,
+        error: "Email service temporarily unavailable. Status was updated but notification email could not be sent."
+      };
+    }
+
     const emailHTML = generateStatusUpdateHTML(data);
 
     const response = await fetch(getEmailApiEndpoint(), {
@@ -407,9 +417,19 @@ export async function sendStatusUpdateEmail(
     return { success: true };
   } catch (error) {
     console.error("Error sending status update email:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown email error";
+
+    // Provide user-friendly error messages
+    if (errorMessage.includes("Failed to fetch") || errorMessage.includes("fetch")) {
+      return {
+        success: false,
+        error: "Email service temporarily unavailable. Status was updated but notification email could not be sent."
+      };
+    }
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown email error",
+      error: errorMessage,
     };
   }
 }
