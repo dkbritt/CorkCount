@@ -11,7 +11,7 @@ const api = {
 // Check if Supabase is configured by testing the API
 async function checkSupabaseConfig(): Promise<{ isConfigured: boolean; isInsecureUrl: boolean }> {
   try {
-    const response = await fetch(getApiEndpoint("/config/supabase"));
+    const response = await api.fetch("/config/supabase");
     if (!response.ok) {
       return { isConfigured: false, isInsecureUrl: false };
     }
@@ -30,7 +30,7 @@ async function checkSupabaseConfig(): Promise<{ isConfigured: boolean; isInsecur
 export const auth = {
   async signInWithPassword({ email, password }: { email: string; password: string }) {
     try {
-      const response = await fetch(getApiEndpoint("/auth/login"), {
+      const response = await api.fetch("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -117,7 +117,7 @@ function createQueryBuilder(tableName: string) {
         
         if (tableName === "Inventory" && queryBuilder._select) {
           // Handle inventory fetching
-          const response = await fetch(getApiEndpoint("/inventory"));
+          const response = await api.fetch("/inventory");
           const apiResult = await response.json();
           
           if (!response.ok || !apiResult.success) {
@@ -133,7 +133,7 @@ function createQueryBuilder(tableName: string) {
           }
         } else if (tableName === "Orders" && queryBuilder._select) {
           // Handle orders fetching
-          const response = await fetch(getApiEndpoint("/orders"));
+          const response = await api.fetch("/orders");
           const apiResult = await response.json();
           
           if (!response.ok || !apiResult.success) {
