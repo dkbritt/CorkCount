@@ -119,10 +119,13 @@ VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
-# Email Configuration
+# Email Configuration (Required)
 RESEND_API_KEY=your_resend_api_key
 VITE_FROM_EMAIL=orders@yourdomain.com
+
+# Optional Email Configuration
 VITE_FIL_EMAIL=admin@yourdomain.com
+VITE_TEST_EMAIL=test@yourdomain.com
 
 # Admin Authentication
 VITE_ADMIN_USERNAME=admin
