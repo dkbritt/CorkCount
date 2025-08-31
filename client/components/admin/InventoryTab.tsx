@@ -15,7 +15,7 @@ import {
   Save,
   Loader2
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 import { autoTagWine, sanitizeTags } from "@/lib/autoTagger";
@@ -211,23 +211,21 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
     const fetchInventory = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('Inventory')
-          .select('*')
-          .order('created_at', { ascending: false });
+        const response = await apiFetch("/inventory?admin=true");
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error fetching inventory:', formatError(error));
+        if (!response.ok || !result.success) {
+          console.error('Error fetching inventory:', result.error);
           toast({
             title: "Error",
-            description: `Failed to load inventory: ${formatError(error)}` ,
+            description: `Failed to load inventory: ${result.error}`,
             variant: "destructive",
           });
           return;
         }
 
-        // Convert Supabase data to InventoryItem format
-        const inventoryItems: InventoryItem[] = (data || []).map((item: any) => ({
+        // Convert API data to InventoryItem format
+        const inventoryItems: InventoryItem[] = (result.inventory || []).map((item: any) => ({
           id: item.id,
           name: item.name || 'Unnamed Wine',
           winery: item.winery || 'Unknown Winery',
@@ -260,19 +258,17 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
     const fetchBatches = async () => {
       try {
-        const { data: batches, error } = await supabase
-          .from('Batches')
-          .select('id, name')
-          .order('created_at', { ascending: false });
+        const response = await apiFetch("/batches");
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error fetching batches:', formatError(error));
-        } else {
-          const batchItems: BatchItem[] = (batches || []).map((batch: any) => ({
+        if (response.ok && result.success) {
+          const batchItems: BatchItem[] = (result.batches || []).map((batch: any) => ({
             id: batch.id,
             name: batch.name || 'Unnamed Batch'
           }));
           setAvailableBatches(batchItems);
+        } else {
+          console.error('Error fetching batches:', result.error);
         }
       } catch (err) {
         console.error('Error fetching batches:', formatError(err));
@@ -400,15 +396,15 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
       if (editingItem) {
         // Update existing item
-        const { data, error } = await supabase
-          .from('Inventory')
-          .update(inventoryData)
-          .eq('id', editingItem.id)
-          .select()
-          .single();
+        const response = await apiFetch(`/inventory/${editingItem.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(inventoryData),
+        });
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error updating inventory:', formatError(error));
+        if (!response.ok || !result.success) {
+          console.error('Error updating inventory:', result.error);
           toast({
             title: "Error",
             description: "Failed to update inventory item. Please try again.",
@@ -445,14 +441,15 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
       } else {
         // Add new item
-        const { data, error } = await supabase
-          .from('Inventory')
-          .insert([inventoryData])
-          .select()
-          .single();
+        const response = await apiFetch("/inventory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(inventoryData),
+        });
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error adding inventory:', formatError(error));
+        if (!response.ok || !result.success) {
+          console.error('Error adding inventory:', result.error);
           toast({
             title: "Error",
             description: "Failed to add inventory item. Please try again.",
@@ -463,7 +460,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
         // Add to local state
         const newItem: InventoryItem = {
-          id: data.id,
+          id: result.item.id,
           name: formData.bottleName,
           winery: "KB Winery",
           vintage: parseInt(formData.vintage),
@@ -556,13 +553,13 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
   const handleDeleteItem = async (itemId: string) => {
     try {
-      const { error } = await supabase
-        .from('Inventory')
-        .delete()
-        .eq('id', itemId);
+      const response = await apiFetch(`/inventory/${itemId}`, {
+        method: "DELETE",
+      });
+      const result = await response.json().catch(() => ({}));
 
-      if (error) {
-        console.error('Error deleting inventory item:', formatError(error));
+      if (!response.ok || (result.success === false)) {
+        console.error('Error deleting inventory item:', result.error);
         toast({
           title: "Error",
           description: "Failed to delete inventory item. Please try again.",
