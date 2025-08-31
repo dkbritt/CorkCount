@@ -17,7 +17,7 @@ async function loadEmailConfig(): Promise<EmailConfig> {
   configLoadAttempted = true;
 
   try {
-    const response = await fetch("/api/config/email");
+    const response = await apiFetch("/config/email");
     if (!response.ok) {
       throw new Error(`Server returned ${response.status}`);
     }
