@@ -158,7 +158,7 @@ export default function Checkout() {
     };
 
     try {
-      // Prepare bottles_ordered data for Supabase
+      // Prepare bottles_ordered data for API
       const bottlesOrdered = cartItems.map(item => ({
         wine_id: item.wine.id,
         wine_name: item.wine.name,
@@ -169,29 +169,33 @@ export default function Checkout() {
         total_price: item.wine.price * item.quantity
       }));
 
-      // Insert order into Supabase
-      const { data: supabaseOrder, error: supabaseError } = await supabase
-        .from('Orders')
-        .insert([
-          {
-            order_number: orderNumber,
-            customer_name: formData.customerName,
-            email: formData.email,
-            phone: formData.phone || null,
-            pickup_date: formData.pickupDate,
-            pickup_time: formData.pickupTime,
-            payment_method: formData.paymentMethod,
-            status: 'pending',
-            notes: formData.orderNotes || null,
-            bottles_ordered: bottlesOrdered,
-            created_at: new Date().toISOString()
-          }
-        ])
-        .select()
-        .single();
+      // Create order via secure API
+      const getApiEndpoint = (path: string) => {
+        return import.meta.env.DEV
+          ? `/api${path}`
+          : `/.netlify/functions/api/api${path}`;
+      };
 
-      if (supabaseError) {
-        console.error('Supabase error:', formatError(supabaseError));
+      const orderResponse = await fetch(getApiEndpoint("/orders"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderNumber,
+          customerName: formData.customerName,
+          email: formData.email,
+          phone: formData.phone || null,
+          pickupDate: formData.pickupDate,
+          pickupTime: formData.pickupTime,
+          paymentMethod: formData.paymentMethod,
+          orderNotes: formData.orderNotes || null,
+          bottlesOrdered
+        }),
+      });
+
+      const orderResult = await orderResponse.json();
+
+      if (!orderResponse.ok || !orderResult.success) {
+        console.error('Order API error:', orderResult.error);
         toast({
           title: "Order failed",
           description: "There was an error processing your order. Please try again.",
@@ -202,17 +206,22 @@ export default function Checkout() {
 
       // Update inventory quantities after successful order
       try {
-        for (const item of cartItems) {
-          const { error: updateError } = await supabase
-            .from('Inventory')
-            .update({
-              quantity: item.wine.inStock - item.quantity
-            })
-            .eq('id', item.wine.id);
+        const inventoryUpdates = cartItems.map(item => ({
+          id: item.wine.id,
+          newQuantity: item.wine.inStock - item.quantity
+        }));
 
-          if (updateError) {
-            console.warn(`Failed to update inventory for wine ${item.wine.id}:`, formatError(updateError));
-          }
+        const inventoryResponse = await fetch(getApiEndpoint("/inventory/update"), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ updates: inventoryUpdates }),
+        });
+
+        const inventoryResult = await inventoryResponse.json();
+
+        if (!inventoryResponse.ok || !inventoryResult.success) {
+          console.warn('Inventory update API error:', inventoryResult.error);
+          // Don't fail the order for inventory update issues
         }
       } catch (inventoryError) {
         console.warn('Error updating inventory:', formatError(inventoryError));
