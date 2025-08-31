@@ -15,33 +15,47 @@ function withTimeout<T>(p: Promise<T>, ms = 5000): Promise<T> {
   });
 }
 
-export async function resolveApiBase(): Promise<string> {
-  if (cachedBase) return cachedBase;
+const CANDIDATE_BASES = [
+  "/api",
+  "/.netlify/functions/api/api",
+  "/.netlify/functions/api",
+] as const;
 
+async function tryPing(base: string): Promise<boolean> {
   try {
-    const res = await withTimeout(fetch("/api/ping"), 3000);
-    if (res.ok) {
-      cachedBase = "/api";
+    const res = await withTimeout(fetch(`${base}/ping`, { method: "GET" }), 3000);
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function resolveApiBase(forceRefresh = false): Promise<string> {
+  if (!forceRefresh && cachedBase) return cachedBase;
+
+  for (const candidate of CANDIDATE_BASES) {
+    const ok = await tryPing(candidate);
+    if (ok) {
+      cachedBase = candidate;
       return cachedBase;
     }
-  } catch {}
+  }
 
-  // Fallback to Netlify functions path
-  try {
-    const res = await withTimeout(fetch("/.netlify/functions/api/api/ping"), 4000);
-    if (res.ok) {
-      cachedBase = "/.netlify/functions/api/api";
-      return cachedBase;
-    }
-  } catch {}
-
-  // Default to /api if all else fails
+  // As a last resort, assume /api
   cachedBase = "/api";
   return cachedBase;
 }
 
 export async function apiFetch(inputPath: string, init?: RequestInit): Promise<Response> {
-  const base = await resolveApiBase();
-  const url = `${base}${inputPath}`;
-  return fetch(url, init);
+  // First attempt with current/auto-resolved base
+  let base = await resolveApiBase();
+  let url = `${base}${inputPath}`;
+  try {
+    return await fetch(url, init);
+  } catch {
+    // Retry after forcing base re-resolution across candidates
+    base = await resolveApiBase(true);
+    url = `${base}${inputPath}`;
+    return fetch(url, init);
+  }
 }
