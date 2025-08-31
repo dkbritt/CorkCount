@@ -29,7 +29,10 @@ const App = () => (
 
           {/* Checkout Routes */}
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
+          <Route
+            path="/checkout/confirmation"
+            element={<CheckoutConfirmation />}
+          />
 
           {/* Customer Routes */}
           <Route

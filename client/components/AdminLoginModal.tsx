@@ -10,7 +10,11 @@ interface AdminLoginModalProps {
   onLogin: () => void;
 }
 
-export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalProps) {
+export function AdminLoginModal({
+  isOpen,
+  onClose,
+  onLogin,
+}: AdminLoginModalProps) {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,30 +32,34 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     if (!isSupabaseConfigured) {
       setError("Admin login is disabled until Supabase is configured.");
       toast({
         title: "Supabase not configured",
-        description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable admin login.",
+        description:
+          "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable admin login.",
         variant: "destructive",
       });
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password
-      });
+      const { data, error: authError } = await supabase.auth.signInWithPassword(
+        {
+          email: email.trim(),
+          password: password,
+        },
+      );
 
       if (authError) {
         setError(authError.message || "Invalid email or password");
         toast({
           title: "Login failed",
-          description: authError.message || "Please check your credentials and try again.",
+          description:
+            authError.message || "Please check your credentials and try again.",
           variant: "destructive",
         });
         setIsLoading(false);
@@ -94,13 +102,18 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
         </button>
 
         <div className="mb-6">
-          <h2 className="font-playfair text-2xl font-bold text-gray-900 mb-2">Admin Login</h2>
+          <h2 className="font-playfair text-2xl font-bold text-gray-900 mb-2">
+            Admin Login
+          </h2>
           <p className="text-gray-600">Sign in to access the admin dashboard</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -116,7 +129,10 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
             <input
@@ -162,7 +178,10 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
               <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
               <div className="text-sm text-gray-600">
                 <p className="font-medium mb-1">Supabase not configured</p>
-                <p>Admin login is disabled. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable authentication.</p>
+                <p>
+                  Admin login is disabled. Set VITE_SUPABASE_URL and
+                  VITE_SUPABASE_ANON_KEY to enable authentication.
+                </p>
               </div>
             </div>
           </div>

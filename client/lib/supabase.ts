@@ -6,13 +6,13 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 export const isSupabaseInsecureUrl = Boolean(
-  supabaseUrl && String(supabaseUrl).startsWith("http://")
+  supabaseUrl && String(supabaseUrl).startsWith("http://"),
 );
 
 // Create a safe stub client when env vars are missing to avoid crashing the app
 function createStubClient() {
   const notConfiguredError = new Error(
-    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."
+    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.",
   );
 
   const makeQuery = () => {
@@ -86,7 +86,7 @@ export const supabase: any = isSupabaseConfigured
   : (() => {
       if (typeof console !== "undefined") {
         console.warn(
-          "Supabase env vars missing. Running with a stub client. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase."
+          "Supabase env vars missing. Running with a stub client. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase.",
         );
       }
       return createStubClient();
@@ -94,7 +94,7 @@ export const supabase: any = isSupabaseConfigured
 
 if (isSupabaseConfigured && isSupabaseInsecureUrl) {
   console.warn(
-    "VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL."
+    "VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL.",
   );
 }
 
@@ -102,6 +102,6 @@ if (isSupabaseConfigured && isSupabaseInsecureUrl) {
 export function checkSupabaseConfig() {
   return {
     isConfigured: isSupabaseConfigured,
-    isInsecureUrl: isSupabaseInsecureUrl
+    isInsecureUrl: isSupabaseInsecureUrl,
   };
 }

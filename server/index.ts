@@ -20,14 +20,15 @@ export function createServer() {
       isConfigured: Boolean(url && key),
       isInsecureUrl: Boolean(url && String(url).startsWith("http://")),
       url: url ? url : undefined, // Only send URL if configured
-      anonKey: key ? key : undefined // Only send key if configured
+      anonKey: key ? key : undefined, // Only send key if configured
     });
   });
 
   app.get("/api/config/email", (_req, res) => {
     const fromEmail = process.env.VITE_FROM_EMAIL;
     const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
-    const isProductionReady = hasVerifiedDomain && process.env.NODE_ENV === "production";
+    const isProductionReady =
+      hasVerifiedDomain && process.env.NODE_ENV === "production";
 
     res.json({
       isConfigured: Boolean(fromEmail),
@@ -38,7 +39,7 @@ export function createServer() {
         ? "Email not configured"
         : !isProductionReady
           ? "Development mode - emails redirected to test address"
-          : "Production mode - emails sent to actual recipients"
+          : "Production mode - emails sent to actual recipients",
     });
   });
 
@@ -57,7 +58,10 @@ export function createServer() {
       if (!RESEND_API_KEY) {
         return res
           .status(500)
-          .json({ success: false, error: "Email service not configured - missing RESEND_API_KEY" });
+          .json({
+            success: false,
+            error: "Email service not configured - missing RESEND_API_KEY",
+          });
       }
 
       const fromEmail = process.env.VITE_FROM_EMAIL;
@@ -71,7 +75,8 @@ export function createServer() {
       const filEmail = process.env.VITE_FIL_EMAIL;
       const testEmail = process.env.VITE_TEST_EMAIL;
       const hasVerifiedDomain = !fromEmail.includes("resend.dev");
-      const isProductionReady = hasVerifiedDomain && process.env.NODE_ENV === "production";
+      const isProductionReady =
+        hasVerifiedDomain && process.env.NODE_ENV === "production";
       const isDevelopment = !isProductionReady;
 
       const defaultFrom = `KB Winery <${fromEmail}>`;
@@ -107,17 +112,16 @@ export function createServer() {
         const recipients = Array.isArray(msg.to) ? msg.to : [msg.to];
 
         // In development mode, redirect emails to test address
-        const finalRecipients = isDevelopment && testEmail
-          ? [testEmail]
-          : recipients;
+        const finalRecipients =
+          isDevelopment && testEmail ? [testEmail] : recipients;
 
         // Adjust subject and content for development mode
         const finalSubject = isDevelopment
-          ? `[TEST] ${msg.subject} (for ${recipients.join(', ')})`
+          ? `[TEST] ${msg.subject} (for ${recipients.join(", ")})`
           : msg.subject;
 
         const finalHtml = isDevelopment
-          ? `<p><strong>TEST EMAIL - Original recipients: ${recipients.join(', ')}</strong></p>${msg.html}`
+          ? `<p><strong>TEST EMAIL - Original recipients: ${recipients.join(", ")}</strong></p>${msg.html}`
           : msg.html;
 
         emailsToSend.push({
@@ -128,8 +132,9 @@ export function createServer() {
         });
 
         // For order confirmations, also send to admin if configured
-        if (msg.type === 'order_confirmation' && filEmail && msg.orderData) {
-          const adminRecipient = isDevelopment && testEmail ? testEmail : filEmail;
+        if (msg.type === "order_confirmation" && filEmail && msg.orderData) {
+          const adminRecipient =
+            isDevelopment && testEmail ? testEmail : filEmail;
           const adminSubject = isDevelopment
             ? `[TEST] New Order - ${msg.orderData.orderNumber} (for ${filEmail})`
             : `New Order Received - ${msg.orderData.orderNumber}`;
@@ -148,12 +153,10 @@ export function createServer() {
 
       // Validate test email is configured for development mode
       if (isDevelopment && !testEmail) {
-        return res
-          .status(500)
-          .json({
-            success: false,
-            error: "Development mode requires VITE_TEST_EMAIL to be configured",
-          });
+        return res.status(500).json({
+          success: false,
+          error: "Development mode requires VITE_TEST_EMAIL to be configured",
+        });
       }
 
       const sendOne = async (msg: {

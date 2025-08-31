@@ -26,7 +26,9 @@ interface StatusUpdateEmailData {
 // Get email API endpoint
 const getEmailApiEndpoint = () => {
   // Use Netlify functions in production, direct server in development
-  return import.meta.env.DEV ? "/api/email" : "/.netlify/functions/api/api/email";
+  return import.meta.env.DEV
+    ? "/api/email"
+    : "/.netlify/functions/api/api/email";
 };
 
 // Check if server is available
@@ -34,7 +36,7 @@ async function checkServerAvailability(): Promise<boolean> {
   try {
     const response = await fetch("/api/ping", {
       method: "GET",
-      timeout: 5000
+      timeout: 5000,
     } as any);
     return response.ok;
   } catch (error) {
@@ -55,7 +57,7 @@ const formatCurrency = (amount: number): string => {
 const formatPaymentMethod = (method: string): string => {
   const methods: Record<string, string> = {
     zelle: "Zelle",
-    cashapp: "CashApp", 
+    cashapp: "CashApp",
     cash: "Cash",
   };
   return methods[method] || method;
@@ -65,7 +67,7 @@ const formatPaymentMethod = (method: string): string => {
 const getStatusDisplayName = (status: string): string => {
   const statusNames: Record<string, string> = {
     pending: "Pending",
-    "ready-for-pickup": "Ready for Pickup", 
+    "ready-for-pickup": "Ready for Pickup",
     "picked-up": "Picked Up",
     cancelled: "Cancelled",
   };
@@ -302,10 +304,13 @@ export async function sendOrderConfirmationEmail(
     // Check if server is available first
     const serverAvailable = await checkServerAvailability();
     if (!serverAvailable) {
-      console.warn("Email server not available, order confirmation will be skipped");
+      console.warn(
+        "Email server not available, order confirmation will be skipped",
+      );
       return {
         success: false,
-        error: "Email service temporarily unavailable. Order was saved but confirmation email could not be sent."
+        error:
+          "Email service temporarily unavailable. Order was saved but confirmation email could not be sent.",
       };
     }
 
@@ -314,15 +319,15 @@ export async function sendOrderConfirmationEmail(
     // Build email requests on client side, server will handle configuration
     const emailRequests = [
       {
-        type: 'order_confirmation',
+        type: "order_confirmation",
         to: orderData.customerEmail,
         subject: "Your KB Winery Order Confirmation",
         html: emailHTML,
         orderData: {
           orderNumber: orderData.orderNumber,
-          customerEmail: orderData.customerEmail
-        }
-      }
+          customerEmail: orderData.customerEmail,
+        },
+      },
     ];
 
     const response = await fetch(getEmailApiEndpoint(), {
@@ -348,13 +353,18 @@ export async function sendOrderConfirmationEmail(
     return { success: true };
   } catch (error) {
     console.error("Error sending order confirmation email:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown email error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown email error";
 
     // Provide user-friendly error messages
-    if (errorMessage.includes("Failed to fetch") || errorMessage.includes("fetch")) {
+    if (
+      errorMessage.includes("Failed to fetch") ||
+      errorMessage.includes("fetch")
+    ) {
       return {
         success: false,
-        error: "Email service temporarily unavailable. Order was saved but confirmation email could not be sent."
+        error:
+          "Email service temporarily unavailable. Order was saved but confirmation email could not be sent.",
       };
     }
 
@@ -373,10 +383,13 @@ export async function sendStatusUpdateEmail(
     // Check if server is available first
     const serverAvailable = await checkServerAvailability();
     if (!serverAvailable) {
-      console.warn("Email server not available, status update email will be skipped");
+      console.warn(
+        "Email server not available, status update email will be skipped",
+      );
       return {
         success: false,
-        error: "Email service temporarily unavailable. Status was updated but notification email could not be sent."
+        error:
+          "Email service temporarily unavailable. Status was updated but notification email could not be sent.",
       };
     }
 
@@ -388,14 +401,14 @@ export async function sendStatusUpdateEmail(
       body: JSON.stringify({
         messages: [
           {
-            type: 'status_update',
+            type: "status_update",
             to: data.customerEmail,
             subject: generateStatusSubject(data.newStatus),
             html: emailHTML,
             orderData: {
               orderNumber: data.orderNumber,
-              customerEmail: data.customerEmail
-            }
+              customerEmail: data.customerEmail,
+            },
           },
         ],
       }),
@@ -417,13 +430,18 @@ export async function sendStatusUpdateEmail(
     return { success: true };
   } catch (error) {
     console.error("Error sending status update email:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown email error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown email error";
 
     // Provide user-friendly error messages
-    if (errorMessage.includes("Failed to fetch") || errorMessage.includes("fetch")) {
+    if (
+      errorMessage.includes("Failed to fetch") ||
+      errorMessage.includes("fetch")
+    ) {
       return {
         success: false,
-        error: "Email service temporarily unavailable. Status was updated but notification email could not be sent."
+        error:
+          "Email service temporarily unavailable. Status was updated but notification email could not be sent.",
       };
     }
 

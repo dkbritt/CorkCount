@@ -13,9 +13,9 @@ let configLoadAttempted = false;
 async function loadEmailConfig(): Promise<EmailConfig> {
   if (emailConfig) return emailConfig;
   if (configLoadAttempted) return emailConfig || getDefaultEmailConfig();
-  
+
   configLoadAttempted = true;
-  
+
   try {
     const response = await fetch("/api/config/email");
     if (!response.ok) {
@@ -26,15 +26,16 @@ async function loadEmailConfig(): Promise<EmailConfig> {
     return emailConfig;
   } catch (error) {
     console.warn("⚠️ Failed to load email configuration from server:", error);
-    
+
     // Fallback to environment variables if server is not available (development mode)
     const fallbackFromEmail = (import.meta.env as any).VITE_FROM_EMAIL;
-    
+
     if (fallbackFromEmail) {
       console.log("🔧 Using fallback email configuration");
       const hasVerifiedDomain = !fallbackFromEmail.includes("resend.dev");
-      const isProductionReady = hasVerifiedDomain && (import.meta.env as any).PROD;
-      
+      const isProductionReady =
+        hasVerifiedDomain && (import.meta.env as any).PROD;
+
       emailConfig = {
         isConfigured: true,
         hasVerifiedDomain,
@@ -42,7 +43,7 @@ async function loadEmailConfig(): Promise<EmailConfig> {
         isDevelopment: !isProductionReady,
         status: !isProductionReady
           ? "Development mode - emails redirected to test address"
-          : "Production mode - emails sent to actual recipients"
+          : "Production mode - emails sent to actual recipients",
       };
     } else {
       console.log("❌ No email configuration available");
@@ -58,7 +59,7 @@ function getDefaultEmailConfig(): EmailConfig {
     hasVerifiedDomain: false,
     isProductionReady: false,
     isDevelopment: true,
-    status: "Email service not configured - server unavailable"
+    status: "Email service not configured - server unavailable",
   };
 }
 
