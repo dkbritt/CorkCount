@@ -288,9 +288,10 @@ export async function sendOrderConfirmationEmail(
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
 
-    // Check if required environment variables are set
-    const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-    if (!fromEmail) {
+    // Check if required environment variables are set (prevent bundler optimization)
+    const envVars = import.meta.env;
+    const fromEmail = envVars.VITE_FROM_EMAIL;
+    if (!fromEmail || fromEmail === '') {
       return { success: false, error: "Email service not configured - missing VITE_FROM_EMAIL" };
     }
 
@@ -371,9 +372,10 @@ export async function sendStatusUpdateEmail(
   try {
     const emailHTML = generateStatusUpdateHTML(data);
 
-    // Check if required environment variables are set
-    const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-    if (!fromEmail) {
+    // Check if required environment variables are set (prevent bundler optimization)
+    const envVars = import.meta.env;
+    const fromEmail = envVars.VITE_FROM_EMAIL;
+    if (!fromEmail || fromEmail === '') {
       return { success: false, error: "Email service not configured - missing VITE_FROM_EMAIL" };
     }
 
