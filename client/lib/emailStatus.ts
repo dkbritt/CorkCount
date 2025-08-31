@@ -1,26 +1,43 @@
-// Utility to check email system status
-export function getEmailStatus() {
-  const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-  const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
-  const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
-  const isDevelopment = !isProductionReady;
-
-  return {
-    mode: isDevelopment ? "DEVELOPMENT" : "PRODUCTION",
-    fromEmail: fromEmail || "NOT_CONFIGURED",
-    hasVerifiedDomain,
-    isProductionReady,
-    isDevelopment,
-    status: !fromEmail
-      ? "Email not configured - missing VITE_FROM_EMAIL"
-      : isDevelopment
-        ? "Emails will be sent to test address (set VITE_TEST_EMAIL)"
-        : "Emails will be sent to actual customers",
-    requiresVerifiedDomain: !hasVerifiedDomain,
-  };
+// Utility to check email system status from server
+interface EmailConfig {
+  isConfigured: boolean;
+  hasVerifiedDomain: boolean;
+  isProductionReady: boolean;
+  isDevelopment: boolean;
+  status: string;
 }
 
-// Helper to check email status (for internal use only - do not log)
-export function checkEmailStatus() {
-  return getEmailStatus();
+let emailConfig: EmailConfig | null = null;
+
+async function loadEmailConfig(): Promise<EmailConfig> {
+  if (emailConfig) return emailConfig;
+  
+  try {
+    const response = await fetch("/api/config/email");
+    if (!response.ok) {
+      throw new Error(`Failed to load email configuration: ${response.status}`);
+    }
+    emailConfig = await response.json();
+    return emailConfig;
+  } catch (error) {
+    console.warn("Failed to load email configuration:", error);
+    emailConfig = {
+      isConfigured: false,
+      hasVerifiedDomain: false,
+      isProductionReady: false,
+      isDevelopment: true,
+      status: "Email configuration unavailable"
+    };
+    return emailConfig;
+  }
+}
+
+// Get email status from server
+export async function getEmailStatus(): Promise<EmailConfig> {
+  return await loadEmailConfig();
+}
+
+// Helper to check email status (for internal use only)
+export async function checkEmailStatus(): Promise<EmailConfig> {
+  return await getEmailStatus();
 }
