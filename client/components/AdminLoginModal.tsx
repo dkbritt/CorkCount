@@ -182,15 +182,28 @@ export function AdminLoginModal({
         </form>
 
         {/* Configuration Status */}
-        {!isSupabaseConfigured && (
+        {supabaseConfigured === false && (
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
               <div className="text-sm text-gray-600">
-                <p className="font-medium mb-1">Supabase not configured</p>
+                <p className="font-medium mb-1">Database not configured</p>
                 <p>
-                  Admin login is disabled. Set VITE_SUPABASE_URL and
-                  VITE_SUPABASE_ANON_KEY to enable authentication.
+                  Admin login is disabled. Please contact the administrator to enable authentication.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {supabaseConfigured === null && (
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Loader2 className="h-5 w-5 text-blue-400 mt-0.5 animate-spin" />
+              <div className="text-sm text-blue-600">
+                <p className="font-medium mb-1">Checking configuration...</p>
+                <p>
+                  Verifying database connection.
                 </p>
               </div>
             </div>
