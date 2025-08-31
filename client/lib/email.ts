@@ -252,21 +252,33 @@ const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
 export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Promise<{ success: boolean; error?: string }> {
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
-    
+
+    // In development/test mode, send all emails to verified address
+    const isDevelopment = import.meta.env.DEV || !import.meta.env.PROD;
+    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email
+
     const emailRequests = [
-      // Email to customer
+      // Email to customer (or test override)
       {
         from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
-        to: [orderData.customerEmail],
-        subject: 'Your KB Winery Order Confirmation',
-        html: emailHTML,
+        to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
+        subject: isDevelopment
+          ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
+          : 'Your KB Winery Order Confirmation',
+        html: isDevelopment
+          ? `<p><strong>TEST EMAIL - Original recipient: ${orderData.customerEmail}</strong></p>${emailHTML}`
+          : emailHTML,
       },
-      // Email to FIL
+      // Email to FIL (or test override)
       {
         from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
-        to: [FIL_EMAIL],
-        subject: `New Order Received - ${orderData.orderNumber}`,
-        html: emailHTML,
+        to: [isDevelopment ? testEmailOverride : FIL_EMAIL],
+        subject: isDevelopment
+          ? `[TEST] New Order for ${orderData.customerEmail} - ${orderData.orderNumber}`
+          : `New Order Received - ${orderData.orderNumber}`,
+        html: isDevelopment
+          ? `<p><strong>TEST EMAIL - Original recipient: ${FIL_EMAIL}</strong></p>${emailHTML}`
+          : emailHTML,
       }
     ];
 
