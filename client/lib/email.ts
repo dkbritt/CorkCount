@@ -321,16 +321,21 @@ export async function sendStatusUpdateEmail(data: StatusUpdateEmailData): Promis
   try {
     const emailHTML = generateStatusUpdateHTML(data);
 
-    // In development/test mode, send all emails to verified address
-    const isDevelopment = import.meta.env.DEV || !import.meta.env.PROD;
-    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email
+    // Check if we're in production mode with a verified domain
+    const fromEmail = import.meta.env.VITE_FROM_EMAIL;
+    const hasVerifiedDomain = fromEmail && !fromEmail.includes('resend.dev');
+    const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
+    const isDevelopment = !isProductionReady;
+    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
+
+    console.log(`Status email mode: ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'}, fromEmail: ${fromEmail}`);
 
     const response = await fetch(getEmailApiEndpoint(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: [{
-          from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
+          from: `KB Winery <${fromEmail || 'orders@resend.dev'}>`,
           to: [isDevelopment ? testEmailOverride : data.customerEmail],
           subject: isDevelopment
             ? `[TEST] Status Update for ${data.customerEmail} - ${data.orderNumber}`
