@@ -22,8 +22,7 @@ export function createServer() {
   // Email sending endpoint (server-side Resend proxy)
   app.post("/api/email", async (req, res) => {
     try {
-      const RESEND_API_KEY =
-        process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY;
+      const RESEND_API_KEY = process.env.RESEND_API_KEY;
       if (!RESEND_API_KEY) {
         return res
           .status(500)

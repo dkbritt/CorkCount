@@ -59,15 +59,3 @@ if (isSupabaseConfigured && isSupabaseInsecureUrl) {
     'VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL.'
   )
 }
-
-// Declare global window interface for TypeScript
-declare global {
-  interface Window {
-    supabase: typeof supabase
-  }
-}
-
-// Make Supabase client globally available
-if (typeof window !== 'undefined') {
-  window.supabase = supabase
-}
