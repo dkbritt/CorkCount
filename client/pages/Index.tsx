@@ -11,7 +11,6 @@ import { WineDetailsModal } from "@/components/WineDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 
@@ -59,73 +58,71 @@ export default function Index() {
   const navigate = useNavigate();
 
   // Fetch inventory from Supabase
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+useEffect(() => {
+  const fetchInventory = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const { data: inventory, error: supabaseError } = await supabase
-          .from('Inventory')
-          .select('*')
-          .gte('quantity', 1); // Only fetch items that are in stock
+      const response = await fetch('/api/fetch-inventory');
+      const inventory = await response.json();
 
-        if (supabaseError) {
-          console.error('Supabase error:', formatError(supabaseError));
-          setError('Failed to load wine inventory');
-          toast({
-            title: "Error",
-            description: `Failed to load wine inventory: ${formatError(supabaseError)}` ,
-            variant: "destructive",
-          });
-          return;
-        }
-
-        // Convert Supabase inventory data to Wine format
-        const winesData: Wine[] = (inventory || []).map((item: any) => ({
-          id: item.id,
-          name: item.name || 'Unnamed Wine',
-          winery: item.winery || 'Unknown Winery',
-          vintage: item.vintage || new Date().getFullYear(),
-          region: '', // Not displayed on shop page
-          type: item.type || 'Red Wine',
-          price: parseFloat(item.price) || 0,
-          inStock: parseInt(item.quantity) || 0,
-          rating: 0, // Not displayed on shop page
-          description: item.description || item.flavor_notes || 'A wonderful wine experience',
-          flavorNotes: (
-            // Use auto-generated tags if available, otherwise parse flavor_notes
-            item.tags && Array.isArray(item.tags) && item.tags.length > 0
-              ? item.tags.map((tag: string) => tag.charAt(0).toUpperCase() + tag.slice(1))
-              : item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced']
-          ),
-          image: item.image_url || item.image || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
-        }));
-
-        setWines(winesData);
-
-        if (winesData.length === 0) {
-          toast({
-            title: "No wines available",
-            description: "The wine inventory is currently empty. Please check back later.",
-          });
-        }
-
-      } catch (err) {
-        console.error('Error fetching inventory:', formatError(err));
-        setError('An unexpected error occurred');
+      if (!response.ok) {
+        console.error('Inventory fetch error:', inventory.error);
+        setError('Failed to load wine inventory');
         toast({
           title: "Error",
-          description: "An unexpected error occurred while loading wines.",
+          description: `Failed to load wine inventory: ${inventory.error}`,
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
 
-    fetchInventory();
+      // Convert inventory data to Wine format
+      const winesData: Wine[] = (inventory || []).map((item: any) => ({
+        id: item.id,
+        name: item.name || 'Unnamed Wine',
+        winery: item.winery || 'Unknown Winery',
+        vintage: item.vintage || new Date().getFullYear(),
+        region: '', // Not displayed on shop page
+        type: item.type || 'Red Wine',
+        price: parseFloat(item.price) || 0,
+        inStock: parseInt(item.quantity) || 0,
+        rating: 0, // Not displayed on shop page
+        description: item.description || item.flavor_notes || 'A wonderful wine experience',
+        flavorNotes: (
+          item.tags && Array.isArray(item.tags) && item.tags.length > 0
+            ? item.tags.map((tag: string) => tag.charAt(0).toUpperCase() + tag.slice(1))
+            : item.flavor_notes ? item.flavor_notes.split(',').map((note: string) => note.trim()) : ['Complex', 'Balanced']
+        ),
+        image: item.image_url || item.image || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
+      }));
+
+      setWines(winesData);
+
+      if (winesData.length === 0) {
+        toast({
+          title: "No wines available",
+          description: "The wine inventory is currently empty. Please check back later.",
+        });
+      }
+
+    } catch (err) {
+      console.error('Error fetching inventory:', formatError(err));
+      setError('An unexpected error occurred');
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while loading wines.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchInventory();
   }, [toast]);
+
 
   // Save cart to localStorage whenever cartItems changes (minimized + bounded)
   useEffect(() => {
