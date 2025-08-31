@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle, Loader2 } from "lucide-react";
-import { getSupabaseClient, checkSupabaseConfig } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdminLoginModalProps {
@@ -28,24 +28,20 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    
+    if (!isSupabaseConfigured) {
+      setError("Admin login is disabled until Supabase is configured.");
+      toast({
+        title: "Supabase not configured",
+        description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable admin login.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
-      // Check if Supabase is configured
-      const config = await checkSupabaseConfig();
-      if (!config.isConfigured) {
-        setError("Admin login is disabled until database is configured.");
-        toast({
-          title: "Database not configured",
-          description: "Contact administrator to configure database authentication.",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      // Get Supabase client and attempt login
-      const supabase = await getSupabaseClient();
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password
@@ -160,15 +156,17 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
         </form>
 
         {/* Configuration Status */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
-            <div className="text-sm text-gray-600">
-              <p className="font-medium mb-1">Database Configuration</p>
-              <p>If you're having trouble logging in, ensure the database service is properly configured.</p>
+        {!isSupabaseConfigured && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+              <div className="text-sm text-gray-600">
+                <p className="font-medium mb-1">Supabase not configured</p>
+                <p>Admin login is disabled. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable authentication.</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
