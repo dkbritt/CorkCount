@@ -22,6 +22,13 @@ export function AdminLoginModal({
   const [isLoading, setIsLoading] = useState(false);
   const [supabaseConfigured, setSupabaseConfigured] = useState<boolean | null>(null);
 
+  // Check Supabase configuration on mount
+  useEffect(() => {
+    if (isOpen) {
+      isSupabaseConfigured().then(setSupabaseConfigured);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
