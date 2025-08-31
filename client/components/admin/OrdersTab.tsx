@@ -169,15 +169,40 @@ export function OrdersTab() {
           orderNotes: order.notes
         }));
 
-        // Also load from localStorage as backup and merge
+        // When Supabase is available, use it as the primary source of truth
+        // Only include localStorage orders if they're very recent (last 24 hours) and not in Supabase
         const localOrders = loadOrdersFromStorage();
+        const now = new Date().getTime();
+        const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
 
-        // Merge orders (Supabase first, then local ones not already in Supabase)
         const allOrderNumbers = new Set(convertedOrders.map(o => o.orderNumber));
-        const uniqueLocalOrders = localOrders.filter(o => !allOrderNumbers.has(o.orderNumber));
+        const recentLocalOrders = localOrders.filter(o => {
+          // Only include if order is recent and not already in Supabase
+          const orderDate = new Date(o.orderDate).getTime();
+          return !allOrderNumbers.has(o.orderNumber) && orderDate > twentyFourHoursAgo;
+        });
 
-        const allOrders = [...convertedOrders, ...uniqueLocalOrders];
+        const allOrders = [...convertedOrders, ...recentLocalOrders];
         setOrders(allOrders);
+
+        // Clean up localStorage: remove orders that are now in Supabase or older than 7 days
+        try {
+          const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+          const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
+          const cleanedOrders = checkoutOrders.filter((order: any) => {
+            const orderDate = new Date(order.orderDate).getTime();
+            const isRecent = orderDate > sevenDaysAgo;
+            const notInSupabase = !allOrderNumbers.has(order.orderNumber);
+            return isRecent && notInSupabase;
+          });
+
+          if (cleanedOrders.length !== checkoutOrders.length) {
+            localStorage.setItem("corkCountOrders", JSON.stringify(cleanedOrders));
+            console.log(`Cleaned localStorage: removed ${checkoutOrders.length - cleanedOrders.length} old/synced orders`);
+          }
+        } catch (e) {
+          console.warn('Error cleaning localStorage:', e);
+        }
 
         // Initialize status updates for all orders
         const initialStatusUpdates: Record<string, string> = {};
