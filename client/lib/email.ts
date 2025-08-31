@@ -23,7 +23,7 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-const FIL_EMAIL = import.meta.env.VITE_FIL_EMAIL || "kelvinb1@gmail.com"; // FIL's email - fallback for development
+const FIL_EMAIL = import.meta.env.VITE_FIL_EMAIL;
 
 const getEmailApiEndpoint = () => {
   const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
@@ -295,14 +295,11 @@ export async function sendOrderConfirmationEmail(
     const isDevelopment = !isProductionReady;
     const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
 
-    console.log(
-      `Email mode: ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"}, fromEmail: ${fromEmail}, hasVerifiedDomain: ${hasVerifiedDomain}`,
-    );
 
     const emailRequests = [
       // Email to customer (or test override)
       {
-        from: `KB Winery <${fromEmail || "orders@resend.dev"}>`,
+        from: `KB Winery <${fromEmail}>`,
         to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
         subject: isDevelopment
           ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
@@ -313,7 +310,7 @@ export async function sendOrderConfirmationEmail(
       },
       // Email to FIL (or test override)
       {
-        from: `KB Winery <${fromEmail || "orders@resend.dev"}>`,
+        from: `KB Winery <${fromEmail}>`,
         to: [isDevelopment ? testEmailOverride : FIL_EMAIL],
         subject: isDevelopment
           ? `[TEST] New Order for ${orderData.customerEmail} - ${orderData.orderNumber}`
@@ -368,9 +365,6 @@ export async function sendStatusUpdateEmail(
     const isDevelopment = !isProductionReady;
     const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
 
-    console.log(
-      `Status email mode: ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"}, fromEmail: ${fromEmail}`,
-    );
 
     const response = await fetch(getEmailApiEndpoint(), {
       method: "POST",
@@ -378,7 +372,7 @@ export async function sendStatusUpdateEmail(
       body: JSON.stringify({
         messages: [
           {
-            from: `KB Winery <${fromEmail || "orders@resend.dev"}>`,
+            from: `KB Winery <${fromEmail}>`,
             to: [isDevelopment ? testEmailOverride : data.customerEmail],
             subject: isDevelopment
               ? `[TEST] Status Update for ${data.customerEmail} - ${data.orderNumber}`
