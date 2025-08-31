@@ -178,7 +178,7 @@ export default function Checkout() {
           : `/.netlify/functions/api/api${path}`;
       };
 
-      const orderResponse = await fetch(getApiEndpoint("/orders"), {
+      const orderResponse = await apiFetch("/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -213,7 +213,7 @@ export default function Checkout() {
           newQuantity: item.wine.inStock - item.quantity
         }));
 
-        const inventoryResponse = await fetch(getApiEndpoint("/inventory/update"), {
+        const inventoryResponse = await apiFetch("/inventory/update", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ updates: inventoryUpdates }),
