@@ -23,7 +23,7 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-const FIL_EMAIL = import.meta.env.VITE_FIL_EMAIL || "kelvinb1@gmail.com"; // FIL's email - fallback for development
+const FIL_EMAIL = import.meta.env.VITE_FIL_EMAIL;
 
 const getEmailApiEndpoint = () => {
   const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
