@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle, Loader2 } from "lucide-react";
 import { secureSupabase, isSupabaseConfigured } from "@/lib/secureSupabase";
