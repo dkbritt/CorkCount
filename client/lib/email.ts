@@ -297,9 +297,9 @@ export async function sendOrderConfirmationEmail(
 
     // Check if we're in production mode with a verified domain
     const hasVerifiedDomain = !fromEmail.includes("resend.dev");
-    const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
+    const isProductionReady = hasVerifiedDomain && envVars.PROD;
     const isDevelopment = !isProductionReady;
-    const testEmailOverride = import.meta.env.VITE_TEST_EMAIL;
+    const testEmailOverride = envVars.VITE_TEST_EMAIL;
 
 
     // Validate test email override for development
@@ -381,9 +381,9 @@ export async function sendStatusUpdateEmail(
 
     // Check if we're in production mode with a verified domain
     const hasVerifiedDomain = !fromEmail.includes("resend.dev");
-    const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
+    const isProductionReady = hasVerifiedDomain && envVars.PROD;
     const isDevelopment = !isProductionReady;
-    const testEmailOverride = import.meta.env.VITE_TEST_EMAIL;
+    const testEmailOverride = envVars.VITE_TEST_EMAIL;
 
     // Validate test email override for development
     if (isDevelopment && !testEmailOverride) {
