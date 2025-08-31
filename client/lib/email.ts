@@ -26,7 +26,9 @@ interface StatusUpdateEmailData {
 // Get email API endpoint
 const getEmailApiEndpoint = () => {
   // Use Netlify functions in production, direct server in development
-  return import.meta.env.DEV
+  // Detect environment by checking hostname
+  const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  return isDev
     ? "/api/email"
     : "/.netlify/functions/api/api/email";
 };
