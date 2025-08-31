@@ -371,12 +371,22 @@ export async function sendStatusUpdateEmail(
   try {
     const emailHTML = generateStatusUpdateHTML(data);
 
-    // Check if we're in production mode with a verified domain
+    // Check if required environment variables are set
     const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-    const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
+    if (!fromEmail) {
+      return { success: false, error: "Email service not configured - missing VITE_FROM_EMAIL" };
+    }
+
+    // Check if we're in production mode with a verified domain
+    const hasVerifiedDomain = !fromEmail.includes("resend.dev");
     const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
     const isDevelopment = !isProductionReady;
-    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
+    const testEmailOverride = import.meta.env.VITE_TEST_EMAIL;
+
+    // Validate test email override for development
+    if (isDevelopment && !testEmailOverride) {
+      return { success: false, error: "Development mode requires VITE_TEST_EMAIL to be set" };
+    }
 
 
     const response = await fetch(getEmailApiEndpoint(), {
