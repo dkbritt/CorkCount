@@ -1,13 +1,11 @@
 // Secure Supabase client that makes API calls to serverless functions
 // This prevents environment variables from being bundled into the client
 
-// API endpoint helpers - detect environment without exposing variables
-const getApiEndpoint = (path: string) => {
-  // Detect environment by checking hostname instead of environment variables
-  const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-  return isDev
-    ? `/api${path}`
-    : `/.netlify/functions/api/api${path}`;
+import { apiFetch } from "./api";
+
+// API endpoint helpers via dynamic resolution
+const api = {
+  fetch: (path: string, init?: RequestInit) => apiFetch(path, init),
 };
 
 // Check if Supabase is configured by testing the API
