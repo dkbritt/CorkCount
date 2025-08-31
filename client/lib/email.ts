@@ -288,12 +288,17 @@ export async function sendOrderConfirmationEmail(
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
 
-    // Check if we're in production mode with a verified domain
+    // Check if required environment variables are set
     const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-    const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
+    if (!fromEmail) {
+      return { success: false, error: "Email service not configured - missing VITE_FROM_EMAIL" };
+    }
+
+    // Check if we're in production mode with a verified domain
+    const hasVerifiedDomain = !fromEmail.includes("resend.dev");
     const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
     const isDevelopment = !isProductionReady;
-    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
+    const testEmailOverride = import.meta.env.VITE_TEST_EMAIL;
 
 
     const emailRequests = [
