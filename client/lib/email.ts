@@ -315,16 +315,24 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
 export async function sendStatusUpdateEmail(data: StatusUpdateEmailData): Promise<{ success: boolean; error?: string }> {
   try {
     const emailHTML = generateStatusUpdateHTML(data);
-    
+
+    // In development/test mode, send all emails to verified address
+    const isDevelopment = import.meta.env.DEV || !import.meta.env.PROD;
+    const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email
+
     const response = await fetch(getEmailApiEndpoint(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: [{
           from: `KB Winery <${import.meta.env.VITE_FROM_EMAIL || 'orders@resend.dev'}>`,
-          to: [data.customerEmail],
-          subject: generateStatusSubject(data.newStatus),
-          html: emailHTML,
+          to: [isDevelopment ? testEmailOverride : data.customerEmail],
+          subject: isDevelopment
+            ? `[TEST] Status Update for ${data.customerEmail} - ${data.orderNumber}`
+            : generateStatusSubject(data.newStatus),
+          html: isDevelopment
+            ? `<p><strong>TEST EMAIL - Original recipient: ${data.customerEmail}</strong></p>${emailHTML}`
+            : emailHTML,
         }],
       }),
     });
