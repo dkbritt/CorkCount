@@ -1,9 +1,11 @@
 // Secure Supabase client that makes API calls to serverless functions
 // This prevents environment variables from being bundled into the client
 
-// API endpoint helpers
+// API endpoint helpers - detect environment without exposing variables
 const getApiEndpoint = (path: string) => {
-  return import.meta.env.DEV
+  // Detect environment by checking hostname instead of environment variables
+  const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  return isDev
     ? `/api${path}`
     : `/.netlify/functions/api/api${path}`;
 };
