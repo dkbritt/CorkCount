@@ -5,6 +5,7 @@ import { handleDemo } from "./routes/demo";
 import { handleAdminLogin } from "./routes/auth";
 import { getAvailableInventory, updateInventoryQuantities } from "./routes/inventory";
 import { createOrder, getOrders, updateOrderStatus } from "./routes/orders";
+import { getBatches, createBatch, updateBatch, deleteBatch } from "./routes/batches";
 
 export function createServer() {
   const app = express();
