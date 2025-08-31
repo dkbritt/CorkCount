@@ -56,6 +56,17 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Metrics endpoint
+  app.get("/api/metrics", async (_req, res) => {
+    try {
+      const result = await getMetricsData();
+      if (result.success) return res.json(result);
+      return res.status(500).json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, error: "Internal server error" });
+    }
+  });
+
   // Authentication endpoints
   app.post("/api/auth/login", async (req, res) => {
     try {
