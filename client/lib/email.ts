@@ -29,6 +29,20 @@ const getEmailApiEndpoint = () => {
   return import.meta.env.DEV ? "/api/email" : "/.netlify/functions/api/api/email";
 };
 
+// Check if server is available
+async function checkServerAvailability(): Promise<boolean> {
+  try {
+    const response = await fetch("/api/ping", {
+      method: "GET",
+      timeout: 5000
+    } as any);
+    return response.ok;
+  } catch (error) {
+    console.warn("Server not available:", error);
+    return false;
+  }
+}
+
 // Helper function to format currency
 const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat("en-US", {
