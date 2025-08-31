@@ -32,9 +32,9 @@ const getEmailApiEndpoint = () => {
 
 // Helper function to format currency
 const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD'
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
   }).format(amount);
 };
 
@@ -42,8 +42,8 @@ const formatCurrency = (amount: number): string => {
 const formatPaymentMethod = (method: string): string => {
   const methods: Record<string, string> = {
     zelle: "Zelle",
-    cashapp: "CashApp", 
-    cash: "Cash"
+    cashapp: "CashApp",
+    cash: "Cash",
   };
   return methods[method] || method;
 };
@@ -51,10 +51,10 @@ const formatPaymentMethod = (method: string): string => {
 // Helper function to get status display name
 const getStatusDisplayName = (status: string): string => {
   const statusNames: Record<string, string> = {
-    "pending": "Pending",
+    pending: "Pending",
     "ready-for-pickup": "Ready for Pickup",
     "picked-up": "Picked Up",
-    "cancelled": "Cancelled"
+    cancelled: "Cancelled",
   };
   return statusNames[status] || status;
 };
@@ -62,20 +62,22 @@ const getStatusDisplayName = (status: string): string => {
 // Generate appropriate subject line for status updates
 const generateStatusSubject = (newStatus: string): string => {
   switch (newStatus) {
-    case 'ready-for-pickup':
-      return 'Your KB Winery Order is Ready for Pickup';
-    case 'picked-up':
-      return 'Your KB Winery Order has been Picked Up';
-    case 'cancelled':
-      return 'Your KB Winery Order has been Cancelled';
+    case "ready-for-pickup":
+      return "Your KB Winery Order is Ready for Pickup";
+    case "picked-up":
+      return "Your KB Winery Order has been Picked Up";
+    case "cancelled":
+      return "Your KB Winery Order has been Cancelled";
     default:
-      return 'Your KB Winery Order Status Update';
+      return "Your KB Winery Order Status Update";
   }
 };
 
 // Generate order confirmation email content
 const generateOrderConfirmationHTML = (data: OrderEmailData): string => {
-  const itemsHTML = data.items.map(item => `
+  const itemsHTML = data.items
+    .map(
+      (item) => `
     <tr style="border-bottom: 1px solid #eee;">
       <td style="padding: 12px; border-right: 1px solid #eee;">
         ${item.wine.name} ${item.wine.vintage}
@@ -90,7 +92,9 @@ const generateOrderConfirmationHTML = (data: OrderEmailData): string => {
         ${formatCurrency(item.wine.price * item.quantity)}
       </td>
     </tr>
-  `).join('');
+  `,
+    )
+    .join("");
 
   return `
     <!DOCTYPE html>
@@ -114,11 +118,11 @@ const generateOrderConfirmationHTML = (data: OrderEmailData): string => {
         <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
           <h3 style="margin-top: 0; color: #722F37;">Order Details</h3>
           <p><strong>Order Number:</strong> ${data.orderNumber}</p>
-          <p><strong>Pickup Date:</strong> ${new Date(data.pickupDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p><strong>Pickup Date:</strong> ${new Date(data.pickupDate).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
           <p><strong>Pickup Time:</strong> ${data.pickupTime}</p>
           <p><strong>Payment Method:</strong> ${formatPaymentMethod(data.paymentMethod)}</p>
-          ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
-          ${data.orderNotes ? `<p><strong>Notes:</strong> ${data.orderNotes}</p>` : ''}
+          ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ""}
+          ${data.orderNotes ? `<p><strong>Notes:</strong> ${data.orderNotes}</p>` : ""}
         </div>
         
         <h3 style="color: #722F37;">Your Wine Selection</h3>
@@ -146,26 +150,38 @@ const generateOrderConfirmationHTML = (data: OrderEmailData): string => {
           </tfoot>
         </table>
         
-        ${data.paymentMethod === 'zelle' ? `
+        ${
+          data.paymentMethod === "zelle"
+            ? `
           <div style="background: #fff3cd; border: 1px solid #ffecb5; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <h4 style="margin-top: 0; color: #856404;">Payment Instructions</h4>
             <p style="margin-bottom: 0;">Please send payment via Zelle to: <strong>kbwinery@zelle.com</strong></p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
-        ${data.paymentMethod === 'cashapp' ? `
+        ${
+          data.paymentMethod === "cashapp"
+            ? `
           <div style="background: #fff3cd; border: 1px solid #ffecb5; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <h4 style="margin-top: 0; color: #856404;">Payment Instructions</h4>
             <p style="margin-bottom: 0;">Please send payment via CashApp to: <strong>$KBWinery</strong></p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
-        ${data.paymentMethod === 'cash' ? `
+        ${
+          data.paymentMethod === "cash"
+            ? `
           <div style="background: #fff3cd; border: 1px solid #ffecb5; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <h4 style="margin-top: 0; color: #856404;">Payment Instructions</h4>
             <p style="margin-bottom: 0;">Please bring exact change (${formatCurrency(data.totalPrice)}) for pickup.</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
         <p>We'll send you another email when your order is ready for pickup. If you have any questions, please don't hesitate to contact us.</p>
         
@@ -182,9 +198,14 @@ const generateOrderConfirmationHTML = (data: OrderEmailData): string => {
 
 // Generate status update email content
 const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
-  const statusColor = data.newStatus === 'ready-for-pickup' ? '#28a745' : 
-                     data.newStatus === 'picked-up' ? '#17a2b8' :
-                     data.newStatus === 'cancelled' ? '#dc3545' : '#ffc107';
+  const statusColor =
+    data.newStatus === "ready-for-pickup"
+      ? "#28a745"
+      : data.newStatus === "picked-up"
+        ? "#17a2b8"
+        : data.newStatus === "cancelled"
+          ? "#dc3545"
+          : "#ffc107";
 
   return `
     <!DOCTYPE html>
@@ -211,29 +232,41 @@ const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
           <div style="background: ${statusColor}; color: white; padding: 10px; border-radius: 4px; text-align: center; margin: 10px 0;">
             <strong>New Status: ${getStatusDisplayName(data.newStatus)}</strong>
           </div>
-          ${data.note ? `<p><strong>Note:</strong> ${data.note}</p>` : ''}
+          ${data.note ? `<p><strong>Note:</strong> ${data.note}</p>` : ""}
         </div>
         
-        ${data.newStatus === 'ready-for-pickup' ? `
+        ${
+          data.newStatus === "ready-for-pickup"
+            ? `
           <div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <h4 style="margin-top: 0; color: #155724;">🍷 Your order is ready!</h4>
             <p style="margin-bottom: 0;">Please come by to pick up your wine order at your scheduled time. Don't forget to bring your payment if you haven't sent it already!</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
-        ${data.newStatus === 'picked-up' ? `
+        ${
+          data.newStatus === "picked-up"
+            ? `
           <div style="background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <h4 style="margin-top: 0; color: #0c5460;">Thank you!</h4>
             <p style="margin-bottom: 0;">Thank you for choosing KB Winery! We hope you enjoy your wine selection.</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
-        ${data.newStatus === 'cancelled' ? `
+        ${
+          data.newStatus === "cancelled"
+            ? `
           <div style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <h4 style="margin-top: 0; color: #721c24;">Order Cancelled</h4>
             <p style="margin-bottom: 0;">Your order has been cancelled. If you have any questions, please contact us.</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
         <p>If you have any questions about your order, please don't hesitate to contact us.</p>
         
@@ -249,34 +282,38 @@ const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
 };
 
 // Send order confirmation email
-export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Promise<{ success: boolean; error?: string }> {
+export async function sendOrderConfirmationEmail(
+  orderData: OrderEmailData,
+): Promise<{ success: boolean; error?: string }> {
   try {
     const emailHTML = generateOrderConfirmationHTML(orderData);
 
     // Check if we're in production mode with a verified domain
     const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-    const hasVerifiedDomain = fromEmail && !fromEmail.includes('resend.dev');
+    const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
     const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
     const isDevelopment = !isProductionReady;
     const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
 
-    console.log(`Email mode: ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'}, fromEmail: ${fromEmail}, hasVerifiedDomain: ${hasVerifiedDomain}`);
+    console.log(
+      `Email mode: ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"}, fromEmail: ${fromEmail}, hasVerifiedDomain: ${hasVerifiedDomain}`,
+    );
 
     const emailRequests = [
       // Email to customer (or test override)
       {
-        from: `KB Winery <${fromEmail || 'orders@resend.dev'}>`,
+        from: `KB Winery <${fromEmail || "orders@resend.dev"}>`,
         to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
         subject: isDevelopment
           ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
-          : 'Your KB Winery Order Confirmation',
+          : "Your KB Winery Order Confirmation",
         html: isDevelopment
           ? `<p><strong>TEST EMAIL - Original recipient: ${orderData.customerEmail}</strong></p>${emailHTML}`
           : emailHTML,
       },
       // Email to FIL (or test override)
       {
-        from: `KB Winery <${fromEmail || 'orders@resend.dev'}>`,
+        from: `KB Winery <${fromEmail || "orders@resend.dev"}>`,
         to: [isDevelopment ? testEmailOverride : FIL_EMAIL],
         subject: isDevelopment
           ? `[TEST] New Order for ${orderData.customerEmail} - ${orderData.orderNumber}`
@@ -284,89 +321,95 @@ export async function sendOrderConfirmationEmail(orderData: OrderEmailData): Pro
         html: isDevelopment
           ? `<p><strong>TEST EMAIL - Original recipient: ${FIL_EMAIL}</strong></p>${emailHTML}`
           : emailHTML,
-      }
+      },
     ];
 
     const response = await fetch(getEmailApiEndpoint(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: emailRequests }),
     });
 
     if (!response.ok) {
-      const text = await response.text().catch(() => '');
+      const text = await response.text().catch(() => "");
       throw new Error(text || `Email service error: ${response.status}`);
     }
 
     const result = await response.json();
     if (!result.success) {
       const detail = Array.isArray(result.failures)
-        ? result.failures.map((f: any) => `#${f.index + 1}: ${f.reason}`).join('; ')
-        : (result.error || 'Unknown error');
+        ? result.failures
+            .map((f: any) => `#${f.index + 1}: ${f.reason}`)
+            .join("; ")
+        : result.error || "Unknown error";
       return { success: false, error: detail };
     }
     return { success: true };
-    
   } catch (error) {
-    console.error('Error sending order confirmation email:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown email error'
+    console.error("Error sending order confirmation email:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown email error",
     };
   }
 }
 
 // Send status update email
-export async function sendStatusUpdateEmail(data: StatusUpdateEmailData): Promise<{ success: boolean; error?: string }> {
+export async function sendStatusUpdateEmail(
+  data: StatusUpdateEmailData,
+): Promise<{ success: boolean; error?: string }> {
   try {
     const emailHTML = generateStatusUpdateHTML(data);
 
     // Check if we're in production mode with a verified domain
     const fromEmail = import.meta.env.VITE_FROM_EMAIL;
-    const hasVerifiedDomain = fromEmail && !fromEmail.includes('resend.dev');
+    const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
     const isProductionReady = hasVerifiedDomain && import.meta.env.PROD;
     const isDevelopment = !isProductionReady;
     const testEmailOverride = "daishakb@gmail.com"; // Verified Resend email for testing
 
-    console.log(`Status email mode: ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'}, fromEmail: ${fromEmail}`);
+    console.log(
+      `Status email mode: ${isDevelopment ? "DEVELOPMENT" : "PRODUCTION"}, fromEmail: ${fromEmail}`,
+    );
 
     const response = await fetch(getEmailApiEndpoint(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        messages: [{
-          from: `KB Winery <${fromEmail || 'orders@resend.dev'}>`,
-          to: [isDevelopment ? testEmailOverride : data.customerEmail],
-          subject: isDevelopment
-            ? `[TEST] Status Update for ${data.customerEmail} - ${data.orderNumber}`
-            : generateStatusSubject(data.newStatus),
-          html: isDevelopment
-            ? `<p><strong>TEST EMAIL - Original recipient: ${data.customerEmail}</strong></p>${emailHTML}`
-            : emailHTML,
-        }],
+        messages: [
+          {
+            from: `KB Winery <${fromEmail || "orders@resend.dev"}>`,
+            to: [isDevelopment ? testEmailOverride : data.customerEmail],
+            subject: isDevelopment
+              ? `[TEST] Status Update for ${data.customerEmail} - ${data.orderNumber}`
+              : generateStatusSubject(data.newStatus),
+            html: isDevelopment
+              ? `<p><strong>TEST EMAIL - Original recipient: ${data.customerEmail}</strong></p>${emailHTML}`
+              : emailHTML,
+          },
+        ],
       }),
     });
 
     if (!response.ok) {
-      const text = await response.text().catch(() => '');
+      const text = await response.text().catch(() => "");
       throw new Error(text || `Email service error: ${response.status}`);
     }
 
     const result = await response.json();
     if (!result.success) {
       const detail = Array.isArray(result.failures)
-        ? result.failures.map((f: any) => f.reason).join('; ')
-        : (result.error || 'Unknown error');
+        ? result.failures.map((f: any) => f.reason).join("; ")
+        : result.error || "Unknown error";
       return { success: false, error: detail };
     }
 
     return { success: true };
-    
   } catch (error) {
-    console.error('Error sending status update email:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown email error'
+    console.error("Error sending status update email:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown email error",
     };
   }
 }

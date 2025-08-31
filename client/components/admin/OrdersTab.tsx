@@ -17,7 +17,7 @@ import {
   Loader2,
   Search,
   Filter,
-  Trash2
+  Trash2,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
@@ -52,69 +52,69 @@ const mockOrders: Order[] = [
     orderNumber: "ORD-20240115-001",
     customer: {
       name: "Sarah Wilson",
-      email: "sarah.wilson@email.com"
+      email: "sarah.wilson@email.com",
     },
     items: [
-      { name: "Château Margaux 2015", quantity: 1, price: 450.00 },
-      { name: "Dom Pérignon Vintage 2012", quantity: 2, price: 280.00 }
+      { name: "Château Margaux 2015", quantity: 1, price: 450.0 },
+      { name: "Dom Pérignon Vintage 2012", quantity: 2, price: 280.0 },
     ],
-    total: 1010.00,
+    total: 1010.0,
     status: "pending",
     orderDate: "2024-01-15T14:30:00Z",
     pickupDate: "2024-01-18",
     pickupTime: "2:00 PM",
     paymentMethod: "zelle",
     phone: "(555) 123-4567",
-    orderNotes: "Please hold until pickup confirmation"
+    orderNotes: "Please hold until pickup confirmation",
   },
   {
     id: "ord-002",
     orderNumber: "ORD-20240114-001",
     customer: {
       name: "John Smith",
-      email: "john.smith@email.com"
+      email: "john.smith@email.com",
     },
     items: [
-      { name: "Opus One 2018", quantity: 1, price: 380.00 },
-      { name: "Barolo Brunate 2017", quantity: 2, price: 120.00 }
+      { name: "Opus One 2018", quantity: 1, price: 380.0 },
+      { name: "Barolo Brunate 2017", quantity: 2, price: 120.0 },
     ],
-    total: 620.00,
+    total: 620.0,
     status: "ready-for-pickup",
     orderDate: "2024-01-14T09:15:00Z",
     pickupDate: "2024-01-16",
     pickupTime: "4:00 PM",
-    paymentMethod: "cashapp"
+    paymentMethod: "cashapp",
   },
   {
     id: "ord-003",
     orderNumber: "ORD-20240112-001",
     customer: {
       name: "Emily Davis",
-      email: "emily.davis@email.com"
+      email: "emily.davis@email.com",
     },
     items: [
-      { name: "Sancerre Les Monts Damnés 2020", quantity: 3, price: 85.00 }
+      { name: "Sancerre Les Monts Damnés 2020", quantity: 3, price: 85.0 },
     ],
-    total: 255.00,
+    total: 255.0,
     status: "picked-up",
     orderDate: "2024-01-12T16:45:00Z",
     pickupDate: "2024-01-15",
     pickupTime: "11:00 AM",
-    paymentMethod: "cash"
-  }
+    paymentMethod: "cash",
+  },
 ];
 
 const statusOptions = [
   { value: "pending", label: "Pending" },
   { value: "ready-for-pickup", label: "Ready for Pickup" },
   { value: "picked-up", label: "Picked Up" },
-  { value: "cancelled", label: "Cancelled" }
+  { value: "cancelled", label: "Cancelled" },
 ];
 
 const paymentMethodLabels: Record<string, string> = {
   zelle: "Zelle",
   cashapp: "CashApp",
-  cash: "Cash"
+  cash: "Cash",
 };
 
 export function OrdersTab() {
@@ -123,10 +123,14 @@ export function OrdersTab() {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
-  const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
+  const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>(
+    {},
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
+    null,
+  );
 
   // Fetch orders from Supabase
   useEffect(() => {
@@ -135,12 +139,15 @@ export function OrdersTab() {
         setLoading(true);
 
         const { data: supabaseOrders, error } = await supabase
-          .from('Orders')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .from("Orders")
+          .select("*")
+          .order("created_at", { ascending: false });
 
         if (error) {
-          console.error('Error fetching orders from Supabase:', formatError(error));
+          console.error(
+            "Error fetching orders from Supabase:",
+            formatError(error),
+          );
           // Fallback to localStorage if Supabase fails
           loadOrdersFromStorage();
           return;
@@ -152,12 +159,12 @@ export function OrdersTab() {
           orderNumber: order.order_number,
           customer: {
             name: order.customer_name,
-            email: order.email
+            email: order.email,
           },
           items: (order.bottles_ordered || []).map((bottle: any) => ({
-            name: `${bottle.wine_name} ${bottle.wine_vintage || ''}`,
+            name: `${bottle.wine_name} ${bottle.wine_vintage || ""}`,
             quantity: bottle.quantity,
-            price: bottle.price_per_bottle
+            price: bottle.price_per_bottle,
           })),
           total: computeOrderTotal(order),
           status: order.status || "pending",
@@ -166,20 +173,25 @@ export function OrdersTab() {
           pickupTime: order.pickup_time,
           paymentMethod: order.payment_method,
           phone: order.phone,
-          orderNotes: order.notes
+          orderNotes: order.notes,
         }));
 
         // When Supabase is available, use it as the primary source of truth
         // Only include localStorage orders if they're very recent (last 24 hours) and not in Supabase
         const localOrders = loadOrdersFromStorage();
         const now = new Date().getTime();
-        const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
+        const twentyFourHoursAgo = now - 24 * 60 * 60 * 1000;
 
-        const allOrderNumbers = new Set(convertedOrders.map(o => o.orderNumber));
-        const recentLocalOrders = localOrders.filter(o => {
+        const allOrderNumbers = new Set(
+          convertedOrders.map((o) => o.orderNumber),
+        );
+        const recentLocalOrders = localOrders.filter((o) => {
           // Only include if order is recent and not already in Supabase
           const orderDate = new Date(o.orderDate).getTime();
-          return !allOrderNumbers.has(o.orderNumber) && orderDate > twentyFourHoursAgo;
+          return (
+            !allOrderNumbers.has(o.orderNumber) &&
+            orderDate > twentyFourHoursAgo
+          );
         });
 
         const allOrders = [...convertedOrders, ...recentLocalOrders];
@@ -187,8 +199,10 @@ export function OrdersTab() {
 
         // Clean up localStorage: remove orders that are now in Supabase or older than 7 days
         try {
-          const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-          const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
+          const checkoutOrders = JSON.parse(
+            localStorage.getItem("corkCountOrders") || "[]",
+          );
+          const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
           const cleanedOrders = checkoutOrders.filter((order: any) => {
             const orderDate = new Date(order.orderDate).getTime();
             const isRecent = orderDate > sevenDaysAgo;
@@ -197,22 +211,26 @@ export function OrdersTab() {
           });
 
           if (cleanedOrders.length !== checkoutOrders.length) {
-            localStorage.setItem("corkCountOrders", JSON.stringify(cleanedOrders));
-            console.log(`Cleaned localStorage: removed ${checkoutOrders.length - cleanedOrders.length} old/synced orders`);
+            localStorage.setItem(
+              "corkCountOrders",
+              JSON.stringify(cleanedOrders),
+            );
+            console.log(
+              `Cleaned localStorage: removed ${checkoutOrders.length - cleanedOrders.length} old/synced orders`,
+            );
           }
         } catch (e) {
-          console.warn('Error cleaning localStorage:', e);
+          console.warn("Error cleaning localStorage:", e);
         }
 
         // Initialize status updates for all orders
         const initialStatusUpdates: Record<string, string> = {};
-        allOrders.forEach(order => {
+        allOrders.forEach((order) => {
           initialStatusUpdates[order.id] = order.status;
         });
         setStatusUpdates(initialStatusUpdates);
-
       } catch (err: any) {
-        console.error('Error in fetchOrders:', formatError(err));
+        console.error("Error in fetchOrders:", formatError(err));
         toast({
           title: "Error",
           description: `Failed to load orders: ${formatError(err)}. Showing local data only.`,
@@ -227,32 +245,42 @@ export function OrdersTab() {
 
     const loadOrdersFromStorage = () => {
       try {
-        const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const checkoutOrders = JSON.parse(
+          localStorage.getItem("corkCountOrders") || "[]",
+        );
 
         // Convert checkout orders to admin order format
         return checkoutOrders.map((checkoutOrder: any) => ({
-          id: checkoutOrder.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+          id: checkoutOrder.orderNumber
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "-"),
           orderNumber: checkoutOrder.orderNumber,
           customer: {
             name: checkoutOrder.customerName,
-            email: checkoutOrder.email
+            email: checkoutOrder.email,
           },
           items: checkoutOrder.items.map((item: any) => ({
-            name: `${item.wine.name} ${item.wine.vintage || ''}`,
+            name: `${item.wine.name} ${item.wine.vintage || ""}`,
             quantity: item.quantity,
-            price: item.wine.price
+            price: item.wine.price,
           })),
           total: checkoutOrder.totalPrice,
-          status: checkoutOrder.status === "pending" ? "pending" : checkoutOrder.status,
+          status:
+            checkoutOrder.status === "pending"
+              ? "pending"
+              : checkoutOrder.status,
           orderDate: checkoutOrder.orderDate,
           pickupDate: checkoutOrder.pickupDate,
           pickupTime: checkoutOrder.pickupTime,
           paymentMethod: checkoutOrder.paymentMethod,
           phone: checkoutOrder.phone,
-          orderNotes: checkoutOrder.orderNotes
+          orderNotes: checkoutOrder.orderNotes,
         }));
       } catch (error: any) {
-        console.error('Error loading orders from localStorage:', error.message || error);
+        console.error(
+          "Error loading orders from localStorage:",
+          error.message || error,
+        );
         return mockOrders;
       }
     };
@@ -300,7 +328,7 @@ export function OrdersTab() {
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric"
+      year: "numeric",
     });
   };
 
@@ -310,16 +338,18 @@ export function OrdersTab() {
     return time ? `${formattedDate} at ${time}` : formattedDate;
   };
 
-  const getTotalBottles = (items: Order['items']) => {
+  const getTotalBottles = (items: Order["items"]) => {
     return items.reduce((sum, item) => sum + item.quantity, 0);
   };
 
   const computeOrderTotal = (order: any) => {
     const direct = (order as any).total_amount ?? (order as any).total_price;
-    if (direct != null && direct !== '') return parseFloat(direct);
+    if (direct != null && direct !== "") return parseFloat(direct);
     const bottles = (order as any).bottles_ordered || [];
     return bottles.reduce((sum: number, b: any) => {
-      const perBottle = parseFloat(b.total_price) || (parseFloat(b.price_per_bottle) || 0) * (parseInt(b.quantity) || 0);
+      const perBottle =
+        parseFloat(b.total_price) ||
+        (parseFloat(b.price_per_bottle) || 0) * (parseInt(b.quantity) || 0);
       return sum + perBottle;
     }, 0);
   };
@@ -327,10 +357,12 @@ export function OrdersTab() {
   // Manual cleanup function to remove stale localStorage orders
   const cleanupLocalStorage = () => {
     try {
-      const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
-      const currentOrderNumbers = new Set(orders.map(o => o.orderNumber));
+      const checkoutOrders = JSON.parse(
+        localStorage.getItem("corkCountOrders") || "[]",
+      );
+      const currentOrderNumbers = new Set(orders.map((o) => o.orderNumber));
       const now = new Date().getTime();
-      const threeDaysAgo = now - (3 * 24 * 60 * 60 * 1000);
+      const threeDaysAgo = now - 3 * 24 * 60 * 60 * 1000;
 
       const cleanedOrders = checkoutOrders.filter((order: any) => {
         const orderDate = new Date(order.orderDate).getTime();
@@ -356,7 +388,7 @@ export function OrdersTab() {
         });
       }
     } catch (error: any) {
-      console.error('Error during cleanup:', error);
+      console.error("Error during cleanup:", error);
       toast({
         title: "Cleanup failed",
         description: "Failed to clean local storage.",
@@ -376,36 +408,47 @@ export function OrdersTab() {
   };
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
-    setStatusUpdates(prev => ({
+    setStatusUpdates((prev) => ({
       ...prev,
-      [orderId]: newStatus
+      [orderId]: newStatus,
     }));
   };
 
   // Filter orders based on search and status
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = searchQuery === "" ||
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch =
+      searchQuery === "" ||
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.customer.email.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || order.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
   const handleDeleteOrder = async (orderId: string) => {
-    const isUuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
+    const isUuid = (v: string) =>
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        v,
+      );
     try {
       // Try to delete from Supabase by id if UUID, otherwise by order_number
-      const targetOrder = orders.find(o => o.id === orderId);
+      const targetOrder = orders.find((o) => o.id === orderId);
       let supabaseErr: any = null;
       try {
         if (isUuid(orderId)) {
-          const { error } = await supabase.from('Orders').delete().eq('id', orderId);
+          const { error } = await supabase
+            .from("Orders")
+            .delete()
+            .eq("id", orderId);
           supabaseErr = error || null;
         } else if (targetOrder?.orderNumber) {
-          const { error } = await supabase.from('Orders').delete().eq('order_number', targetOrder.orderNumber);
+          const { error } = await supabase
+            .from("Orders")
+            .delete()
+            .eq("order_number", targetOrder.orderNumber);
           supabaseErr = error || null;
         }
       } catch (e: any) {
@@ -413,10 +456,14 @@ export function OrdersTab() {
       }
 
       if (supabaseErr) {
-        console.error('Error deleting order from Supabase:', formatError(supabaseErr));
+        console.error(
+          "Error deleting order from Supabase:",
+          formatError(supabaseErr),
+        );
         toast({
           title: "Warning",
-          description: "Order deleted locally but failed to sync with database.",
+          description:
+            "Order deleted locally but failed to sync with database.",
           variant: "destructive",
         });
       } else {
@@ -427,29 +474,38 @@ export function OrdersTab() {
       }
 
       // Update local state
-      setOrders(prev => prev.filter(order => order.id !== orderId));
+      setOrders((prev) => prev.filter((order) => order.id !== orderId));
 
       // Also remove from localStorage backup by order number
       try {
-        const targetOrder = orders.find(o => o.id === orderId);
-        const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const targetOrder = orders.find((o) => o.id === orderId);
+        const checkoutOrders = JSON.parse(
+          localStorage.getItem("corkCountOrders") || "[]",
+        );
         const updatedCheckoutOrders = checkoutOrders.filter((order: any) => {
           // Remove by both normalized ID and exact order number match
-          const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
-          const exactOrderMatch = order.orderNumber === targetOrder?.orderNumber;
+          const orderId_normalized = order.orderNumber
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "-");
+          const exactOrderMatch =
+            order.orderNumber === targetOrder?.orderNumber;
           return orderId_normalized !== orderId && !exactOrderMatch;
         });
 
         if (updatedCheckoutOrders.length !== checkoutOrders.length) {
-          localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
-          console.log(`Removed order ${targetOrder?.orderNumber} from localStorage`);
+          localStorage.setItem(
+            "corkCountOrders",
+            JSON.stringify(updatedCheckoutOrders),
+          );
+          console.log(
+            `Removed order ${targetOrder?.orderNumber} from localStorage`,
+          );
         }
       } catch (error: any) {
-        console.error('Error updating localStorage:', formatError(error));
+        console.error("Error updating localStorage:", formatError(error));
       }
-
     } catch (err: any) {
-      console.error('Error deleting order:', formatError(err));
+      console.error("Error deleting order:", formatError(err));
       toast({
         title: "Error",
         description: "Failed to delete order. Please try again.",
@@ -464,27 +520,40 @@ export function OrdersTab() {
     const newStatus = statusUpdates[orderId];
 
     try {
-      const isUuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
-      const targetOrder = orders.find(order => order.id === orderId);
+      const isUuid = (v: string) =>
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+          v,
+        );
+      const targetOrder = orders.find((order) => order.id === orderId);
 
       // Update in Supabase first (by id if UUID, otherwise by order_number)
       let error: any = null;
       try {
         if (isUuid(orderId)) {
-          ({ error } = await supabase.from('Orders').update({ status: newStatus }).eq('id', orderId));
+          ({ error } = await supabase
+            .from("Orders")
+            .update({ status: newStatus })
+            .eq("id", orderId));
         } else if (targetOrder?.orderNumber) {
-          ({ error } = await supabase.from('Orders').update({ status: newStatus }).eq('order_number', targetOrder.orderNumber));
+          ({ error } = await supabase
+            .from("Orders")
+            .update({ status: newStatus })
+            .eq("order_number", targetOrder.orderNumber));
         }
       } catch (e: any) {
         error = e;
       }
 
       if (error) {
-        console.error('Error updating order status in Supabase:', formatError(error));
+        console.error(
+          "Error updating order status in Supabase:",
+          formatError(error),
+        );
         // Still update locally but show warning
         toast({
           title: "Warning",
-          description: "Status updated locally but failed to sync with database.",
+          description:
+            "Status updated locally but failed to sync with database.",
           variant: "destructive",
         });
       } else {
@@ -496,14 +565,16 @@ export function OrdersTab() {
 
       // Find the order being updated for email
       const orderBeingUpdated = targetOrder;
-      const oldStatus = orderBeingUpdated?.status || 'pending';
+      const oldStatus = orderBeingUpdated?.status || "pending";
 
       // Update local state
-      setOrders(prev => prev.map(order =>
-        order.id === orderId
-          ? { ...order, status: newStatus as Order['status'] }
-          : order
-      ));
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId
+            ? { ...order, status: newStatus as Order["status"] }
+            : order,
+        ),
+      );
 
       // Send status update email if database update was successful and customer email exists
       if (!error && orderBeingUpdated?.customer?.email) {
@@ -513,7 +584,7 @@ export function OrdersTab() {
             customerName: orderBeingUpdated.customer.name,
             customerEmail: orderBeingUpdated.customer.email,
             oldStatus,
-            newStatus
+            newStatus,
           });
 
           if (emailResult.success) {
@@ -524,15 +595,17 @@ export function OrdersTab() {
           } else {
             toast({
               title: "Status updated",
-              description: "Status updated but customer email notification failed to send.",
+              description:
+                "Status updated but customer email notification failed to send.",
               variant: "destructive",
             });
           }
         } catch (emailError) {
-          console.warn('Status update email failed:', emailError);
+          console.warn("Status update email failed:", emailError);
           toast({
             title: "Status updated",
-            description: "Status updated but customer email notification failed to send.",
+            description:
+              "Status updated but customer email notification failed to send.",
             variant: "destructive",
           });
         }
@@ -540,20 +613,29 @@ export function OrdersTab() {
 
       // Update localStorage as backup
       try {
-        const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const checkoutOrders = JSON.parse(
+          localStorage.getItem("corkCountOrders") || "[]",
+        );
         const updatedCheckoutOrders = checkoutOrders.map((order: any) => {
-          const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          const orderId_normalized = order.orderNumber
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "-");
           return orderId_normalized === orderId
             ? { ...order, status: newStatus }
             : order;
         });
-        localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
+        localStorage.setItem(
+          "corkCountOrders",
+          JSON.stringify(updatedCheckoutOrders),
+        );
       } catch (error: any) {
-        console.error('Error updating order status in localStorage:', formatError(error));
+        console.error(
+          "Error updating order status in localStorage:",
+          formatError(error),
+        );
       }
-
     } catch (err: any) {
-      console.error('Error updating order status:', formatError(err));
+      console.error("Error updating order status:", formatError(err));
       toast({
         title: "Error",
         description: "Failed to update order status. Please try again.",
@@ -693,7 +775,10 @@ export function OrdersTab() {
       {/* Orders Cards - All Screen Sizes */}
       <div className="space-y-4">
         {filteredOrders.map((order) => (
-          <div key={order.id} className="bg-white rounded-lg border border-gray-200 p-4">
+          <div
+            key={order.id}
+            className="bg-white rounded-lg border border-gray-200 p-4"
+          >
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-gray-900 font-mono text-sm">
@@ -733,7 +818,9 @@ export function OrdersTab() {
               </div>
               <div>
                 <span className="text-gray-500">Bottles:</span>
-                <div className="font-medium">{getTotalBottles(order.items)} bottles</div>
+                <div className="font-medium">
+                  {getTotalBottles(order.items)} bottles
+                </div>
               </div>
               <div>
                 <span className="text-gray-500">Pickup:</span>
@@ -744,7 +831,10 @@ export function OrdersTab() {
               <div>
                 <span className="text-gray-500">Payment:</span>
                 <div className="font-medium text-xs">
-                  {order.paymentMethod ? paymentMethodLabels[order.paymentMethod] || order.paymentMethod : "Not specified"}
+                  {order.paymentMethod
+                    ? paymentMethodLabels[order.paymentMethod] ||
+                      order.paymentMethod
+                    : "Not specified"}
                 </div>
               </div>
             </div>
@@ -756,7 +846,7 @@ export function OrdersTab() {
                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
                 className="flex-1 text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
               >
-                {statusOptions.map(option => (
+                {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -779,7 +869,8 @@ export function OrdersTab() {
       {/* Results Summary */}
       {!searchQuery && statusFilter === "all" && (
         <div className="text-sm text-gray-500">
-          Showing {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''}
+          Showing {filteredOrders.length} order
+          {filteredOrders.length !== 1 ? "s" : ""}
         </div>
       )}
 
@@ -794,11 +885,15 @@ export function OrdersTab() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Delete Order</h3>
-                  <p className="text-sm text-gray-600">This action cannot be undone.</p>
+                  <p className="text-sm text-gray-600">
+                    This action cannot be undone.
+                  </p>
                 </div>
               </div>
               <p className="text-gray-700 mb-6">
-                Are you sure you want to delete this order? This will permanently remove the order from both the database and local storage.
+                Are you sure you want to delete this order? This will
+                permanently remove the order from both the database and local
+                storage.
               </p>
               <div className="flex gap-3">
                 <Button
@@ -848,25 +943,35 @@ export function OrdersTab() {
               {/* Order Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Order Information</h3>
+                  <h3 className="font-medium text-gray-900 mb-3">
+                    Order Information
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <div>
                       <span className="text-gray-600">Order #:</span>
-                      <span className="ml-2 font-mono font-medium">{selectedOrder.orderNumber}</span>
+                      <span className="ml-2 font-mono font-medium">
+                        {selectedOrder.orderNumber}
+                      </span>
                     </div>
                     <div>
                       <span className="text-gray-600">Order Date:</span>
-                      <span className="ml-2">{formatDate(selectedOrder.orderDate)}</span>
+                      <span className="ml-2">
+                        {formatDate(selectedOrder.orderDate)}
+                      </span>
                     </div>
                     <div>
                       <span className="text-gray-600">Status:</span>
-                      <span className="ml-2">{getStatusBadge(selectedOrder.status)}</span>
+                      <span className="ml-2">
+                        {getStatusBadge(selectedOrder.status)}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Customer Information</h3>
+                  <h3 className="font-medium text-gray-900 mb-3">
+                    Customer Information
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-gray-400" />
@@ -889,21 +994,34 @@ export function OrdersTab() {
               {/* Pickup & Payment Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Pickup Information</h3>
+                  <h3 className="font-medium text-gray-900 mb-3">
+                    Pickup Information
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
-                      <span>{formatPickupDateTime(selectedOrder.pickupDate, selectedOrder.pickupTime)}</span>
+                      <span>
+                        {formatPickupDateTime(
+                          selectedOrder.pickupDate,
+                          selectedOrder.pickupTime,
+                        )}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Payment Information</h3>
+                  <h3 className="font-medium text-gray-900 mb-3">
+                    Payment Information
+                  </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <CreditCard className="h-4 w-4 text-gray-400" />
-                      <span>{selectedOrder.paymentMethod ? paymentMethodLabels[selectedOrder.paymentMethod] : "Not specified"}</span>
+                      <span>
+                        {selectedOrder.paymentMethod
+                          ? paymentMethodLabels[selectedOrder.paymentMethod]
+                          : "Not specified"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -917,25 +1035,42 @@ export function OrdersTab() {
                     <table className="w-full">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                          <th className="px-2 sm:px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase w-16">Qty</th>
-                          <th className="px-2 sm:px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">Price</th>
-                          <th className="px-2 sm:px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">Total</th>
+                          <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            Item
+                          </th>
+                          <th className="px-2 sm:px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase w-16">
+                            Qty
+                          </th>
+                          <th className="px-2 sm:px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-20">
+                            Price
+                          </th>
+                          <th className="px-2 sm:px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase w-24">
+                            Total
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {selectedOrder.items.map((item, index) => (
                           <tr key={index}>
-                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900">{item.name}</td>
-                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900 text-center">{item.quantity}</td>
-                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900 text-right">${item.price.toFixed(2)}</td>
+                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900">
+                              {item.name}
+                            </td>
+                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900 text-center">
+                              {item.quantity}
+                            </td>
+                            <td className="px-2 sm:px-4 py-2 text-sm text-gray-900 text-right">
+                              ${item.price.toFixed(2)}
+                            </td>
                             <td className="px-2 sm:px-4 py-2 text-sm font-medium text-gray-900 text-right">
                               ${(item.price * item.quantity).toFixed(2)}
                             </td>
                           </tr>
                         ))}
                         <tr className="bg-gray-50">
-                          <td colSpan={3} className="px-2 sm:px-4 py-2 text-sm font-medium text-gray-900 text-right">
+                          <td
+                            colSpan={3}
+                            className="px-2 sm:px-4 py-2 text-sm font-medium text-gray-900 text-right"
+                          >
                             Total:
                           </td>
                           <td className="px-2 sm:px-4 py-2 text-sm font-bold text-wine text-right">
