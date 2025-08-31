@@ -54,6 +54,148 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Authentication endpoints
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          error: "Email and password are required"
+        });
+      }
+
+      const result = await handleAdminLogin(email, password);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(401).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  // Inventory endpoints
+  app.get("/api/inventory", async (req, res) => {
+    try {
+      const result = await getAvailableInventory();
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.put("/api/inventory/update", async (req, res) => {
+    try {
+      const { updates } = req.body;
+
+      if (!Array.isArray(updates)) {
+        return res.status(400).json({
+          success: false,
+          error: "Updates must be an array"
+        });
+      }
+
+      const result = await updateInventoryQuantities(updates);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  // Orders endpoints
+  app.post("/api/orders", async (req, res) => {
+    try {
+      const orderData = req.body;
+
+      if (!orderData.orderNumber || !orderData.customerName || !orderData.email) {
+        return res.status(400).json({
+          success: false,
+          error: "Order number, customer name, and email are required"
+        });
+      }
+
+      const result = await createOrder(orderData);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.get("/api/orders", async (req, res) => {
+    try {
+      const result = await getOrders();
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.put("/api/orders/:id/status", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, note } = req.body;
+
+      if (!status) {
+        return res.status(400).json({
+          success: false,
+          error: "Status is required"
+        });
+      }
+
+      const result = await updateOrderStatus(id, status, note);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
   // Email sending endpoint (server-side Resend proxy)
   app.post("/api/email", async (req, res) => {
     try {
