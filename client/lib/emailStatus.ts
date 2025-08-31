@@ -1,3 +1,5 @@
+import { apiFetch } from "./api";
+
 // Utility to check email system status from server
 interface EmailConfig {
   isConfigured: boolean;
