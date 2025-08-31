@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle, Loader2 } from "lucide-react";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabaseClient, checkSupabaseConfig } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdminLoginModalProps {
@@ -28,18 +28,24 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!isSupabaseConfigured) {
-      setError("Admin login is disabled until Supabase is configured.");
-      toast({
-        title: "Supabase not configured",
-        description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable admin login.",
-        variant: "destructive",
-      });
-      return;
-    }
     setIsLoading(true);
 
     try {
+      // Check if Supabase is configured
+      const config = await checkSupabaseConfig();
+      if (!config.isConfigured) {
+        setError("Admin login is disabled until database is configured.");
+        toast({
+          title: "Database not configured",
+          description: "Contact administrator to configure database authentication.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Get Supabase client and attempt login
+      const supabase = await getSupabaseClient();
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password
@@ -49,26 +55,25 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
         setError(authError.message || "Invalid email or password");
         toast({
           title: "Login failed",
-          description: authError.message || "Invalid email or password",
+          description: authError.message || "Please check your credentials and try again.",
           variant: "destructive",
         });
+        setIsLoading(false);
         return;
       }
 
       if (data.user) {
         toast({
           title: "Login successful",
-          description: "Welcome to the KB Winery admin dashboard!",
+          description: "Welcome to the admin dashboard!",
         });
         onLogin();
         onClose();
-        resetForm();
-      } else {
-        setError("Authentication failed. Please try again.");
+        setEmail("");
+        setPassword("");
       }
-
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      setError("An unexpected error occurred during login");
       toast({
         title: "Login error",
         description: "An unexpected error occurred. Please try again.",
@@ -79,128 +84,91 @@ export function AdminLoginModal({ isOpen, onClose, onLogin }: AdminLoginModalPro
     }
   };
 
-  const resetForm = () => {
-    setEmail("");
-    setPassword("");
-    setError("");
-  };
-
-  const handleClose = () => {
-    resetForm();
-    onClose();
-  };
-
   return (
-    <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="font-playfair text-xl font-semibold text-gray-900">
-            Admin Login
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleClose}
-            className="h-8 w-8 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+      <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
+          <X className="h-6 w-6" />
+        </button>
+
+        <div className="mb-6">
+          <h2 className="font-playfair text-2xl font-bold text-gray-900 mb-2">Admin Login</h2>
+          <p className="text-gray-600">Sign in to access the admin dashboard</p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Error Message */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wine focus:border-transparent"
+              placeholder="admin@example.com"
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wine focus:border-transparent"
+              placeholder="Enter your password"
+              required
+              disabled={isLoading}
+            />
+          </div>
+
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <div className="flex items-center gap-2 text-red-600 text-sm">
+              <AlertCircle className="h-4 w-4" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Email Field */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="admin@kbwinery.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors"
-            />
-          </div>
-
-          {/* Password Field */}
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal transition-colors"
-            />
-          </div>
-
-          {/* Auth Info */}
-          <div className="p-3 rounded-lg text-xs border" style={{
-            backgroundColor: isSupabaseConfigured ? '#EFF6FF' : '#FEF2F2',
-            borderColor: isSupabaseConfigured ? '#BFDBFE' : '#FECACA',
-            color: isSupabaseConfigured ? '#1D4ED8' : '#B91C1C'
-          }}>
-            {isSupabaseConfigured ? (
+          <Button
+            type="submit"
+            variant="accent"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? (
               <>
-                <p className="font-medium mb-1">Admin Access:</p>
-                <p>Use your Supabase admin credentials to sign in.</p>
-                <p>Ensure your email is registered in the Supabase Auth system.</p>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing in...
               </>
             ) : (
-              <>
-                <p className="font-medium mb-1">Supabase not configured</p>
-                <p>Admin login is disabled. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable authentication.</p>
-              </>
+              "Sign In"
             )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="cancel"
-              onClick={handleClose}
-              className="flex-1"
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="accent"
-              className="flex-1 gap-2"
-              disabled={isLoading || !isSupabaseConfigured}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
-          </div>
+          </Button>
         </form>
+
+        {/* Configuration Status */}
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+            <div className="text-sm text-gray-600">
+              <p className="font-medium mb-1">Database Configuration</p>
+              <p>If you're having trouble logging in, ensure the database service is properly configured.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
