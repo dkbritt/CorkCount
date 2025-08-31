@@ -324,6 +324,47 @@ export function OrdersTab() {
     }, 0);
   };
 
+  // Manual cleanup function to remove stale localStorage orders
+  const cleanupLocalStorage = () => {
+    try {
+      const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+      const currentOrderNumbers = new Set(orders.map(o => o.orderNumber));
+      const now = new Date().getTime();
+      const threeDaysAgo = now - (3 * 24 * 60 * 60 * 1000);
+
+      const cleanedOrders = checkoutOrders.filter((order: any) => {
+        const orderDate = new Date(order.orderDate).getTime();
+        const isRecent = orderDate > threeDaysAgo;
+        const isCurrentlyDisplayed = currentOrderNumbers.has(order.orderNumber);
+        return isRecent && isCurrentlyDisplayed;
+      });
+
+      localStorage.setItem("corkCountOrders", JSON.stringify(cleanedOrders));
+      const removedCount = checkoutOrders.length - cleanedOrders.length;
+
+      if (removedCount > 0) {
+        toast({
+          title: "Cleanup completed",
+          description: `Removed ${removedCount} stale orders from local storage.`,
+        });
+        // Refresh the orders list
+        window.location.reload();
+      } else {
+        toast({
+          title: "No cleanup needed",
+          description: "Local storage is already clean.",
+        });
+      }
+    } catch (error: any) {
+      console.error('Error during cleanup:', error);
+      toast({
+        title: "Cleanup failed",
+        description: "Failed to clean local storage.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleViewOrder = (order: Order) => {
     setSelectedOrder(order);
     setShowOrderModal(true);
