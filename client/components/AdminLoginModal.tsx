@@ -20,6 +20,7 @@ export function AdminLoginModal({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [supabaseConfigured, setSupabaseConfigured] = useState<boolean | null>(null);
 
   if (!isOpen) return null;
 
