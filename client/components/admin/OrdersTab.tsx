@@ -329,15 +329,25 @@ export function OrdersTab() {
   });
 
   const handleDeleteOrder = async (orderId: string) => {
+    const isUuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
     try {
-      // Delete from Supabase
-      const { error } = await supabase
-        .from('Orders')
-        .delete()
-        .eq('id', orderId);
+      // Try to delete from Supabase by id if UUID, otherwise by order_number
+      const targetOrder = orders.find(o => o.id === orderId);
+      let supabaseErr: any = null;
+      try {
+        if (isUuid(orderId)) {
+          const { error } = await supabase.from('Orders').delete().eq('id', orderId);
+          supabaseErr = error || null;
+        } else if (targetOrder?.orderNumber) {
+          const { error } = await supabase.from('Orders').delete().eq('order_number', targetOrder.orderNumber);
+          supabaseErr = error || null;
+        }
+      } catch (e: any) {
+        supabaseErr = e;
+      }
 
-      if (error) {
-        console.error('Error deleting order from Supabase:', formatError(error));
+      if (supabaseErr) {
+        console.error('Error deleting order from Supabase:', formatError(supabaseErr));
         toast({
           title: "Warning",
           description: "Order deleted locally but failed to sync with database.",
@@ -381,11 +391,20 @@ export function OrdersTab() {
     const newStatus = statusUpdates[orderId];
 
     try {
-      // Update in Supabase first
-      const { error } = await supabase
-        .from('Orders')
-        .update({ status: newStatus })
-        .eq('id', orderId);
+      const isUuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
+      const targetOrder = orders.find(order => order.id === orderId);
+
+      // Update in Supabase first (by id if UUID, otherwise by order_number)
+      let error: any = null;
+      try {
+        if (isUuid(orderId)) {
+          ({ error } = await supabase.from('Orders').update({ status: newStatus }).eq('id', orderId));
+        } else if (targetOrder?.orderNumber) {
+          ({ error } = await supabase.from('Orders').update({ status: newStatus }).eq('order_number', targetOrder.orderNumber));
+        }
+      } catch (e: any) {
+        error = e;
+      }
 
       if (error) {
         console.error('Error updating order status in Supabase:', formatError(error));
@@ -403,7 +422,7 @@ export function OrdersTab() {
       }
 
       // Find the order being updated for email
-      const orderBeingUpdated = orders.find(order => order.id === orderId);
+      const orderBeingUpdated = targetOrder;
       const oldStatus = orderBeingUpdated?.status || 'pending';
 
       // Update local state
