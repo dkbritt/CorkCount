@@ -1,5 +1,6 @@
 // Email service for order confirmations and status updates
 import { CartItem } from "@/components/CartModal";
+import { apiFetch } from "./api";
 
 interface OrderEmailData {
   orderNumber: string;
@@ -23,23 +24,12 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-// Get email API endpoint
-const getEmailApiEndpoint = () => {
-  // Use Netlify functions in production, direct server in development
-  // Detect environment by checking hostname
-  const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-  return isDev
-    ? "/api/email"
-    : "/.netlify/functions/api/api/email";
-};
+// API calls are routed via apiFetch with dynamic base
 
 // Check if server is available
 async function checkServerAvailability(): Promise<boolean> {
   try {
-    const response = await fetch("/api/ping", {
-      method: "GET",
-      timeout: 5000,
-    } as any);
+    const response = await apiFetch("/ping");
     return response.ok;
   } catch (error) {
     console.warn("Server not available:", error);
@@ -332,7 +322,7 @@ export async function sendOrderConfirmationEmail(
       },
     ];
 
-    const response = await fetch(getEmailApiEndpoint(), {
+    const response = await apiFetch("/email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: emailRequests }),
@@ -397,7 +387,7 @@ export async function sendStatusUpdateEmail(
 
     const emailHTML = generateStatusUpdateHTML(data);
 
-    const response = await fetch(getEmailApiEndpoint(), {
+    const response = await apiFetch("/email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
