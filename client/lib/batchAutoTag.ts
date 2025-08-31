@@ -1,10 +1,10 @@
 /**
  * Utility for batch processing auto-tags on existing wines
+ * Note: This functionality may be better moved to server-side for production use
  */
 
-import { supabase } from './supabase';
+import { apiFetch } from './api';
 import { autoTagWine, sanitizeTags } from './autoTagger';
-import { formatError } from './errors';
 
 export interface BatchAutoTagResult {
   success: boolean;
@@ -25,18 +25,19 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
   };
 
   try {
-    // Fetch all wines from inventory
-    const { data: wines, error: fetchError } = await supabase
-      .from('Inventory')
-      .select('id, name, winery, type, vintage, flavor_notes, description, tags');
+    // Fetch all wines from inventory via API
+    const response = await apiFetch('/inventory?admin=true');
+    const apiResult = await response.json();
 
-    if (fetchError) {
+    if (!response.ok || !apiResult.success) {
       result.success = false;
-      result.errors.push(`Failed to fetch wines: ${formatError(fetchError)}`);
+      result.errors.push(`Failed to fetch wines: ${apiResult.error}`);
       return result;
     }
 
-    if (!wines || wines.length === 0) {
+    const wines = apiResult.inventory || [];
+
+    if (wines.length === 0) {
       result.errors.push('No wines found in inventory');
       return result;
     }
@@ -61,16 +62,18 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
         const tagsChanged = JSON.stringify(existingTags.sort()) !== JSON.stringify(sanitizedTags.sort());
 
         if (tagsChanged) {
-          // Update the wine with new tags
-          const { error: updateError } = await supabase
-            .from('Inventory')
-            .update({ tags: sanitizedTags })
-            .eq('id', wine.id);
+          // Update the wine with new tags via API
+          const updateResponse = await apiFetch(`/inventory/${wine.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tags: sanitizedTags })
+          });
+          const updateResult = await updateResponse.json();
 
-          if (updateError) {
+          if (!updateResponse.ok || !updateResult.success) {
             result.failed++;
-            result.errors.push(`Failed to update wine ${wine.name}: ${formatError(updateError)}`);
-            console.error(`Failed to update wine ${wine.id}:`, updateError);
+            result.errors.push(`Failed to update wine ${wine.name}: ${updateResult.error}`);
+            console.error(`Failed to update wine ${wine.id}:`, updateResult.error);
           } else {
             result.processed++;
             console.log(`Updated tags for ${wine.name}:`, sanitizedTags);
@@ -115,20 +118,21 @@ export async function previewAutoTags(): Promise<{
   error?: string;
 }> {
   try {
-    // Fetch all wines from inventory
-    const { data: wines, error: fetchError } = await supabase
-      .from('Inventory')
-      .select('id, name, winery, type, vintage, flavor_notes, description, tags');
+    // Fetch all wines from inventory via API
+    const response = await apiFetch('/inventory?admin=true');
+    const apiResult = await response.json();
 
-    if (fetchError) {
+    if (!response.ok || !apiResult.success) {
       return {
         success: false,
         previews: [],
-        error: `Failed to fetch wines: ${formatError(fetchError)}`
+        error: `Failed to fetch wines: ${apiResult.error}`
       };
     }
 
-    if (!wines || wines.length === 0) {
+    const wines = apiResult.inventory || [];
+
+    if (wines.length === 0) {
       return {
         success: true,
         previews: [],
