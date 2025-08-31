@@ -59,12 +59,10 @@ export function AdminLoginModal({
     setIsLoading(true);
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword(
-        {
-          email: email.trim(),
-          password: password,
-        },
-      );
+      const { data, error: authError } = await secureSupabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
 
       if (authError) {
         setError(authError.message || "Invalid email or password");
