@@ -388,14 +388,21 @@ export function OrdersTab() {
       // Update local state
       setOrders(prev => prev.filter(order => order.id !== orderId));
 
-      // Also remove from localStorage backup
+      // Also remove from localStorage backup by order number
       try {
+        const targetOrder = orders.find(o => o.id === orderId);
         const checkoutOrders = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
         const updatedCheckoutOrders = checkoutOrders.filter((order: any) => {
+          // Remove by both normalized ID and exact order number match
           const orderId_normalized = order.orderNumber.toLowerCase().replace(/[^a-z0-9]/g, '-');
-          return orderId_normalized !== orderId;
+          const exactOrderMatch = order.orderNumber === targetOrder?.orderNumber;
+          return orderId_normalized !== orderId && !exactOrderMatch;
         });
-        localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
+
+        if (updatedCheckoutOrders.length !== checkoutOrders.length) {
+          localStorage.setItem("corkCountOrders", JSON.stringify(updatedCheckoutOrders));
+          console.log(`Removed order ${targetOrder?.orderNumber} from localStorage`);
+        }
       } catch (error: any) {
         console.error('Error updating localStorage:', formatError(error));
       }
