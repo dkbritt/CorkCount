@@ -299,6 +299,16 @@ export async function sendOrderConfirmationEmail(
   orderData: OrderEmailData,
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Check if server is available first
+    const serverAvailable = await checkServerAvailability();
+    if (!serverAvailable) {
+      console.warn("Email server not available, order confirmation will be skipped");
+      return {
+        success: false,
+        error: "Email service temporarily unavailable. Order was saved but confirmation email could not be sent."
+      };
+    }
+
     const emailHTML = generateOrderConfirmationHTML(orderData);
 
     // Build email requests on client side, server will handle configuration
@@ -306,7 +316,7 @@ export async function sendOrderConfirmationEmail(
       {
         type: 'order_confirmation',
         to: orderData.customerEmail,
-        subject: "Your KB Winery Order Confirmation", 
+        subject: "Your KB Winery Order Confirmation",
         html: emailHTML,
         orderData: {
           orderNumber: orderData.orderNumber,
@@ -338,9 +348,19 @@ export async function sendOrderConfirmationEmail(
     return { success: true };
   } catch (error) {
     console.error("Error sending order confirmation email:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown email error";
+
+    // Provide user-friendly error messages
+    if (errorMessage.includes("Failed to fetch") || errorMessage.includes("fetch")) {
+      return {
+        success: false,
+        error: "Email service temporarily unavailable. Order was saved but confirmation email could not be sent."
+      };
+    }
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown email error",
+      error: errorMessage,
     };
   }
 }
