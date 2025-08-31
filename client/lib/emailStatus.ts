@@ -20,9 +20,7 @@ export function getEmailStatus() {
   };
 }
 
-// Console helper to check email status
-export function logEmailStatus() {
-  const status = getEmailStatus();
-  console.log("🔧 Email System Status:", status);
-  return status;
+// Helper to check email status (for internal use only - do not log)
+export function checkEmailStatus() {
+  return getEmailStatus();
 }
