@@ -1,18 +1,35 @@
 import { createClient } from "@supabase/supabase-js";
 
-// Environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Configuration state
+let supabaseConfig: {
+  isConfigured: boolean;
+  isInsecureUrl: boolean;
+  url?: string;
+  anonKey?: string;
+} | null = null;
 
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
-export const isSupabaseInsecureUrl = Boolean(
-  supabaseUrl && String(supabaseUrl).startsWith("http://"),
-);
+// Load configuration from server
+async function loadSupabaseConfig() {
+  if (supabaseConfig) return supabaseConfig;
+  
+  try {
+    const response = await fetch("/api/config/supabase");
+    if (!response.ok) {
+      throw new Error(`Failed to load configuration: ${response.status}`);
+    }
+    supabaseConfig = await response.json();
+    return supabaseConfig;
+  } catch (error) {
+    console.warn("Failed to load Supabase configuration:", error);
+    supabaseConfig = { isConfigured: false, isInsecureUrl: false };
+    return supabaseConfig;
+  }
+}
 
-// Create a safe stub client when env vars are missing to avoid crashing the app
+// Create a safe stub client when configuration is not available
 function createStubClient() {
   const notConfiguredError = new Error(
-    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.",
+    "Supabase is not configured. Contact administrator to configure database."
   );
 
   const makeQuery = () => {
@@ -47,20 +64,38 @@ function createStubClient() {
   return client;
 }
 
-// Create Supabase client (or stub if envs are missing)
-export const supabase: any = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : (() => {
-      if (typeof console !== "undefined") {
-        console.warn(
-          "Supabase env vars missing. Running with a stub client. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase.",
-        );
-      }
-      return createStubClient();
-    })();
+// Cached client instance
+let supabaseClient: any = null;
 
-if (isSupabaseConfigured && isSupabaseInsecureUrl) {
-  console.warn(
-    "VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL.",
-  );
+// Get or create Supabase client
+export async function getSupabaseClient() {
+  if (supabaseClient) return supabaseClient;
+  
+  const config = await loadSupabaseConfig();
+  
+  if (config.isConfigured && config.url && config.anonKey) {
+    if (config.isInsecureUrl) {
+      console.warn(
+        "Supabase URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL."
+      );
+    }
+    supabaseClient = createClient(config.url, config.anonKey);
+  } else {
+    console.warn("Supabase configuration not available. Running with stub client.");
+    supabaseClient = createStubClient();
+  }
+  
+  return supabaseClient;
+}
+
+// Compatibility export for existing code - returns a promise
+export const supabase = getSupabaseClient();
+
+// Check if Supabase is configured (async)
+export async function checkSupabaseConfig() {
+  const config = await loadSupabaseConfig();
+  return {
+    isConfigured: config.isConfigured,
+    isInsecureUrl: config.isInsecureUrl
+  };
 }
