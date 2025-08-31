@@ -627,13 +627,26 @@ export function OrdersTab() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
-          Customer Orders
-        </h1>
-        <p className="text-gray-600">
-          View and manage customer pickup orders
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
+            Customer Orders
+          </h1>
+          <p className="text-gray-600">
+            View and manage customer pickup orders
+          </p>
+        </div>
+        <div className="mt-4 sm:mt-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={cleanupLocalStorage}
+            className="gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            Clean Up Orders
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}
