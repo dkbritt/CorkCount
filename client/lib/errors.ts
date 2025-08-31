@@ -18,7 +18,7 @@ function mapCommonErrors(message: string): string {
   const msg = message || "Unknown error";
   const lower = msg.toLowerCase();
   if (lower.includes("failed to fetch") || lower.includes("fetch failed") || lower.includes("networkerror")) {
-    return "Network error connecting to Supabase. Ensure VITE_SUPABASE_URL is correct and uses HTTPS, your project is online, and CORS/Adblock aren’t blocking requests.";
+    return "Network error connecting to database. Please check your internet connection and ensure the service is online.";
   }
   return msg;
 }
