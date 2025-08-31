@@ -7,13 +7,15 @@ export function getEmailStatus() {
 
   return {
     mode: isDevelopment ? "DEVELOPMENT" : "PRODUCTION",
-    fromEmail: fromEmail || "orders@resend.dev",
+    fromEmail: fromEmail || "NOT_CONFIGURED",
     hasVerifiedDomain,
     isProductionReady,
     isDevelopment,
-    status: isDevelopment
-      ? "Emails will be sent to test address (daishakb@gmail.com)"
-      : "Emails will be sent to actual customers",
+    status: !fromEmail
+      ? "Email not configured - missing VITE_FROM_EMAIL"
+      : isDevelopment
+        ? "Emails will be sent to test address (set VITE_TEST_EMAIL)"
+        : "Emails will be sent to actual customers",
     requiresVerifiedDomain: !hasVerifiedDomain,
   };
 }
