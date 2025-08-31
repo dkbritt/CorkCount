@@ -1,11 +1,10 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_SUPABASE_URL: string;
-  readonly VITE_SUPABASE_ANON_KEY: string;
-  readonly VITE_FROM_EMAIL?: string;
-  readonly VITE_FIL_EMAIL?: string;
-  readonly VITE_TEST_EMAIL?: string;
+  readonly DEV: boolean;
+  readonly PROD: boolean;
+  // Note: Sensitive environment variables (VITE_SUPABASE_*, VITE_*_EMAIL, etc.)
+  // are no longer exposed to frontend to prevent bundling secrets
 }
 
 interface ImportMeta {
