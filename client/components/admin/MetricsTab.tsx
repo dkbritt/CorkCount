@@ -146,20 +146,6 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           }]);
         }
 
-        // Check for any errors
-        if (inventoryError || ordersError || batchesError) {
-          const errorDetails = [
-            inventoryError && `Inventory: ${formatError(inventoryError)}`,
-            ordersError && `Orders: ${formatError(ordersError)}`,
-            batchesError && `Batches: ${formatError(batchesError)}`
-          ].filter(Boolean).join('; ');
-          setError('Some data could not be loaded');
-          toast({
-            title: "Warning",
-            description: `Some metrics data could not be loaded: ${errorDetails}`,
-            variant: "destructive",
-          });
-        }
 
       } catch (err) {
         console.error('Error fetching metrics data:', formatError(err));
