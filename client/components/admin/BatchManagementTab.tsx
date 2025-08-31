@@ -15,7 +15,7 @@ import {
   MoreVertical,
   Loader2
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 
@@ -162,13 +162,11 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
     const fetchBatches = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('Batches')
-          .select('*')
-          .order('created_at', { ascending: false });
+        const response = await apiFetch("/batches");
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error fetching batches:', formatError(error));
+        if (!response.ok || !result.success) {
+          console.error('Error fetching batches:', result.error);
           toast({
             title: "Error",
             description: "Failed to load batches. Please try again.",
@@ -177,8 +175,8 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
           return;
         }
 
-        // Convert Supabase data to BatchItem format
-        const batchItems: BatchItem[] = (data || []).map((item: any) => ({
+        // Convert API data to BatchItem format
+        const batchItems: BatchItem[] = (result.batches || []).map((item: any) => ({
           id: item.id,
           name: item.name || 'Unnamed Batch',
           type: item.type || 'Red Wine',
@@ -350,15 +348,15 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
 
       if (editingBatch) {
         // Update existing batch
-        const { data, error } = await supabase
-          .from('Batches')
-          .update(batchData)
-          .eq('id', editingBatch.id)
-          .select()
-          .single();
+        const response = await apiFetch(`/batches/${editingBatch.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(batchData),
+        });
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error updating batch:', formatError(error));
+        if (!response.ok || !result.success) {
+          console.error('Error updating batch:', result.error);
           toast({
             title: "Error",
             description: "Failed to update batch. Please try again.",
@@ -388,17 +386,18 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
 
       } else {
         // Add new batch
-        const { data, error } = await supabase
-          .from('Batches')
-          .insert([{
+        const response = await apiFetch("/batches", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             ...batchData,
             status: "primary-fermentation"
-          }])
-          .select()
-          .single();
+          }),
+        });
+        const result = await response.json();
 
-        if (error) {
-          console.error('Error adding batch:', formatError(error));
+        if (!response.ok || !result.success) {
+          console.error('Error adding batch:', result.error);
           toast({
             title: "Error",
             description: "Failed to add batch. Please try again.",
@@ -409,7 +408,7 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
 
         // Add to local state
         const newBatch: BatchItem = {
-          id: data.id,
+          id: result.batch.id,
           ...formData,
           dateAdded: new Date().toISOString().split('T')[0],
           status: "primary-fermentation",
@@ -471,13 +470,13 @@ export function BatchManagementTab({ settings, onSetAddCallback }: BatchManageme
 
   const handleDelete = async (batchId: string) => {
     try {
-      const { error } = await supabase
-        .from('Batches')
-        .delete()
-        .eq('id', batchId);
+      const response = await apiFetch(`/batches/${batchId}`, {
+        method: "DELETE",
+      });
+      const result = await response.json().catch(() => ({}));
 
-      if (error) {
-        console.error('Error deleting batch:', formatError(error));
+      if (!response.ok || (result.success === false)) {
+        console.error('Error deleting batch:', result.error);
         toast({
           title: "Error",
           description: "Failed to delete batch. Please try again.",
