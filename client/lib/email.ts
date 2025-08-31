@@ -23,7 +23,12 @@ interface StatusUpdateEmailData {
   note?: string;
 }
 
-const FIL_EMAIL = import.meta.env.VITE_FIL_EMAIL;
+// Prevent bundler optimization by accessing env indirectly
+const getFilEmail = () => {
+  const envVars = import.meta.env;
+  return envVars.VITE_FIL_EMAIL;
+};
+const FIL_EMAIL = getFilEmail();
 
 const getEmailApiEndpoint = () => {
   const base = import.meta.env.DEV ? "" : "/.netlify/functions/api";
