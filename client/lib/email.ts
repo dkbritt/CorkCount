@@ -301,20 +301,28 @@ export async function sendOrderConfirmationEmail(
     const testEmailOverride = import.meta.env.VITE_TEST_EMAIL;
 
 
-    const emailRequests = [
-      // Email to customer (or test override)
-      {
-        from: `KB Winery <${fromEmail}>`,
-        to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
-        subject: isDevelopment
-          ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
-          : "Your KB Winery Order Confirmation",
-        html: isDevelopment
-          ? `<p><strong>TEST EMAIL - Original recipient: ${orderData.customerEmail}</strong></p>${emailHTML}`
-          : emailHTML,
-      },
-      // Email to FIL (or test override)
-      {
+    // Validate test email override for development
+    if (isDevelopment && !testEmailOverride) {
+      return { success: false, error: "Development mode requires VITE_TEST_EMAIL to be set" };
+    }
+
+    const emailRequests = [];
+
+    // Email to customer
+    emailRequests.push({
+      from: `KB Winery <${fromEmail}>`,
+      to: [isDevelopment ? testEmailOverride : orderData.customerEmail],
+      subject: isDevelopment
+        ? `[TEST] Order Confirmation for ${orderData.customerEmail} - ${orderData.orderNumber}`
+        : "Your KB Winery Order Confirmation",
+      html: isDevelopment
+        ? `<p><strong>TEST EMAIL - Original recipient: ${orderData.customerEmail}</strong></p>${emailHTML}`
+        : emailHTML,
+    });
+
+    // Email to admin (only if configured)
+    if (FIL_EMAIL) {
+      emailRequests.push({
         from: `KB Winery <${fromEmail}>`,
         to: [isDevelopment ? testEmailOverride : FIL_EMAIL],
         subject: isDevelopment
@@ -323,8 +331,8 @@ export async function sendOrderConfirmationEmail(
         html: isDevelopment
           ? `<p><strong>TEST EMAIL - Original recipient: ${FIL_EMAIL}</strong></p>${emailHTML}`
           : emailHTML,
-      },
-    ];
+      });
+    }
 
     const response = await fetch(getEmailApiEndpoint(), {
       method: "POST",
