@@ -11,7 +11,7 @@ import { WineDetailsModal } from "@/components/WineDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { secureSupabase } from "@/lib/secureSupabase";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 
