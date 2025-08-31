@@ -59,39 +59,20 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         setLoading(true);
         setError(null);
 
-        // Fetch inventory data
-        const { data: inventory, error: inventoryError } = await supabase
-          .from('Inventory')
-          .select('*');
-
-        if (inventoryError) {
-          console.error('Error fetching inventory:', formatError(inventoryError));
-        } else {
-          setInventoryData(inventory || []);
+        // Fetch aggregated metrics data via server API
+        const response = await apiFetch("/metrics");
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Failed to load metrics");
         }
 
-        // Fetch orders data
-        const { data: orders, error: ordersError } = await supabase
-          .from('Orders')
-          .select('*')
-          .order('created_at', { ascending: false });
+        const inventory = result.inventory || [];
+        const orders = result.orders || [];
+        const batches = result.batches || [];
 
-        if (ordersError) {
-          console.error('Error fetching orders:', formatError(ordersError));
-        } else {
-          setOrdersData(orders || []);
-        }
-
-        // Fetch batches data
-        const { data: batches, error: batchesError } = await supabase
-          .from('Batches')
-          .select('*');
-
-        if (batchesError) {
-          console.error('Error fetching batches:', formatError(batchesError));
-        } else {
-          setBatchesData(batches || []);
-        }
+        setInventoryData(inventory);
+        setOrdersData(orders);
+        setBatchesData(batches);
 
         // Generate recent activity from multiple sources
         const allActivity = [];
