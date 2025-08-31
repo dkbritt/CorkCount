@@ -2,6 +2,9 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { handleAdminLogin } from "./routes/auth";
+import { getAvailableInventory, updateInventoryQuantities } from "./routes/inventory";
+import { createOrder, getOrders, updateOrderStatus } from "./routes/orders";
 
 export function createServer() {
   const app = express();
