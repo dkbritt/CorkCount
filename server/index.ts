@@ -197,6 +197,49 @@ export function createServer() {
     }
   });
 
+  // Batches endpoints
+  app.get("/api/batches", async (_req, res) => {
+    try {
+      const result = await getBatches();
+      if (result.success) return res.json(result);
+      return res.status(500).json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/batches", async (req, res) => {
+    try {
+      const result = await createBatch(req.body);
+      if (result.success) return res.json(result);
+      return res.status(500).json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, error: "Internal server error" });
+    }
+  });
+
+  app.put("/api/batches/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await updateBatch(id, req.body);
+      if (result.success) return res.json(result);
+      return res.status(500).json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, error: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/batches/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await deleteBatch(id);
+      if (result.success) return res.json(result);
+      return res.status(500).json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, error: "Internal server error" });
+    }
+  });
+
   // Email sending endpoint (server-side Resend proxy)
   app.post("/api/email", async (req, res) => {
     try {
