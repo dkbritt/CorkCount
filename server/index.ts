@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleAdminLogin } from "./routes/auth";
-import { getAvailableInventory, updateInventoryQuantities } from "./routes/inventory";
-import { createOrder, getOrders, updateOrderStatus } from "./routes/orders";
+import { getAvailableInventory, getAllInventory, updateInventoryQuantities, addInventoryItem, updateInventoryItem, deleteInventoryItem } from "./routes/inventory";
+import { createOrder, getOrders, updateOrderStatus, deleteOrder, deleteOrderByNumber } from "./routes/orders";
 import { getBatches, createBatch, updateBatch, deleteBatch } from "./routes/batches";
 import { getMetricsData } from "./routes/metrics";
 
@@ -97,7 +97,61 @@ export function createServer() {
   // Inventory endpoints
   app.get("/api/inventory", async (req, res) => {
     try {
-      const result = await getAvailableInventory();
+      const { admin } = req.query;
+      const result = admin === 'true' ? await getAllInventory() : await getAvailableInventory();
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.post("/api/inventory", async (req, res) => {
+    try {
+      const result = await addInventoryItem(req.body);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.put("/api/inventory/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await updateInventoryItem(id, req.body);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.delete("/api/inventory/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await deleteInventoryItem(id);
 
       if (result.success) {
         res.json(result);
@@ -195,6 +249,42 @@ export function createServer() {
       }
 
       const result = await updateOrderStatus(id, status, note);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.delete("/api/orders/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await deleteOrder(id);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(500).json(result);
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  app.delete("/api/orders/by-number/:orderNumber", async (req, res) => {
+    try {
+      const { orderNumber } = req.params;
+      const result = await deleteOrderByNumber(orderNumber);
 
       if (result.success) {
         res.json(result);
