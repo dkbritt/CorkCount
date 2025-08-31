@@ -296,8 +296,11 @@ export async function sendOrderConfirmationEmail(
     // Check if required environment variables are set (prevent bundler optimization)
     const envVars = import.meta.env;
     const fromEmail = envVars.VITE_FROM_EMAIL;
-    if (!fromEmail || fromEmail === '') {
-      return { success: false, error: "Email service not configured - missing VITE_FROM_EMAIL" };
+    if (!fromEmail || fromEmail === "") {
+      return {
+        success: false,
+        error: "Email service not configured - missing VITE_FROM_EMAIL",
+      };
     }
 
     // Check if we're in production mode with a verified domain
@@ -306,10 +309,12 @@ export async function sendOrderConfirmationEmail(
     const isDevelopment = !isProductionReady;
     const testEmailOverride = envVars.VITE_TEST_EMAIL;
 
-
     // Validate test email override for development
     if (isDevelopment && !testEmailOverride) {
-      return { success: false, error: "Development mode requires VITE_TEST_EMAIL to be set" };
+      return {
+        success: false,
+        error: "Development mode requires VITE_TEST_EMAIL to be set",
+      };
     }
 
     const emailRequests = [];
@@ -380,8 +385,11 @@ export async function sendStatusUpdateEmail(
     // Check if required environment variables are set (prevent bundler optimization)
     const envVars = import.meta.env;
     const fromEmail = envVars.VITE_FROM_EMAIL;
-    if (!fromEmail || fromEmail === '') {
-      return { success: false, error: "Email service not configured - missing VITE_FROM_EMAIL" };
+    if (!fromEmail || fromEmail === "") {
+      return {
+        success: false,
+        error: "Email service not configured - missing VITE_FROM_EMAIL",
+      };
     }
 
     // Check if we're in production mode with a verified domain
@@ -392,9 +400,11 @@ export async function sendStatusUpdateEmail(
 
     // Validate test email override for development
     if (isDevelopment && !testEmailOverride) {
-      return { success: false, error: "Development mode requires VITE_TEST_EMAIL to be set" };
+      return {
+        success: false,
+        error: "Development mode requires VITE_TEST_EMAIL to be set",
+      };
     }
-
 
     const response = await fetch(getEmailApiEndpoint(), {
       method: "POST",
