@@ -1,61 +1,66 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 // Environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
-export const isSupabaseInsecureUrl = Boolean(supabaseUrl && String(supabaseUrl).startsWith('http://'))
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+export const isSupabaseInsecureUrl = Boolean(
+  supabaseUrl && String(supabaseUrl).startsWith("http://"),
+);
 
 // Create a safe stub client when env vars are missing to avoid crashing the app
 function createStubClient() {
   const notConfiguredError = new Error(
-    'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
-  )
+    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.",
+  );
 
   const makeQuery = () => {
-    const p: any = Promise.resolve({ data: null, error: notConfiguredError })
+    const p: any = Promise.resolve({ data: null, error: notConfiguredError });
     // Chainable query builder methods used in the app
-    p.select = () => p
-    p.order = () => p
-    p.gte = () => p
-    p.eq = () => p
-    p.limit = () => p
-    p.range = () => p
-    p.single = () => p
-    p.insert = () => p
-    p.update = () => p
-    p.delete = () => p
+    p.select = () => p;
+    p.order = () => p;
+    p.gte = () => p;
+    p.eq = () => p;
+    p.limit = () => p;
+    p.range = () => p;
+    p.single = () => p;
+    p.insert = () => p;
+    p.update = () => p;
+    p.delete = () => p;
     // Promise compatibility
-    p.then = Promise.prototype.then.bind(p)
-    p.catch = Promise.prototype.catch.bind(p)
-    p.finally = Promise.prototype.finally.bind(p)
-    return p
-  }
+    p.then = Promise.prototype.then.bind(p);
+    p.catch = Promise.prototype.catch.bind(p);
+    p.finally = Promise.prototype.finally.bind(p);
+    return p;
+  };
 
   const client: any = {
     from: (_table: string) => makeQuery(),
     auth: {
-      signInWithPassword: async () => ({ data: { user: null }, error: notConfiguredError }),
+      signInWithPassword: async () => ({
+        data: { user: null },
+        error: notConfiguredError,
+      }),
     },
-  }
-  return client
+  };
+  return client;
 }
 
 // Create Supabase client (or stub if envs are missing)
 export const supabase: any = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : (() => {
-      if (typeof console !== 'undefined') {
+      if (typeof console !== "undefined") {
         console.warn(
-          'Supabase env vars missing. Running with a stub client. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase.'
-        )
+          "Supabase env vars missing. Running with a stub client. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase.",
+        );
       }
-      return createStubClient()
-    })()
+      return createStubClient();
+    })();
 
 if (isSupabaseConfigured && isSupabaseInsecureUrl) {
   console.warn(
-    'VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL.'
-  )
+    "VITE_SUPABASE_URL uses http://. Browsers will block mixed content when your site is served over HTTPS; use an https:// Supabase URL.",
+  );
 }

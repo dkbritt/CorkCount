@@ -31,12 +31,10 @@ export function createServer() {
 
       const fromEmail = process.env.VITE_FROM_EMAIL;
       if (!fromEmail) {
-        return res
-          .status(500)
-          .json({
-            success: false,
-            error: "Email service not configured - missing FROM_EMAIL",
-          });
+        return res.status(500).json({
+          success: false,
+          error: "Email service not configured - missing FROM_EMAIL",
+        });
       }
       const defaultFrom = `KB Winery <${fromEmail}>`;
       const { messages } = req.body as {
@@ -97,12 +95,10 @@ export function createServer() {
         total: results.length,
       });
     } catch (err) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          error: err instanceof Error ? err.message : "Unknown server error",
-        });
+      return res.status(500).json({
+        success: false,
+        error: err instanceof Error ? err.message : "Unknown server error",
+      });
     }
   });
 
