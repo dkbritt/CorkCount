@@ -144,3 +144,59 @@ export async function updateOrderStatus(orderId: string, status: string, note?: 
     };
   }
 }
+
+// Delete order
+export async function deleteOrder(orderId: string) {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('Orders')
+      .delete()
+      .eq('id', orderId);
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to delete order'
+      };
+    }
+
+    return {
+      success: true
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: 'An unexpected error occurred while deleting order'
+    };
+  }
+}
+
+// Delete order by order number
+export async function deleteOrderByNumber(orderNumber: string) {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('Orders')
+      .delete()
+      .eq('order_number', orderNumber);
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to delete order'
+      };
+    }
+
+    return {
+      success: true
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: 'An unexpected error occurred while deleting order'
+    };
+  }
+}
