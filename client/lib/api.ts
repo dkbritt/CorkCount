@@ -27,6 +27,14 @@ async function tryPing(base: string): Promise<boolean> {
       fetch(`${base}/ping`, { method: "GET" }),
       3000,
     );
+    // Consume the response body to prevent "body stream already read" errors
+    if (res.ok) {
+      try {
+        await res.text(); // Consume the body
+      } catch {
+        // Ignore errors when consuming body
+      }
+    }
     return res.ok;
   } catch {
     return false;
@@ -56,12 +64,25 @@ export async function apiFetch(
   // First attempt with current/auto-resolved base
   let base = await resolveApiBase();
   let url = `${base}${inputPath}`;
+
   try {
-    return await fetch(url, init);
-  } catch {
+    const response = await fetch(url, init);
+    // If response is successful, return it
+    if (response.ok) {
+      return response;
+    }
+    // If response failed, try to retry with different base
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  } catch (error) {
     // Retry after forcing base re-resolution across candidates
-    base = await resolveApiBase(true);
-    url = `${base}${inputPath}`;
-    return fetch(url, init);
+    try {
+      base = await resolveApiBase(true);
+      url = `${base}${inputPath}`;
+      const retryResponse = await fetch(url, init);
+      return retryResponse;
+    } catch (retryError) {
+      // If retry also fails, throw the original error
+      throw error;
+    }
   }
 }
