@@ -66,11 +66,13 @@ export function createServer() {
     });
   });
 
-  // Example API routes
+  // Ping endpoint for API base resolution
   app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
+    res.json({ status: "ok", message: "API is available" });
   });
+
+  // Example API routes
+  app.get("/api/demo", handleDemo);
 
   app.get("/api/demo", handleDemo);
 
