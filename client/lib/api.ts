@@ -17,7 +17,6 @@ function withTimeout<T>(p: Promise<T>, ms = 5000): Promise<T> {
 
 const CANDIDATE_BASES = [
   "/api",
-  "/.netlify/functions/api/api",
   "/.netlify/functions/api",
 ] as const;
 

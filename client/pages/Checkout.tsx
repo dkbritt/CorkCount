@@ -187,7 +187,7 @@ export default function Checkout() {
         const isDev =
           window.location.hostname === "localhost" ||
           window.location.hostname === "127.0.0.1";
-        return isDev ? `/api${path}` : `/.netlify/functions/api/api${path}`;
+        return isDev ? `/api${path}` : `/.netlify/functions/api${path}`;
       };
 
       const orderResponse = await apiFetch("/orders", {
