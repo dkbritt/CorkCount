@@ -9,28 +9,28 @@ import {
 export const handler = async (event, context) => {
   // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
   try {
-    const path = event.path.replace('/.netlify/functions/orders', '');
+    const path = event.path.replace("/.netlify/functions/orders", "");
     const method = event.httpMethod;
     const body = event.body ? JSON.parse(event.body) : {};
 
     // GET /orders
-    if (method === 'GET' && (path === '' || path === '/')) {
+    if (method === "GET" && (path === "" || path === "/")) {
       const result = await getOrders();
 
       if (result.success) {
@@ -49,7 +49,7 @@ export const handler = async (event, context) => {
     }
 
     // POST /orders (create new order)
-    if (method === 'POST' && (path === '' || path === '/')) {
+    if (method === "POST" && (path === "" || path === "/")) {
       if (!body.orderNumber || !body.customerName || !body.email) {
         return {
           statusCode: 400,
@@ -79,8 +79,8 @@ export const handler = async (event, context) => {
     }
 
     // PUT /orders/:id/status
-    if (method === 'PUT' && path.includes('/status')) {
-      const id = path.split('/')[1]; // Extract ID from path like /abc123/status
+    if (method === "PUT" && path.includes("/status")) {
+      const id = path.split("/")[1]; // Extract ID from path like /abc123/status
       const { status, note } = body;
 
       if (!status) {
@@ -112,7 +112,11 @@ export const handler = async (event, context) => {
     }
 
     // DELETE /orders/:id
-    if (method === 'DELETE' && path.startsWith('/') && !path.includes('/by-number/')) {
+    if (
+      method === "DELETE" &&
+      path.startsWith("/") &&
+      !path.includes("/by-number/")
+    ) {
       const id = path.substring(1); // Remove leading slash
       const result = await deleteOrder(id);
 
@@ -132,8 +136,10 @@ export const handler = async (event, context) => {
     }
 
     // DELETE /orders/by-number/:orderNumber
-    if (method === 'DELETE' && path.startsWith('/by-number/')) {
-      const orderNumber = decodeURIComponent(path.substring('/by-number/'.length));
+    if (method === "DELETE" && path.startsWith("/by-number/")) {
+      const orderNumber = decodeURIComponent(
+        path.substring("/by-number/".length),
+      );
       const result = await deleteOrderByNumber(orderNumber);
 
       if (result.success) {
@@ -154,19 +160,19 @@ export const handler = async (event, context) => {
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Orders endpoint not found' 
+      body: JSON.stringify({
+        success: false,
+        error: "Orders endpoint not found",
       }),
     };
   } catch (error) {
-    console.error('Orders error:', error);
+    console.error("Orders error:", error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Internal server error' 
+      body: JSON.stringify({
+        success: false,
+        error: "Internal server error",
       }),
     };
   }

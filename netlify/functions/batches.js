@@ -8,28 +8,28 @@ import {
 export const handler = async (event, context) => {
   // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
   try {
-    const path = event.path.replace('/.netlify/functions/batches', '');
+    const path = event.path.replace("/.netlify/functions/batches", "");
     const method = event.httpMethod;
     const body = event.body ? JSON.parse(event.body) : {};
 
     // GET /batches
-    if (method === 'GET' && (path === '' || path === '/')) {
+    if (method === "GET" && (path === "" || path === "/")) {
       const result = await getBatches();
 
       if (result.success) {
@@ -48,7 +48,7 @@ export const handler = async (event, context) => {
     }
 
     // POST /batches (create new batch)
-    if (method === 'POST' && (path === '' || path === '/')) {
+    if (method === "POST" && (path === "" || path === "/")) {
       const result = await createBatch(body);
 
       if (result.success) {
@@ -67,7 +67,7 @@ export const handler = async (event, context) => {
     }
 
     // PUT /batches/:id (update batch)
-    if (method === 'PUT' && path.startsWith('/')) {
+    if (method === "PUT" && path.startsWith("/")) {
       const id = path.substring(1); // Remove leading slash
       const result = await updateBatch(id, body);
 
@@ -87,7 +87,7 @@ export const handler = async (event, context) => {
     }
 
     // DELETE /batches/:id
-    if (method === 'DELETE' && path.startsWith('/')) {
+    if (method === "DELETE" && path.startsWith("/")) {
       const id = path.substring(1); // Remove leading slash
       const result = await deleteBatch(id);
 
@@ -109,19 +109,19 @@ export const handler = async (event, context) => {
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Batches endpoint not found' 
+      body: JSON.stringify({
+        success: false,
+        error: "Batches endpoint not found",
       }),
     };
   } catch (error) {
-    console.error('Batches error:', error);
+    console.error("Batches error:", error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Internal server error' 
+      body: JSON.stringify({
+        success: false,
+        error: "Internal server error",
       }),
     };
   }
