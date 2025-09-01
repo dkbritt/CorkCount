@@ -269,7 +269,24 @@ export const handler = async (event, context) => {
 
     const method = event.httpMethod;
     const queryParams = event.queryStringParameters || {};
-    const body = event.body ? JSON.parse(event.body) : {};
+
+    // Safe body parsing
+    let body = {};
+    if (event.body) {
+      try {
+        body = JSON.parse(event.body);
+      } catch (error) {
+        console.error("Invalid JSON in request body:", error);
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: "Invalid JSON in request body",
+          }),
+        };
+      }
+    }
 
     // GET /inventory
     if (method === "GET" && (path === "" || path === "/")) {
