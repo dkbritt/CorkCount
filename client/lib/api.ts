@@ -57,28 +57,12 @@ export async function apiFetch(
   inputPath: string,
   init?: RequestInit,
 ): Promise<Response> {
-  // First attempt with current/auto-resolved mode
-  let useNetlify = await resolveApiMode();
-  let url = getEndpointUrl(inputPath, useNetlify);
+  const url = getEndpointUrl(inputPath);
 
   try {
     const response = await fetch(url, init);
-    // If response is successful, return it
-    if (response.ok) {
-      return response;
-    }
-    // If response failed, try to retry with different mode
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    return response;
   } catch (error) {
-    // Retry after forcing mode re-resolution
-    try {
-      useNetlify = await resolveApiMode(true);
-      url = getEndpointUrl(inputPath, useNetlify);
-      const retryResponse = await fetch(url, init);
-      return retryResponse;
-    } catch (retryError) {
-      // If retry also fails, throw the original error
-      throw error;
-    }
+    throw error;
   }
 }
