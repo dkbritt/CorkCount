@@ -1,6 +1,4 @@
-// Helper to resolve API base path dynamically
-// Tries local /api first, then falls back to Netlify functions path
-let cachedBase: string | null = null;
+// API client with automatic environment detection
 
 function withTimeout<T>(p: Promise<T>, ms = 5000): Promise<T> {
   return new Promise((resolve, reject) => {
