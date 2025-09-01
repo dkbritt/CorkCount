@@ -64,7 +64,7 @@ export default function Index() {
   const [isWineDetailsModalOpen, setIsWineDetailsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch inventory from Supabase
+  // Fetch inventory from secure API
   useEffect(() => {
     const fetchInventory = async () => {
       try {
