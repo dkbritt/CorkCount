@@ -61,8 +61,19 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
         // Fetch aggregated metrics data via server API
         const response = await apiFetch("/metrics");
-        const result = await response.json();
-        if (!response.ok || !result.success) {
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        let result;
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          throw new Error('Failed to parse response as JSON');
+        }
+
+        if (!result.success) {
           throw new Error(result.error || "Failed to load metrics");
         }
 

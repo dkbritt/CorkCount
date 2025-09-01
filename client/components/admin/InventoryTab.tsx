@@ -223,9 +223,19 @@ export function InventoryTab({
       try {
         setLoading(true);
         const response = await apiFetch("/inventory?admin=true");
-        const result = await response.json();
 
-        if (!response.ok || !result.success) {
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        let result;
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          throw new Error('Failed to parse response as JSON');
+        }
+
+        if (!result.success) {
           console.error("Error fetching inventory:", result.error);
           toast({
             title: "Error",
