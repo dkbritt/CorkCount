@@ -181,14 +181,7 @@ export default function Checkout() {
         total_price: item.wine.price * item.quantity,
       }));
 
-      // Create order via secure API
-      const getApiEndpoint = (path: string) => {
-        // Detect environment by checking hostname instead of environment variables
-        const isDev =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-        return isDev ? `/api${path}` : `/.netlify/functions/api${path}`;
-      };
+      // Create order via secure API (apiFetch handles routing automatically)
 
       const orderResponse = await apiFetch("/orders", {
         method: "POST",
