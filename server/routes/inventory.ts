@@ -34,9 +34,10 @@ export async function getAllInventory() {
       inventory: inventory || [],
     };
   } catch (err) {
+    console.error('Error in getAllInventory:', err);
     return {
       success: false,
-      error: "An unexpected error occurred while fetching inventory",
+      error: err instanceof Error ? err.message : "An unexpected error occurred while fetching inventory",
     };
   }
 }
@@ -91,9 +92,10 @@ export async function getAvailableInventory() {
       wines,
     };
   } catch (err) {
+    console.error('Error in getAvailableInventory:', err);
     return {
       success: false,
-      error: "An unexpected error occurred while fetching inventory",
+      error: err instanceof Error ? err.message : "An unexpected error occurred while fetching inventory",
     };
   }
 }
