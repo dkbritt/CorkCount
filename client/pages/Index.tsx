@@ -81,7 +81,7 @@ export default function Index() {
         try {
           result = await response.json();
         } catch (jsonError) {
-          throw new Error('Failed to parse response as JSON');
+          throw new Error("Failed to parse response as JSON");
         }
 
         if (!result.success) {

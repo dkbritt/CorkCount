@@ -38,7 +38,8 @@ export function createServer() {
   app.get("/api/config/supabase", (_req, res) => {
     // Check for both non-VITE and VITE prefixed environment variables
     const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const key = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    const key =
+      process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
     res.json({
       isConfigured: Boolean(url && key),

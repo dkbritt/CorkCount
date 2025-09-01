@@ -3,13 +3,13 @@ import { createClient } from "@supabase/supabase-js";
 function getSupabaseClient() {
   // Check for both non-VITE and VITE prefixed environment variables
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseAnonKey =
+    process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Missing Supabase configuration");
   }
   return createClient(supabaseUrl, supabaseAnonKey);
 }
-
 
 export async function getMetricsData() {
   try {
@@ -45,10 +45,11 @@ export async function getMetricsData() {
       error: errors.length ? errors.join("; ") : undefined,
     };
   } catch (err) {
-    console.error('Error in getMetricsData:', err);
+    console.error("Error in getMetricsData:", err);
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Failed to fetch metrics data"
+      error:
+        err instanceof Error ? err.message : "Failed to fetch metrics data",
     };
   }
 }
