@@ -43,6 +43,10 @@ export async function getMetricsData() {
       error: errors.length ? errors.join("; ") : undefined,
     };
   } catch (err) {
-    return { success: false, error: "Failed to fetch metrics data" };
+    console.error('Error in getMetricsData:', err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to fetch metrics data"
+    };
   }
 }
