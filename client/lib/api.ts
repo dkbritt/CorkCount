@@ -95,9 +95,9 @@ export async function apiFetch(
   inputPath: string,
   init?: RequestInit,
 ): Promise<Response> {
-  // First attempt with current/auto-resolved base
-  let base = await resolveApiBase();
-  let url = `${base}${inputPath}`;
+  // First attempt with current/auto-resolved mode
+  let useNetlify = await resolveApiMode();
+  let url = getEndpointUrl(inputPath, useNetlify);
 
   try {
     const response = await fetch(url, init);
@@ -105,13 +105,13 @@ export async function apiFetch(
     if (response.ok) {
       return response;
     }
-    // If response failed, try to retry with different base
+    // If response failed, try to retry with different mode
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   } catch (error) {
-    // Retry after forcing base re-resolution across candidates
+    // Retry after forcing mode re-resolution
     try {
-      base = await resolveApiBase(true);
-      url = `${base}${inputPath}`;
+      useNetlify = await resolveApiMode(true);
+      url = getEndpointUrl(inputPath, useNetlify);
       const retryResponse = await fetch(url, init);
       return retryResponse;
     } catch (retryError) {
