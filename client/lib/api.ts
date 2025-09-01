@@ -15,10 +15,7 @@ function withTimeout<T>(p: Promise<T>, ms = 5000): Promise<T> {
   });
 }
 
-const CANDIDATE_BASES = [
-  "/api",
-  "/.netlify/functions/api",
-] as const;
+const CANDIDATE_BASES = ["/api", "/.netlify/functions/api"] as const;
 
 async function tryPing(base: string): Promise<boolean> {
   try {
