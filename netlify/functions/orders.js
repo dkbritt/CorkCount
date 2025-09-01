@@ -25,7 +25,14 @@ export const handler = async (event, context) => {
   }
 
   try {
-    const path = event.path.replace("/.netlify/functions/orders", "");
+    // Handle both direct calls and redirected calls
+    let path = event.path || '';
+    if (path.startsWith('/.netlify/functions/orders')) {
+      path = path.replace('/.netlify/functions/orders', '');
+    } else if (path.startsWith('/api/orders')) {
+      path = path.replace('/api/orders', '');
+    }
+
     const method = event.httpMethod;
     const body = event.body ? JSON.parse(event.body) : {};
 
