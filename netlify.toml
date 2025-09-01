@@ -21,21 +21,39 @@
 
 [[redirects]]
   force = true
-  from = "/api/inventory*"
+  from = "/api/inventory"
   status = 200
-  to = "/.netlify/functions/inventory:splat"
+  to = "/.netlify/functions/inventory"
 
 [[redirects]]
   force = true
-  from = "/api/orders*"
+  from = "/api/inventory/*"
   status = 200
-  to = "/.netlify/functions/orders:splat"
+  to = "/.netlify/functions/inventory/:splat"
 
 [[redirects]]
   force = true
-  from = "/api/batches*"
+  from = "/api/orders"
   status = 200
-  to = "/.netlify/functions/batches:splat"
+  to = "/.netlify/functions/orders"
+
+[[redirects]]
+  force = true
+  from = "/api/orders/*"
+  status = 200
+  to = "/.netlify/functions/orders/:splat"
+
+[[redirects]]
+  force = true
+  from = "/api/batches"
+  status = 200
+  to = "/.netlify/functions/batches"
+
+[[redirects]]
+  force = true
+  from = "/api/batches/*"
+  status = 200
+  to = "/.netlify/functions/batches/:splat"
 
 [[redirects]]
   force = true
