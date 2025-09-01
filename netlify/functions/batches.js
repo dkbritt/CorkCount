@@ -25,11 +25,11 @@ export const handler = async (event, context) => {
 
   try {
     // Handle both direct calls and redirected calls
-    let path = event.path || '';
-    if (path.startsWith('/.netlify/functions/batches')) {
-      path = path.replace('/.netlify/functions/batches', '');
-    } else if (path.startsWith('/api/batches')) {
-      path = path.replace('/api/batches', '');
+    let path = event.path || "";
+    if (path.startsWith("/.netlify/functions/batches")) {
+      path = path.replace("/.netlify/functions/batches", "");
+    } else if (path.startsWith("/api/batches")) {
+      path = path.replace("/api/batches", "");
     }
 
     const method = event.httpMethod;
