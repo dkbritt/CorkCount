@@ -1,4 +1,4 @@
-import { getMetricsData } from "../../server/routes/metrics.js";
+import { getMetricsData } from "../../server/routes/metrics.ts";
 
 export const handler = async (event, context) => {
   // Set CORS headers

@@ -4,7 +4,7 @@ import {
   updateOrderStatus,
   deleteOrder,
   deleteOrderByNumber,
-} from "../../server/routes/orders.js";
+} from "../../server/routes/orders.ts";
 
 export const handler = async (event, context) => {
   // Set CORS headers

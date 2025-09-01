@@ -3,7 +3,7 @@ import {
   createBatch,
   updateBatch,
   deleteBatch,
-} from "../../server/routes/batches.js";
+} from "../../server/routes/batches.ts";
 
 export const handler = async (event, context) => {
   // Set CORS headers

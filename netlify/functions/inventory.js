@@ -5,7 +5,7 @@ import {
   addInventoryItem,
   updateInventoryItem,
   deleteInventoryItem,
-} from "../../server/routes/inventory.js";
+} from "../../server/routes/inventory.ts";
 
 export const handler = async (event, context) => {
   // Set CORS headers
