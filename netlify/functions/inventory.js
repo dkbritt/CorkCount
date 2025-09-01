@@ -417,7 +417,7 @@ export const handler = async (event, context) => {
       headers,
       body: JSON.stringify({
         success: false,
-        error: "Internal server error",
+        error: error instanceof Error ? error.message : "Internal server error",
       }),
     };
   }
