@@ -11,7 +11,7 @@ import {
   Phone,
   FileText,
   ArrowLeft,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
 import { CartItem } from "@/components/CartModal";
 import { apiFetch } from "@/lib/api";
@@ -35,20 +35,29 @@ interface PaymentInstruction {
 }
 
 const timeSlots = [
-  "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", 
-  "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "1:00 PM",
+  "2:00 PM",
+  "3:00 PM",
+  "4:00 PM",
+  "5:00 PM",
+  "6:00 PM",
 ];
 
 const paymentMethods = [
   { value: "zelle", label: "Zelle" },
   { value: "cashapp", label: "CashApp" },
-  { value: "cash", label: "Cash" }
+  { value: "cash", label: "Cash" },
 ];
 
 const paymentInstructions: Record<string, string> = {
-  zelle: "Send payment to kbwinery@zelle.com before pickup. Include order # in the memo.",
-  cashapp: "Send payment to $KBWinery before pickup. Include order # in the notes.",
-  cash: "Please bring exact change to pickup."
+  zelle:
+    "Send payment to kbwinery@zelle.com before pickup. Include order # in the memo.",
+  cashapp:
+    "Send payment to $KBWinery before pickup. Include order # in the notes.",
+  cash: "Please bring exact change to pickup.",
 };
 
 export default function Checkout() {
@@ -56,7 +65,7 @@ export default function Checkout() {
   const location = useLocation();
   const cartItems: CartItem[] = location.state?.cartItems || [];
   const { toast } = useToast();
-  
+
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: "",
     email: "",
@@ -64,9 +73,9 @@ export default function Checkout() {
     pickupDate: "",
     pickupTime: "",
     paymentMethod: "",
-    orderNotes: ""
+    orderNotes: "",
   });
-  
+
   const [formErrors, setFormErrors] = useState<Partial<CheckoutFormData>>({});
   const [showPaymentInstruction, setShowPaymentInstruction] = useState(false);
   const [currentInstruction, setCurrentInstruction] = useState("");
@@ -79,21 +88,24 @@ export default function Checkout() {
   }, [cartItems, navigate]);
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.wine.price * item.quantity), 0);
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + item.wine.price * item.quantity,
+    0,
+  );
 
   const validateForm = (): boolean => {
     const errors: Partial<CheckoutFormData> = {};
-    
+
     if (!formData.customerName.trim()) {
       errors.customerName = "Customer name is required";
     }
-    
+
     if (!formData.email.trim()) {
       errors.email = "Email address is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = "Please enter a valid email address";
     }
-    
+
     if (!formData.pickupDate) {
       errors.pickupDate = "Pickup date is required";
     } else {
@@ -104,15 +116,15 @@ export default function Checkout() {
         errors.pickupDate = "Pickup date cannot be in the past";
       }
     }
-    
+
     if (!formData.pickupTime) {
       errors.pickupTime = "Pickup time is required";
     }
-    
+
     if (!formData.paymentMethod) {
       errors.paymentMethod = "Payment method is required";
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -125,13 +137,13 @@ export default function Checkout() {
   };
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear error when user starts typing
     if (formErrors[field]) {
-      setFormErrors(prev => ({ ...prev, [field]: undefined }));
+      setFormErrors((prev) => ({ ...prev, [field]: undefined }));
     }
-    
+
     // Handle payment method selection
     if (field === "paymentMethod" && value) {
       setCurrentInstruction(paymentInstructions[value]);
@@ -154,28 +166,28 @@ export default function Checkout() {
       items: cartItems,
       totalPrice,
       orderDate: new Date().toISOString(),
-      status: "pending"
+      status: "pending",
     };
 
     try {
       // Prepare bottles_ordered data for API
-      const bottlesOrdered = cartItems.map(item => ({
+      const bottlesOrdered = cartItems.map((item) => ({
         wine_id: item.wine.id,
         wine_name: item.wine.name,
         wine_vintage: item.wine.vintage,
         wine_winery: item.wine.winery,
         quantity: item.quantity,
         price_per_bottle: item.wine.price,
-        total_price: item.wine.price * item.quantity
+        total_price: item.wine.price * item.quantity,
       }));
 
       // Create order via secure API
       const getApiEndpoint = (path: string) => {
         // Detect environment by checking hostname instead of environment variables
-        const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        return isDev
-          ? `/api${path}`
-          : `/.netlify/functions/api/api${path}`;
+        const isDev =
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1";
+        return isDev ? `/api${path}` : `/.netlify/functions/api/api${path}`;
       };
 
       const orderResponse = await apiFetch("/orders", {
@@ -190,17 +202,18 @@ export default function Checkout() {
           pickupTime: formData.pickupTime,
           paymentMethod: formData.paymentMethod,
           orderNotes: formData.orderNotes || null,
-          bottlesOrdered
+          bottlesOrdered,
         }),
       });
 
       const orderResult = await orderResponse.json();
 
       if (!orderResponse.ok || !orderResult.success) {
-        console.error('Order API error:', orderResult.error);
+        console.error("Order API error:", orderResult.error);
         toast({
           title: "Order failed",
-          description: "There was an error processing your order. Please try again.",
+          description:
+            "There was an error processing your order. Please try again.",
           variant: "destructive",
         });
         return;
@@ -208,9 +221,9 @@ export default function Checkout() {
 
       // Update inventory quantities after successful order
       try {
-        const inventoryUpdates = cartItems.map(item => ({
+        const inventoryUpdates = cartItems.map((item) => ({
           id: item.wine.id,
-          newQuantity: item.wine.inStock - item.quantity
+          newQuantity: item.wine.inStock - item.quantity,
         }));
 
         const inventoryResponse = await apiFetch("/inventory/update", {
@@ -222,11 +235,11 @@ export default function Checkout() {
         const inventoryResult = await inventoryResponse.json();
 
         if (!inventoryResponse.ok || !inventoryResult.success) {
-          console.warn('Inventory update API error:', inventoryResult.error);
+          console.warn("Inventory update API error:", inventoryResult.error);
           // Don't fail the order for inventory update issues
         }
       } catch (inventoryError) {
-        console.warn('Error updating inventory:', formatError(inventoryError));
+        console.warn("Error updating inventory:", formatError(inventoryError));
         // Don't fail the order for inventory update issues
       }
 
@@ -247,26 +260,29 @@ export default function Checkout() {
           paymentMethod: formData.paymentMethod,
           items: cartItems,
           totalPrice,
-          orderNotes: formData.orderNotes
+          orderNotes: formData.orderNotes,
         });
 
         if (emailResult.success) {
           toast({
             title: "Confirmation email sent!",
-            description: "Check your email for order details and pickup instructions.",
+            description:
+              "Check your email for order details and pickup instructions.",
           });
         } else {
           toast({
             title: "Email not sent",
-            description: "Order was created successfully, but confirmation email failed to send.",
+            description:
+              "Order was created successfully, but confirmation email failed to send.",
             variant: "destructive",
           });
         }
       } catch (emailError) {
-        console.warn('Email sending failed:', emailError);
+        console.warn("Email sending failed:", emailError);
         toast({
           title: "Email not sent",
-          description: "Order was created successfully, but confirmation email failed to send.",
+          description:
+            "Order was created successfully, but confirmation email failed to send.",
           variant: "destructive",
         });
       }
@@ -289,13 +305,15 @@ export default function Checkout() {
           wine: {
             name: ci.wine.name,
             vintage: ci.wine.vintage,
-            price: ci.wine.price
-          }
-        }))
+            price: ci.wine.price,
+          },
+        })),
       });
 
       try {
-        const existing = JSON.parse(localStorage.getItem("corkCountOrders") || "[]");
+        const existing = JSON.parse(
+          localStorage.getItem("corkCountOrders") || "[]",
+        );
         const pruned = existing.slice(0, 49); // keep at most 50
         pruned.unshift(minimizeOrderForStorage(orderData));
         localStorage.setItem("corkCountOrders", JSON.stringify(pruned));
@@ -305,10 +323,14 @@ export default function Checkout() {
           const fallbackList = [minimizeOrderForStorage(orderData)];
           localStorage.setItem("corkCountOrders", JSON.stringify(fallbackList));
         } catch (e2) {
-          console.warn("Skipping local backup of orders due to storage limits:", e2);
+          console.warn(
+            "Skipping local backup of orders due to storage limits:",
+            e2,
+          );
           toast({
             title: "Order saved",
-            description: "Local backup not saved due to storage limits. This will not affect your order.",
+            description:
+              "Local backup not saved due to storage limits. This will not affect your order.",
           });
         }
       }
@@ -320,11 +342,10 @@ export default function Checkout() {
       // Navigate to confirmation
       navigate("/checkout/confirmation", {
         state: { orderData },
-        replace: true
+        replace: true,
       });
-
     } catch (error) {
-      console.error('Error submitting order:', formatError(error));
+      console.error("Error submitting order:", formatError(error));
       toast({
         title: "Order failed",
         description: "An unexpected error occurred. Please try again.",
@@ -338,7 +359,7 @@ export default function Checkout() {
   };
 
   // Get minimum date (today)
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   if (cartItems.length === 0) {
     return null; // Will redirect
@@ -373,7 +394,7 @@ export default function Checkout() {
               <User className="h-5 w-5" />
               Customer Information
             </h2>
-            
+
             <div className="space-y-4">
               {/* Customer Name */}
               <div>
@@ -383,14 +404,20 @@ export default function Checkout() {
                 <input
                   type="text"
                   value={formData.customerName}
-                  onChange={(e) => handleInputChange('customerName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("customerName", e.target.value)
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.customerName ? 'border-red-300' : 'border-gray-300'
+                    formErrors.customerName
+                      ? "border-red-300"
+                      : "border-gray-300"
                   }`}
                   placeholder="Enter your full name"
                 />
                 {formErrors.customerName && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.customerName}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.customerName}
+                  </p>
                 )}
               </div>
 
@@ -402,14 +429,16 @@ export default function Checkout() {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.email ? 'border-red-300' : 'border-gray-300'
+                    formErrors.email ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter your email address"
                 />
                 {formErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.email}
+                  </p>
                 )}
               </div>
 
@@ -421,7 +450,7 @@ export default function Checkout() {
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
                   placeholder="Enter your phone number"
                 />
@@ -435,7 +464,7 @@ export default function Checkout() {
               <Calendar className="h-5 w-5" />
               Pickup Information
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Pickup Date */}
               <div>
@@ -445,14 +474,18 @@ export default function Checkout() {
                 <input
                   type="date"
                   value={formData.pickupDate}
-                  onChange={(e) => handleInputChange('pickupDate', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("pickupDate", e.target.value)
+                  }
                   min={today}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.pickupDate ? 'border-red-300' : 'border-gray-300'
+                    formErrors.pickupDate ? "border-red-300" : "border-gray-300"
                   }`}
                 />
                 {formErrors.pickupDate && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.pickupDate}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.pickupDate}
+                  </p>
                 )}
               </div>
 
@@ -463,9 +496,11 @@ export default function Checkout() {
                 </label>
                 <select
                   value={formData.pickupTime}
-                  onChange={(e) => handleInputChange('pickupTime', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("pickupTime", e.target.value)
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.pickupTime ? 'border-red-300' : 'border-gray-300'
+                    formErrors.pickupTime ? "border-red-300" : "border-gray-300"
                   }`}
                 >
                   <option value="">Select pickup time</option>
@@ -476,7 +511,9 @@ export default function Checkout() {
                   ))}
                 </select>
                 {formErrors.pickupTime && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.pickupTime}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.pickupTime}
+                  </p>
                 )}
               </div>
             </div>
@@ -488,16 +525,20 @@ export default function Checkout() {
               <CreditCard className="h-5 w-5" />
               Payment Method
             </h2>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Payment Method *
               </label>
               <select
                 value={formData.paymentMethod}
-                onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("paymentMethod", e.target.value)
+                }
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                  formErrors.paymentMethod ? 'border-red-300' : 'border-gray-300'
+                  formErrors.paymentMethod
+                    ? "border-red-300"
+                    : "border-gray-300"
                 }`}
               >
                 <option value="">Select payment method</option>
@@ -508,7 +549,9 @@ export default function Checkout() {
                 ))}
               </select>
               {formErrors.paymentMethod && (
-                <p className="mt-1 text-sm text-red-600">{formErrors.paymentMethod}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {formErrors.paymentMethod}
+                </p>
               )}
 
               {/* Payment Instructions Popup */}
@@ -516,7 +559,9 @@ export default function Checkout() {
                 <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-blue-800">{currentInstruction}</p>
+                    <p className="text-sm text-blue-800">
+                      {currentInstruction}
+                    </p>
                   </div>
                 </div>
               )}
@@ -529,12 +574,17 @@ export default function Checkout() {
               <FileText className="h-5 w-5" />
               Order Summary
             </h2>
-            
+
             <div className="space-y-3 mb-4">
               {cartItems.map((item) => (
-                <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
+                >
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{item.wine.name}</h3>
+                    <h3 className="font-medium text-gray-900">
+                      {item.wine.name}
+                    </h3>
                     <p className="text-sm text-gray-600">
                       {item.wine.winery} • {item.wine.vintage}
                     </p>
@@ -555,11 +605,11 @@ export default function Checkout() {
                 </div>
               ))}
             </div>
-            
+
             <div className="border-t border-gray-200 pt-3">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-gray-900">
-                  Total ({totalItems} item{totalItems !== 1 ? 's' : ''}):
+                  Total ({totalItems} item{totalItems !== 1 ? "s" : ""}):
                 </span>
                 <span className="font-bold text-xl text-wine">
                   ${totalPrice.toFixed(2)}
@@ -574,14 +624,17 @@ export default function Checkout() {
               <FileText className="h-5 w-5" />
               Order Notes
             </h2>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Special Instructions <span className="text-gray-500">(optional)</span>
+                Special Instructions{" "}
+                <span className="text-gray-500">(optional)</span>
               </label>
               <textarea
                 value={formData.orderNotes}
-                onChange={(e) => handleInputChange('orderNotes', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("orderNotes", e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
                 placeholder="Any special requests or notes for your order..."
                 rows={3}
@@ -599,11 +652,7 @@ export default function Checkout() {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              variant="accent"
-              className="flex-1"
-            >
+            <Button type="submit" variant="accent" className="flex-1">
               Place Order
             </Button>
           </div>

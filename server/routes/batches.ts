@@ -69,10 +69,7 @@ export async function updateBatch(id: string, updateData: any) {
 export async function deleteBatch(id: string) {
   try {
     const supabase = getSupabaseClient();
-    const { error } = await supabase
-      .from("Batches")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("Batches").delete().eq("id", id);
 
     if (error) {
       return { success: false, error: error.message };

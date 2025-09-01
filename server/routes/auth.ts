@@ -4,11 +4,11 @@ import { createClient } from "@supabase/supabase-js";
 function getSupabaseClient() {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  
+
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Missing Supabase configuration');
+    throw new Error("Missing Supabase configuration");
   }
-  
+
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
@@ -16,7 +16,7 @@ function getSupabaseClient() {
 export async function handleAdminLogin(email: string, password: string) {
   try {
     const supabase = getSupabaseClient();
-    
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password,
@@ -25,7 +25,7 @@ export async function handleAdminLogin(email: string, password: string) {
     if (error) {
       return {
         success: false,
-        error: error.message || "Invalid email or password"
+        error: error.message || "Invalid email or password",
       };
     }
 
@@ -33,18 +33,18 @@ export async function handleAdminLogin(email: string, password: string) {
       return {
         success: true,
         user: data.user,
-        session: data.session
+        session: data.session,
       };
     }
 
     return {
       success: false,
-      error: "Authentication failed"
+      error: "Authentication failed",
     };
   } catch (err) {
     return {
       success: false,
-      error: "An unexpected error occurred during login"
+      error: "An unexpected error occurred during login",
     };
   }
 }

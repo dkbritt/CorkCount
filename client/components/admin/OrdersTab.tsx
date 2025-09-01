@@ -142,10 +142,7 @@ export function OrdersTab() {
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          console.error(
-            "Error fetching orders from API:",
-            result.error,
-          );
+          console.error("Error fetching orders from API:", result.error);
           // Fallback to localStorage if API fails
           loadOrdersFromStorage();
           return;
@@ -441,13 +438,22 @@ export function OrdersTab() {
             method: "DELETE",
           });
           const result = await response.json().catch(() => ({}));
-          supabaseErr = (!response.ok || result.success === false) ? (result.error || "Failed to delete order") : null;
+          supabaseErr =
+            !response.ok || result.success === false
+              ? result.error || "Failed to delete order"
+              : null;
         } else if (targetOrder?.orderNumber) {
-          const response = await apiFetch(`/orders/by-number/${encodeURIComponent(targetOrder.orderNumber)}`, {
-            method: "DELETE",
-          });
+          const response = await apiFetch(
+            `/orders/by-number/${encodeURIComponent(targetOrder.orderNumber)}`,
+            {
+              method: "DELETE",
+            },
+          );
           const result = await response.json().catch(() => ({}));
-          supabaseErr = (!response.ok || result.success === false) ? (result.error || "Failed to delete order") : null;
+          supabaseErr =
+            !response.ok || result.success === false
+              ? result.error || "Failed to delete order"
+              : null;
         }
       } catch (e: any) {
         supabaseErr = e;
@@ -534,7 +540,10 @@ export function OrdersTab() {
             body: JSON.stringify({ status: newStatus }),
           });
           const result = await response.json();
-          error = (!response.ok || !result.success) ? (result.error || "Failed to update order status") : null;
+          error =
+            !response.ok || !result.success
+              ? result.error || "Failed to update order status"
+              : null;
         } else if (targetOrder?.orderNumber) {
           // For non-UUID orders, we need to find by order number first
           // This is a more complex operation, so we'll use the same endpoint approach
@@ -544,7 +553,10 @@ export function OrdersTab() {
             body: JSON.stringify({ status: newStatus }),
           });
           const result = await response.json();
-          error = (!response.ok || !result.success) ? (result.error || "Failed to update order status") : null;
+          error =
+            !response.ok || !result.success
+              ? result.error || "Failed to update order status"
+              : null;
         }
       } catch (e: any) {
         error = e;

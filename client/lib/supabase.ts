@@ -1,7 +1,11 @@
 // Legacy Supabase client - now replaced with secure API endpoints
 // This file maintains compatibility while preventing environment variable exposure
 
-import { secureSupabase, isSupabaseConfigured as secureIsConfigured, isSupabaseInsecureUrl as secureIsInsecureUrl } from "./secureSupabase";
+import {
+  secureSupabase,
+  isSupabaseConfigured as secureIsConfigured,
+  isSupabaseInsecureUrl as secureIsInsecureUrl,
+} from "./secureSupabase";
 
 // Redirect to secure client
 export const supabase = secureSupabase;

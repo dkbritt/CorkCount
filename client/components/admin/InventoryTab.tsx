@@ -13,7 +13,7 @@ import {
   Package,
   X,
   Save,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -65,11 +65,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2015,
     type: "Red Wine",
     quantity: 12,
-    price: 450.00,
+    price: 450.0,
     status: "in-stock",
     lastUpdated: "2024-01-15",
     location: "Wine Cellar - Section A",
-    image: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop",
   },
   {
     id: "inv-002",
@@ -78,11 +79,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2012,
     type: "Sparkling",
     quantity: 8,
-    price: 280.00,
+    price: 280.0,
     status: "in-stock",
     lastUpdated: "2024-01-14",
     location: "Refrigerator - Top Shelf",
-    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=600&fit=crop",
   },
   {
     id: "inv-003",
@@ -91,11 +93,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2018,
     type: "Red Wine",
     quantity: 15,
-    price: 380.00,
+    price: 380.0,
     status: "in-stock",
     lastUpdated: "2024-01-13",
     location: "Wine Cellar - Section B",
-    image: "https://images.unsplash.com/photo-1566995147102-a84a5b4b8b0a?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1566995147102-a84a5b4b8b0a?w=400&h=600&fit=crop",
   },
   {
     id: "inv-004",
@@ -104,11 +107,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2017,
     type: "Red Wine",
     quantity: 3,
-    price: 120.00,
+    price: 120.0,
     status: "low-stock",
     lastUpdated: "2024-01-12",
     location: "Dining Room Cabinet",
-    image: "https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?w=400&h=600&fit=crop",
   },
   {
     id: "inv-005",
@@ -117,11 +121,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2020,
     type: "White Wine",
     quantity: 36,
-    price: 85.00,
+    price: 85.0,
     status: "in-stock",
     lastUpdated: "2024-01-11",
     location: "Kitchen Wine Fridge",
-    image: "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=600&fit=crop",
   },
   {
     id: "inv-006",
@@ -130,11 +135,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2019,
     type: "Red Wine",
     quantity: 2,
-    price: 95.00,
+    price: 95.0,
     status: "low-stock",
     lastUpdated: "2024-01-10",
     location: "Basement Storage",
-    image: "https://images.unsplash.com/photo-1574282248091-7e8bfcef9e8d?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1574282248091-7e8bfcef9e8d?w=400&h=600&fit=crop",
   },
   {
     id: "inv-007",
@@ -143,11 +149,12 @@ const mockInventory: InventoryItem[] = [
     vintage: 2022,
     type: "Rosé",
     quantity: 48,
-    price: 25.00,
+    price: 25.0,
     status: "in-stock",
     lastUpdated: "2024-01-09",
     location: "Pantry Rack",
-    image: "https://images.unsplash.com/photo-1569235186275-626cb8f3c7be?w=400&h=600&fit=crop"
+    image:
+      "https://images.unsplash.com/photo-1569235186275-626cb8f3c7be?w=400&h=600&fit=crop",
   },
   {
     id: "inv-008",
@@ -156,12 +163,13 @@ const mockInventory: InventoryItem[] = [
     vintage: 2021,
     type: "Dessert Wine",
     quantity: 0,
-    price: 45.00,
+    price: 45.0,
     status: "out-of-stock",
     lastUpdated: "2024-01-08",
     location: "Wine Cellar - Section C",
-    image: "https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400&h=600&fit=crop"
-  }
+    image:
+      "https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400&h=600&fit=crop",
+  },
 ];
 
 interface InventoryTabProps {
@@ -172,7 +180,10 @@ interface InventoryTabProps {
   onSetAddCallback?: (callback: () => void) => void;
 }
 
-export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps = {}) {
+export function InventoryTab({
+  settings,
+  onSetAddCallback,
+}: InventoryTabProps = {}) {
   const { lowStockThreshold = 5, outOfStockThreshold = 0 } = settings || {};
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -194,7 +205,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
     batchLink: "",
     status: "Active",
     location: "",
-    image: ""
+    image: "",
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
   const [availableBatches, setAvailableBatches] = useState<BatchItem[]>([]);
@@ -215,7 +226,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          console.error('Error fetching inventory:', result.error);
+          console.error("Error fetching inventory:", result.error);
           toast({
             title: "Error",
             description: `Failed to load inventory: ${result.error}`,
@@ -225,27 +236,31 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         }
 
         // Convert API data to InventoryItem format
-        const inventoryItems: InventoryItem[] = (result.inventory || []).map((item: any) => ({
-          id: item.id,
-          name: item.name || 'Unnamed Wine',
-          winery: item.winery || 'Unknown Winery',
-          vintage: item.vintage || new Date().getFullYear(),
-          type: item.type || 'Red Wine',
-          quantity: parseInt(item.quantity) || 0,
-          price: parseFloat(item.price) || 0,
-          status: getInventoryStatus(item.quantity),
-          lastUpdated: item.last_updated || item.created_at || new Date().toISOString().split('T')[0],
-          flavorNotes: item.flavor_notes || '',
-          batchId: item.batch_id || '',
-          location: item.location || '',
-          image: item.image_url || item.image || '',
-          tags: item.tags || []
-        }));
+        const inventoryItems: InventoryItem[] = (result.inventory || []).map(
+          (item: any) => ({
+            id: item.id,
+            name: item.name || "Unnamed Wine",
+            winery: item.winery || "Unknown Winery",
+            vintage: item.vintage || new Date().getFullYear(),
+            type: item.type || "Red Wine",
+            quantity: parseInt(item.quantity) || 0,
+            price: parseFloat(item.price) || 0,
+            status: getInventoryStatus(item.quantity),
+            lastUpdated:
+              item.last_updated ||
+              item.created_at ||
+              new Date().toISOString().split("T")[0],
+            flavorNotes: item.flavor_notes || "",
+            batchId: item.batch_id || "",
+            location: item.location || "",
+            image: item.image_url || item.image || "",
+            tags: item.tags || [],
+          }),
+        );
 
         setInventory(inventoryItems);
-
       } catch (err: any) {
-        console.error('Error fetching inventory:', formatError(err));
+        console.error("Error fetching inventory:", formatError(err));
         toast({
           title: "Error",
           description: "An unexpected error occurred while loading inventory.",
@@ -262,16 +277,18 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         const result = await response.json();
 
         if (response.ok && result.success) {
-          const batchItems: BatchItem[] = (result.batches || []).map((batch: any) => ({
-            id: batch.id,
-            name: batch.name || 'Unnamed Batch'
-          }));
+          const batchItems: BatchItem[] = (result.batches || []).map(
+            (batch: any) => ({
+              id: batch.id,
+              name: batch.name || "Unnamed Batch",
+            }),
+          );
           setAvailableBatches(batchItems);
         } else {
-          console.error('Error fetching batches:', result.error);
+          console.error("Error fetching batches:", result.error);
         }
       } catch (err) {
-        console.error('Error fetching batches:', formatError(err));
+        console.error("Error fetching batches:", formatError(err));
       }
     };
 
@@ -289,7 +306,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
   }, [onSetAddCallback]);
 
   // Helper function to determine status based on quantity
-  const getInventoryStatus = (quantity: number): "in-stock" | "low-stock" | "out-of-stock" => {
+  const getInventoryStatus = (
+    quantity: number,
+  ): "in-stock" | "low-stock" | "out-of-stock" => {
     if (quantity <= outOfStockThreshold) return "out-of-stock";
     if (quantity <= lowStockThreshold) return "low-stock";
     return "in-stock";
@@ -344,13 +363,19 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
     if (!formData.quantity) {
       errors.quantity = "Quantity is required";
-    } else if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
+    } else if (
+      isNaN(parseInt(formData.quantity)) ||
+      parseInt(formData.quantity) < 0
+    ) {
       errors.quantity = "Please enter a valid quantity";
     }
 
     if (!formData.price) {
       errors.price = "Price is required";
-    } else if (isNaN(parseFloat(formData.price)) || parseFloat(formData.price) < 0) {
+    } else if (
+      isNaN(parseFloat(formData.price)) ||
+      parseFloat(formData.price) < 0
+    ) {
       errors.price = "Please enter a valid price";
     }
 
@@ -373,9 +398,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       // Generate auto-tags from flavor notes and wine data
       const autoTags = autoTagWine({
         flavorNotes: formData.flavorNotes,
-        description: '', // No description field in current form
+        description: "", // No description field in current form
         name: formData.bottleName,
-        type: formData.type
+        type: formData.type,
       });
       const sanitizedTags = sanitizeTags(autoTags);
 
@@ -391,7 +416,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         location: formData.location,
         image_url: formData.image,
         tags: sanitizedTags, // Add auto-generated tags
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       };
 
       if (editingItem) {
@@ -404,7 +429,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          console.error('Error updating inventory:', result.error);
+          console.error("Error updating inventory:", result.error);
           toast({
             title: "Error",
             description: "Failed to update inventory item. Please try again.",
@@ -422,23 +447,24 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           quantity: quantity,
           price: parseFloat(formData.price),
           status: getInventoryStatus(quantity),
-          lastUpdated: new Date().toISOString().split('T')[0],
+          lastUpdated: new Date().toISOString().split("T")[0],
           flavorNotes: formData.flavorNotes,
           batchId: formData.batchLink,
           location: formData.location,
           image: formData.image,
-          tags: sanitizedTags
+          tags: sanitizedTags,
         };
 
-        setInventory(inventory.map(item =>
-          item.id === editingItem.id ? updatedItem : item
-        ));
+        setInventory(
+          inventory.map((item) =>
+            item.id === editingItem.id ? updatedItem : item,
+          ),
+        );
 
         toast({
           title: "Success",
           description: "Inventory item updated successfully.",
         });
-
       } else {
         // Add new item
         const response = await apiFetch("/inventory", {
@@ -449,7 +475,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          console.error('Error adding inventory:', result.error);
+          console.error("Error adding inventory:", result.error);
           toast({
             title: "Error",
             description: "Failed to add inventory item. Please try again.",
@@ -468,12 +494,12 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           quantity: quantity,
           price: parseFloat(formData.price),
           status: getInventoryStatus(quantity),
-          lastUpdated: new Date().toISOString().split('T')[0],
+          lastUpdated: new Date().toISOString().split("T")[0],
           flavorNotes: formData.flavorNotes,
           batchId: formData.batchLink,
           location: formData.location,
           image: formData.image,
-          tags: sanitizedTags
+          tags: sanitizedTags,
         };
 
         setInventory([...inventory, newItem]);
@@ -486,9 +512,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
       // Reset form
       resetForm();
-
     } catch (err: any) {
-      console.error('Error submitting form:', formatError(err));
+      console.error("Error submitting form:", formatError(err));
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -510,7 +535,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       batchLink: "",
       status: "Active",
       location: "",
-      image: ""
+      image: "",
     });
     setFormErrors({});
     setShowAddForm(false);
@@ -544,7 +569,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       batchLink: item.batchId || "",
       status: getFormStatus(item.status),
       location: item.location || "",
-      image: item.image || ""
+      image: item.image || "",
     });
     setEditingItem(item);
     setShowAddForm(true);
@@ -558,8 +583,8 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       });
       const result = await response.json().catch(() => ({}));
 
-      if (!response.ok || (result.success === false)) {
-        console.error('Error deleting inventory item:', result.error);
+      if (!response.ok || result.success === false) {
+        console.error("Error deleting inventory item:", result.error);
         toast({
           title: "Error",
           description: "Failed to delete inventory item. Please try again.",
@@ -569,15 +594,14 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
       }
 
       // Update local state
-      setInventory(inventory.filter(item => item.id !== itemId));
+      setInventory(inventory.filter((item) => item.id !== itemId));
 
       toast({
         title: "Success",
         description: "Inventory item deleted successfully.",
       });
-
     } catch (err: any) {
-      console.error('Error deleting inventory item:', formatError(err));
+      console.error("Error deleting inventory item:", formatError(err));
       toast({
         title: "Error",
         description: "An unexpected error occurred while deleting item.",
@@ -587,39 +611,41 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
   };
 
   const handleInputChange = (field: keyof AddInventoryForm, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Clear error when user starts typing
     if (formErrors[field]) {
-      setFormErrors(prev => ({ ...prev, [field]: undefined }));
+      setFormErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const filteredInventory = inventory
-    .filter(item => {
-      const matchesSearch = searchQuery === "" || 
+    .filter((item) => {
+      const matchesSearch =
+        searchQuery === "" ||
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.winery.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.type.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-      
+
+      const matchesStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
       const aValue = a[sortField];
       const bValue = b[sortField];
-      
+
       if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortDirection === "asc" 
+        return sortDirection === "asc"
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      
+
       if (typeof aValue === "number" && typeof bValue === "number") {
         return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
-      
+
       return 0;
     });
 
@@ -684,14 +710,18 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 <input
                   type="text"
                   value={formData.bottleName}
-                  onChange={(e) => handleInputChange('bottleName', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("bottleName", e.target.value)
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.bottleName ? 'border-red-300' : 'border-gray-300'
+                    formErrors.bottleName ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter bottle name"
                 />
                 {formErrors.bottleName && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.bottleName}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.bottleName}
+                  </p>
                 )}
               </div>
 
@@ -702,9 +732,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 </label>
                 <select
                   value={formData.type}
-                  onChange={(e) => handleInputChange('type', e.target.value)}
+                  onChange={(e) => handleInputChange("type", e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.type ? 'border-red-300' : 'border-gray-300'
+                    formErrors.type ? "border-red-300" : "border-gray-300"
                   }`}
                 >
                   <option value="">Select wine type</option>
@@ -727,16 +757,18 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 <input
                   type="number"
                   value={formData.vintage}
-                  onChange={(e) => handleInputChange('vintage', e.target.value)}
+                  onChange={(e) => handleInputChange("vintage", e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.vintage ? 'border-red-300' : 'border-gray-300'
+                    formErrors.vintage ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="2023"
                   min="1800"
                   max={new Date().getFullYear() + 5}
                 />
                 {formErrors.vintage && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.vintage}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.vintage}
+                  </p>
                 )}
               </div>
 
@@ -748,15 +780,19 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 <input
                   type="number"
                   value={formData.quantity}
-                  onChange={(e) => handleInputChange('quantity', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("quantity", e.target.value)
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.quantity ? 'border-red-300' : 'border-gray-300'
+                    formErrors.quantity ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="12"
                   min="0"
                 />
                 {formErrors.quantity && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.quantity}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.quantity}
+                  </p>
                 )}
               </div>
 
@@ -770,9 +806,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                   <input
                     type="number"
                     value={formData.price}
-                    onChange={(e) => handleInputChange('price', e.target.value)}
+                    onChange={(e) => handleInputChange("price", e.target.value)}
                     className={`w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                      formErrors.price ? 'border-red-300' : 'border-gray-300'
+                      formErrors.price ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="45.00"
                     min="0"
@@ -780,7 +816,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                   />
                 </div>
                 {formErrors.price && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.price}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.price}
+                  </p>
                 )}
               </div>
 
@@ -791,7 +829,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 </label>
                 <select
                   value={formData.batchLink}
-                  onChange={(e) => handleInputChange('batchLink', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("batchLink", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
                 >
                   <option value="">Select a batch (optional)</option>
@@ -810,7 +850,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 </label>
                 <select
                   value={formData.status}
-                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  onChange={(e) => handleInputChange("status", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
                 >
                   <option value="Active">Active</option>
@@ -827,14 +867,18 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 <input
                   type="text"
                   value={formData.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                    formErrors.location ? 'border-red-300' : 'border-gray-300'
+                    formErrors.location ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="e.g., Wine Cellar - Section A"
                 />
                 {formErrors.location && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.location}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.location}
+                  </p>
                 )}
               </div>
 
@@ -846,7 +890,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 <div className="space-y-3">
                   {/* File Upload */}
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Upload from device:</label>
+                    <label className="block text-xs text-gray-500 mb-1">
+                      Upload from device:
+                    </label>
                     <input
                       type="file"
                       accept="image/*"
@@ -856,7 +902,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                           const reader = new FileReader();
                           reader.onload = (event) => {
                             const result = event.target?.result as string;
-                            handleInputChange('image', result);
+                            handleInputChange("image", result);
                           };
                           reader.readAsDataURL(file);
                         }
@@ -867,13 +913,17 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
 
                   {/* URL Input */}
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Or enter image URL:</label>
+                    <label className="block text-xs text-gray-500 mb-1">
+                      Or enter image URL:
+                    </label>
                     <input
                       type="url"
                       value={formData.image}
-                      onChange={(e) => handleInputChange('image', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("image", e.target.value)
+                      }
                       className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal ${
-                        formErrors.image ? 'border-red-300' : 'border-gray-300'
+                        formErrors.image ? "border-red-300" : "border-gray-300"
                       }`}
                       placeholder="https://example.com/wine-image.jpg"
                     />
@@ -881,7 +931,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 </div>
 
                 {formErrors.image && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.image}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {formErrors.image}
+                  </p>
                 )}
 
                 {formData.image && (
@@ -893,7 +945,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                       className="w-20 h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
+                        target.style.display = "none";
                       }}
                     />
                   </div>
@@ -907,7 +959,9 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
                 </label>
                 <textarea
                   value={formData.flavorNotes}
-                  onChange={(e) => handleInputChange('flavorNotes', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("flavorNotes", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
                   placeholder="Describe the wine's flavor profile, tasting notes, and characteristics..."
                   rows={3}
@@ -926,16 +980,24 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="accent" className="gap-2" disabled={formLoading}>
+              <Button
+                type="submit"
+                variant="accent"
+                className="gap-2"
+                disabled={formLoading}
+              >
                 {formLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Save className="h-4 w-4" />
                 )}
                 {formLoading
-                  ? (editingItem ? "Updating..." : "Adding...")
-                  : (editingItem ? "Update Bottle" : "Add Bottle")
-                }
+                  ? editingItem
+                    ? "Updating..."
+                    : "Adding..."
+                  : editingItem
+                    ? "Update Bottle"
+                    : "Add Bottle"}
               </Button>
             </div>
           </form>
@@ -951,7 +1013,7 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
             placeholder="Search wines, wineries, types..."
           />
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-gray-500" />
           <select
@@ -974,203 +1036,211 @@ export function InventoryTab({ settings, onSetAddCallback }: InventoryTabProps =
           <h3 className="font-playfair text-lg font-medium text-gray-900 mb-2">
             Loading inventory...
           </h3>
-          <p className="text-gray-600">Please wait while we fetch your wine collection.</p>
+          <p className="text-gray-600">
+            Please wait while we fetch your wine collection.
+          </p>
         </div>
       )}
 
       {/* Inventory Table - Desktop */}
       {!loading && (
         <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px]">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("name")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Wine Name
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("vintage")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Vintage
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("type")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Type
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("quantity")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Quantity
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </span>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <button
-                    onClick={() => handleSort("price")}
-                    className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
-                  >
-                    Price
-                    <ArrowUpDown className="h-3 w-3" />
-                  </button>
-                </th>
-                <th className="px-4 py-3 text-left">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
-                  </span>
-                </th>
-                <th className="px-4 py-3 text-center">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredInventory.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-4">
-                    <div>
-                      <div className="font-playfair font-medium text-gray-900">
-                        {item.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {item.winery}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-900">
-                    {item.vintage}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-900">
-                    {item.type}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-900">
-                    {item.quantity} bottles
-                  </td>
-                  <td className="px-4 py-4">
-                    {getStatusBadge(item)}
-                  </td>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                    ${item.price.toFixed(2)}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-900">
-                    {item.location || "Not specified"}
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0"
-                        onClick={() => handleEditItem(item)}
-                        title="Edit item"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                        onClick={() => handleDeleteItem(item.id)}
-                        title="Delete item"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px]">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-4 py-3 text-left">
+                    <button
+                      onClick={() => handleSort("name")}
+                      className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
+                    >
+                      Wine Name
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <button
+                      onClick={() => handleSort("vintage")}
+                      className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
+                    >
+                      Vintage
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <button
+                      onClick={() => handleSort("type")}
+                      className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
+                    >
+                      Type
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <button
+                      onClick={() => handleSort("quantity")}
+                      className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
+                    >
+                      Quantity
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </span>
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <button
+                      onClick={() => handleSort("price")}
+                      className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700"
+                    >
+                      Price
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Location
+                    </span>
+                  </th>
+                  <th className="px-4 py-3 text-center">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredInventory.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-4 py-4">
+                      <div>
+                        <div className="font-playfair font-medium text-gray-900">
+                          {item.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {item.winery}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {item.vintage}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {item.type}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {item.quantity} bottles
+                    </td>
+                    <td className="px-4 py-4">{getStatusBadge(item)}</td>
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900">
+                      ${item.price.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {item.location || "Not specified"}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleEditItem(item)}
+                          title="Edit item"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                          onClick={() => handleDeleteItem(item.id)}
+                          title="Delete item"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Inventory Cards - Mobile/Tablet */}
       {!loading && (
         <div className="lg:hidden space-y-4">
-        {filteredInventory.map((item) => (
-          <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-playfair font-medium text-gray-900 truncate">
-                  {item.name}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {item.winery} • {item.vintage}
-                </p>
+          {filteredInventory.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-lg border border-gray-200 p-4"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-playfair font-medium text-gray-900 truncate">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {item.winery} • {item.vintage}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 ml-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => handleEditItem(item)}
+                    title="Edit item"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                    onClick={() => handleDeleteItem(item.id)}
+                    title="Delete item"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-2 ml-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handleEditItem(item)}
-                  title="Edit item"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                  onClick={() => handleDeleteItem(item.id)}
-                  title="Delete item"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-gray-500">Type:</span>
-                <div className="font-medium">{item.type}</div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Type:</span>
+                  <div className="font-medium">{item.type}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Quantity:</span>
+                  <div className="font-medium">{item.quantity} bottles</div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Price:</span>
+                  <div className="font-medium text-wine">
+                    ${item.price.toFixed(2)}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-gray-500">Status:</span>
+                  <div className="mt-1">{getStatusBadge(item)}</div>
+                </div>
               </div>
-              <div>
-                <span className="text-gray-500">Quantity:</span>
-                <div className="font-medium">{item.quantity} bottles</div>
-              </div>
-              <div>
-                <span className="text-gray-500">Price:</span>
-                <div className="font-medium text-wine">${item.price.toFixed(2)}</div>
-              </div>
-              <div>
-                <span className="text-gray-500">Status:</span>
-                <div className="mt-1">{getStatusBadge(item)}</div>
-              </div>
-            </div>
 
-            {item.location && (
-              <div className="mt-3 text-sm">
-                <span className="text-gray-500">Location:</span>
-                <div className="font-medium">{item.location}</div>
-              </div>
-            )}
-          </div>
-        ))}
+              {item.location && (
+                <div className="mt-3 text-sm">
+                  <span className="text-gray-500">Location:</span>
+                  <div className="font-medium">{item.location}</div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
 

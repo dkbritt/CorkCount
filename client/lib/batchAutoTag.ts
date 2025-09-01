@@ -3,8 +3,8 @@
  * Note: This functionality may be better moved to server-side for production use
  */
 
-import { apiFetch } from './api';
-import { autoTagWine, sanitizeTags } from './autoTagger';
+import { apiFetch } from "./api";
+import { autoTagWine, sanitizeTags } from "./autoTagger";
 
 export interface BatchAutoTagResult {
   success: boolean;
@@ -21,12 +21,12 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
     success: true,
     processed: 0,
     failed: 0,
-    errors: []
+    errors: [],
   };
 
   try {
     // Fetch all wines from inventory via API
-    const response = await apiFetch('/inventory?admin=true');
+    const response = await apiFetch("/inventory?admin=true");
     const apiResult = await response.json();
 
     if (!response.ok || !apiResult.success) {
@@ -38,7 +38,7 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
     const wines = apiResult.inventory || [];
 
     if (wines.length === 0) {
-      result.errors.push('No wines found in inventory');
+      result.errors.push("No wines found in inventory");
       return result;
     }
 
@@ -49,31 +49,38 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
       try {
         // Generate tags for this wine
         const autoTags = autoTagWine({
-          flavorNotes: wine.flavor_notes || '',
-          description: wine.description || '',
-          name: wine.name || '',
-          type: wine.type || ''
+          flavorNotes: wine.flavor_notes || "",
+          description: wine.description || "",
+          name: wine.name || "",
+          type: wine.type || "",
         });
 
         const sanitizedTags = sanitizeTags(autoTags);
 
         // Only update if we have new tags or different tags
         const existingTags = wine.tags || [];
-        const tagsChanged = JSON.stringify(existingTags.sort()) !== JSON.stringify(sanitizedTags.sort());
+        const tagsChanged =
+          JSON.stringify(existingTags.sort()) !==
+          JSON.stringify(sanitizedTags.sort());
 
         if (tagsChanged) {
           // Update the wine with new tags via API
           const updateResponse = await apiFetch(`/inventory/${wine.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tags: sanitizedTags })
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tags: sanitizedTags }),
           });
           const updateResult = await updateResponse.json();
 
           if (!updateResponse.ok || !updateResult.success) {
             result.failed++;
-            result.errors.push(`Failed to update wine ${wine.name}: ${updateResult.error}`);
-            console.error(`Failed to update wine ${wine.id}:`, updateResult.error);
+            result.errors.push(
+              `Failed to update wine ${wine.name}: ${updateResult.error}`,
+            );
+            console.error(
+              `Failed to update wine ${wine.id}:`,
+              updateResult.error,
+            );
           } else {
             result.processed++;
             console.log(`Updated tags for ${wine.name}:`, sanitizedTags);
@@ -82,10 +89,11 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
           // No changes needed
           result.processed++;
         }
-
       } catch (error) {
         result.failed++;
-        result.errors.push(`Error processing wine ${wine.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        result.errors.push(
+          `Error processing wine ${wine.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
         console.error(`Error processing wine ${wine.id}:`, error);
       }
     }
@@ -93,11 +101,12 @@ export async function batchAutoTagInventory(): Promise<BatchAutoTagResult> {
     if (result.failed > 0) {
       result.success = false;
     }
-
   } catch (error) {
     result.success = false;
-    result.errors.push(`Batch processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    console.error('Batch auto-tagging failed:', error);
+    result.errors.push(
+      `Batch processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+    console.error("Batch auto-tagging failed:", error);
   }
 
   return result;
@@ -119,14 +128,14 @@ export async function previewAutoTags(): Promise<{
 }> {
   try {
     // Fetch all wines from inventory via API
-    const response = await apiFetch('/inventory?admin=true');
+    const response = await apiFetch("/inventory?admin=true");
     const apiResult = await response.json();
 
     if (!response.ok || !apiResult.success) {
       return {
         success: false,
         previews: [],
-        error: `Failed to fetch wines: ${apiResult.error}`
+        error: `Failed to fetch wines: ${apiResult.error}`,
       };
     }
 
@@ -136,40 +145,43 @@ export async function previewAutoTags(): Promise<{
       return {
         success: true,
         previews: [],
-        error: 'No wines found in inventory'
+        error: "No wines found in inventory",
       };
     }
 
-    const previews = wines.map(wine => {
-      const suggestedTags = sanitizeTags(autoTagWine({
-        flavorNotes: wine.flavor_notes || '',
-        description: wine.description || '',
-        name: wine.name || '',
-        type: wine.type || ''
-      }));
+    const previews = wines.map((wine) => {
+      const suggestedTags = sanitizeTags(
+        autoTagWine({
+          flavorNotes: wine.flavor_notes || "",
+          description: wine.description || "",
+          name: wine.name || "",
+          type: wine.type || "",
+        }),
+      );
 
       const currentTags = wine.tags || [];
-      const changed = JSON.stringify(currentTags.sort()) !== JSON.stringify(suggestedTags.sort());
+      const changed =
+        JSON.stringify(currentTags.sort()) !==
+        JSON.stringify(suggestedTags.sort());
 
       return {
         id: wine.id,
         name: wine.name,
         currentTags,
         suggestedTags,
-        changed
+        changed,
       };
     });
 
     return {
       success: true,
-      previews
+      previews,
     };
-
   } catch (error) {
     return {
       success: false,
       previews: [],
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }

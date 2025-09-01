@@ -9,7 +9,10 @@ const api = {
 };
 
 // Check if Supabase is configured by testing the API
-async function checkSupabaseConfig(): Promise<{ isConfigured: boolean; isInsecureUrl: boolean }> {
+async function checkSupabaseConfig(): Promise<{
+  isConfigured: boolean;
+  isInsecureUrl: boolean;
+}> {
   try {
     const response = await api.fetch("/config/supabase");
     if (!response.ok) {
@@ -18,7 +21,7 @@ async function checkSupabaseConfig(): Promise<{ isConfigured: boolean; isInsecur
     const config = await response.json();
     return {
       isConfigured: config.isConfigured || false,
-      isInsecureUrl: config.isInsecureUrl || false
+      isInsecureUrl: config.isInsecureUrl || false,
     };
   } catch (error) {
     console.warn("Could not check Supabase configuration:", error);
@@ -28,7 +31,13 @@ async function checkSupabaseConfig(): Promise<{ isConfigured: boolean; isInsecur
 
 // Authentication functions
 export const auth = {
-  async signInWithPassword({ email, password }: { email: string; password: string }) {
+  async signInWithPassword({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) {
     try {
       const response = await api.fetch("/auth/login", {
         method: "POST",
@@ -37,25 +46,25 @@ export const auth = {
       });
 
       const result = await response.json();
-      
+
       if (!response.ok) {
         return {
           data: { user: null },
-          error: { message: result.error || "Authentication failed" }
+          error: { message: result.error || "Authentication failed" },
         };
       }
 
       return {
-        data: { 
+        data: {
           user: result.user,
-          session: result.session
+          session: result.session,
         },
-        error: null
+        error: null,
       };
     } catch (error) {
       return {
         data: { user: null },
-        error: { message: "Network error during authentication" }
+        error: { message: "Network error during authentication" },
       };
     }
   },
@@ -64,16 +73,16 @@ export const auth = {
     // For now, return null as we're not implementing full session management
     return {
       data: { user: null },
-      error: null
+      error: null,
     };
   },
 
   async signOut() {
     // For now, just return success
     return {
-      error: null
+      error: null,
     };
-  }
+  },
 };
 
 // Database query builder functions
@@ -129,7 +138,9 @@ function createQueryBuilder(tableName: string) {
           if (!response.ok || !apiResult.success) {
             result = {
               data: null,
-              error: { message: apiResult.error || "Failed to fetch inventory" },
+              error: {
+                message: apiResult.error || "Failed to fetch inventory",
+              },
             };
           } else {
             result = { data: apiResult.wines, error: null };
@@ -160,15 +171,23 @@ function createQueryBuilder(tableName: string) {
             });
             const apiResult = await response.json();
             if (!response.ok || !apiResult.success) {
-              result = { data: null, error: { message: apiResult.error || "Failed to create batch" } };
+              result = {
+                data: null,
+                error: { message: apiResult.error || "Failed to create batch" },
+              };
             } else {
               result = { data: apiResult.batch, error: null };
             }
           } else if (queryBuilder._update) {
-            const idFilter = (queryBuilder._filters || []).find((f: any) => f.type === "eq" && f.column === "id");
+            const idFilter = (queryBuilder._filters || []).find(
+              (f: any) => f.type === "eq" && f.column === "id",
+            );
             const id = idFilter?.value;
             if (!id) {
-              result = { data: null, error: { message: "Missing id for update" } };
+              result = {
+                data: null,
+                error: { message: "Missing id for update" },
+              };
             } else {
               const response = await api.fetch(`/batches/${id}`, {
                 method: "PUT",
@@ -177,21 +196,40 @@ function createQueryBuilder(tableName: string) {
               });
               const apiResult = await response.json();
               if (!response.ok || !apiResult.success) {
-                result = { data: null, error: { message: apiResult.error || "Failed to update batch" } };
+                result = {
+                  data: null,
+                  error: {
+                    message: apiResult.error || "Failed to update batch",
+                  },
+                };
               } else {
                 result = { data: apiResult.batch, error: null };
               }
             }
           } else if (queryBuilder._delete) {
-            const idFilter = (queryBuilder._filters || []).find((f: any) => f.type === "eq" && f.column === "id");
+            const idFilter = (queryBuilder._filters || []).find(
+              (f: any) => f.type === "eq" && f.column === "id",
+            );
             const id = idFilter?.value;
             if (!id) {
-              result = { data: null, error: { message: "Missing id for delete" } };
+              result = {
+                data: null,
+                error: { message: "Missing id for delete" },
+              };
             } else {
-              const response = await api.fetch(`/batches/${id}`, { method: "DELETE" });
+              const response = await api.fetch(`/batches/${id}`, {
+                method: "DELETE",
+              });
               const apiResult = await response.json().catch(() => ({}));
-              if (!response.ok || (apiResult.success === false)) {
-                result = { data: null, error: { message: (apiResult && apiResult.error) || "Failed to delete batch" } };
+              if (!response.ok || apiResult.success === false) {
+                result = {
+                  data: null,
+                  error: {
+                    message:
+                      (apiResult && apiResult.error) ||
+                      "Failed to delete batch",
+                  },
+                };
               } else {
                 result = { data: { id }, error: null };
               }
@@ -200,12 +238,20 @@ function createQueryBuilder(tableName: string) {
             const response = await api.fetch("/batches");
             const apiResult = await response.json();
             if (!response.ok || !apiResult.success) {
-              result = { data: null, error: { message: apiResult.error || "Failed to fetch batches" } };
+              result = {
+                data: null,
+                error: {
+                  message: apiResult.error || "Failed to fetch batches",
+                },
+              };
             } else {
               result = { data: apiResult.batches, error: null };
             }
           } else {
-            result = { data: null, error: { message: `Unsupported operation on ${tableName}` } };
+            result = {
+              data: null,
+              error: { message: `Unsupported operation on ${tableName}` },
+            };
           }
         } else {
           result = {
@@ -253,7 +299,7 @@ function from(tableName: string) {
 export const secureSupabase = {
   auth,
   from,
-  checkSupabaseConfig
+  checkSupabaseConfig,
 };
 
 // Export configuration helpers

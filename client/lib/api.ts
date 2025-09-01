@@ -23,7 +23,10 @@ const CANDIDATE_BASES = [
 
 async function tryPing(base: string): Promise<boolean> {
   try {
-    const res = await withTimeout(fetch(`${base}/ping`, { method: "GET" }), 3000);
+    const res = await withTimeout(
+      fetch(`${base}/ping`, { method: "GET" }),
+      3000,
+    );
     return res.ok;
   } catch {
     return false;
@@ -46,7 +49,10 @@ export async function resolveApiBase(forceRefresh = false): Promise<string> {
   return cachedBase;
 }
 
-export async function apiFetch(inputPath: string, init?: RequestInit): Promise<Response> {
+export async function apiFetch(
+  inputPath: string,
+  init?: RequestInit,
+): Promise<Response> {
   // First attempt with current/auto-resolved base
   let base = await resolveApiBase();
   let url = `${base}${inputPath}`;

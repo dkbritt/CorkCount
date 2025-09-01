@@ -10,7 +10,13 @@ import { AdminLoginModal } from "@/components/AdminLoginModal";
 import { WineDetailsModal } from "@/components/WineDetailsModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SlidersHorizontal, Grid, List, AlertCircle, Loader2 } from "lucide-react";
+import {
+  SlidersHorizontal,
+  Grid,
+  List,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
@@ -65,12 +71,12 @@ export default function Index() {
         setLoading(true);
         setError(null);
 
-        const response = await apiFetch('/inventory');
+        const response = await apiFetch("/inventory");
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          console.error('Inventory API error:', result.error);
-          setError('Failed to load wine inventory');
+          console.error("Inventory API error:", result.error);
+          setError("Failed to load wine inventory");
           toast({
             title: "Error",
             description: `Failed to load wine inventory: ${result.error}`,
@@ -84,13 +90,13 @@ export default function Index() {
         if (result.wines.length === 0) {
           toast({
             title: "No wines available",
-            description: "The wine inventory is currently empty. Please check back later.",
+            description:
+              "The wine inventory is currently empty. Please check back later.",
           });
         }
-
       } catch (err) {
-        console.error('Error fetching inventory:', formatError(err));
-        setError('An unexpected error occurred');
+        console.error("Error fetching inventory:", formatError(err));
+        setError("An unexpected error occurred");
         toast({
           title: "Error",
           description: "An unexpected error occurred while loading wines.",
@@ -141,19 +147,25 @@ export default function Index() {
 
   // Filter and search logic
   const filteredWines = useMemo(() => {
-    return wines.filter(wine => {
+    return wines.filter((wine) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
-        const searchableText = `${wine.name} ${wine.winery} ${wine.region} ${wine.type}`.toLowerCase();
+        const searchableText =
+          `${wine.name} ${wine.winery} ${wine.region} ${wine.type}`.toLowerCase();
         if (!searchableText.includes(query)) return false;
       }
 
       // Type filter
-      if (filters.types.length > 0 && !filters.types.includes(wine.type)) return false;
+      if (filters.types.length > 0 && !filters.types.includes(wine.type))
+        return false;
 
       // Price range filter
-      if (wine.price < filters.priceRange[0] || wine.price > filters.priceRange[1]) return false;
+      if (
+        wine.price < filters.priceRange[0] ||
+        wine.price > filters.priceRange[1]
+      )
+        return false;
 
       // In stock filter
       if (filters.inStockOnly && wine.inStock === 0) return false;
@@ -163,38 +175,44 @@ export default function Index() {
   }, [wines, searchQuery, filters]);
 
   const handleAddToCart = (wine: Wine, quantity: number) => {
-    setCartItems(prev => {
-      const existingItem = prev.find(item => item.wine.id === wine.id);
+    setCartItems((prev) => {
+      const existingItem = prev.find((item) => item.wine.id === wine.id);
       if (existingItem) {
         // Update quantity of existing item
-        return prev.map(item =>
+        return prev.map((item) =>
           item.wine.id === wine.id
-            ? { ...item, quantity: Math.min(item.quantity + quantity, wine.inStock) }
-            : item
+            ? {
+                ...item,
+                quantity: Math.min(item.quantity + quantity, wine.inStock),
+              }
+            : item,
         );
       } else {
         // Add new item
-        return [...prev, {
-          id: `cart-${wine.id}-${Date.now()}`,
-          wine,
-          quantity: Math.min(quantity, wine.inStock)
-        }];
+        return [
+          ...prev,
+          {
+            id: `cart-${wine.id}-${Date.now()}`,
+            wine,
+            quantity: Math.min(quantity, wine.inStock),
+          },
+        ];
       }
     });
   };
 
   const handleUpdateCartQuantity = (itemId: string, newQuantity: number) => {
-    setCartItems(prev =>
-      prev.map(item =>
+    setCartItems((prev) =>
+      prev.map((item) =>
         item.id === itemId
           ? { ...item, quantity: Math.min(newQuantity, item.wine.inStock) }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const handleRemoveFromCart = (itemId: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== itemId));
+    setCartItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
   const handleOpenCart = () => {
@@ -212,7 +230,7 @@ export default function Index() {
 
     setIsCartModalOpen(false);
     navigate("/checkout", {
-      state: { cartItems }
+      state: { cartItems },
     });
   };
 
@@ -240,8 +258,14 @@ export default function Index() {
   };
 
   // Calculate cart totals
-  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalCartPrice = cartItems.reduce((sum, item) => sum + (item.wine.price * item.quantity), 0);
+  const totalCartItems = cartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
+  const totalCartPrice = cartItems.reduce(
+    (sum, item) => sum + item.wine.price * item.quantity,
+    0,
+  );
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -283,18 +307,14 @@ export default function Index() {
               Sip Happens — Find Your Vintage
             </h1>
             <p className="text-lg sm:text-xl mb-8 text-wine-100 max-w-3xl mx-auto">
-              Curated collection of premium wines from KB Winery.
-              From everyday favorites to rare vintages.
+              Curated collection of premium wines from KB Winery. From everyday
+              favorites to rare vintages.
             </p>
-            
+
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto mb-8">
-              <SearchBar
-                onSearch={handleSearch}
-                onClear={clearSearch}
-              />
+              <SearchBar onSearch={handleSearch} onClear={clearSearch} />
             </div>
-
           </div>
         </div>
       </div>
@@ -315,8 +335,10 @@ export default function Index() {
                 <SlidersHorizontal className="h-4 w-4" />
                 Filters
               </Button>
-              
-              {(searchQuery || filters.types.length > 0 || filters.inStockOnly) && (
+
+              {(searchQuery ||
+                filters.types.length > 0 ||
+                filters.inStockOnly) && (
                 <Badge variant="secondary">
                   {filteredWines.length} of {wines.length} wines
                 </Badge>
@@ -349,7 +371,7 @@ export default function Index() {
             <FilterBar
               onFiltersChange={handleFiltersChange}
               onClearFilters={clearFilters}
-              availableTypes={Array.from(new Set(wines.map(w => w.type)))}
+              availableTypes={Array.from(new Set(wines.map((w) => w.type)))}
             />
           )}
         </div>
@@ -378,9 +400,7 @@ export default function Index() {
             <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
               Unable to load wines
             </h3>
-            <p className="text-gray-600 mb-4">
-              {error}
-            </p>
+            <p className="text-gray-600 mb-4">{error}</p>
             <Button variant="accent" onClick={() => window.location.reload()}>
               Retry
             </Button>
@@ -389,11 +409,13 @@ export default function Index() {
 
         {/* Wine Grid/List */}
         {!loading && !error && filteredWines.length > 0 && (
-          <div className={
-            viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              : "space-y-4"
-          }>
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                : "space-y-4"
+            }
+          >
             {filteredWines.map((wine) => (
               <WineCard
                 key={wine.id}
@@ -408,25 +430,31 @@ export default function Index() {
         )}
 
         {/* No Results State */}
-        {!loading && !error && filteredWines.length === 0 && wines.length > 0 && (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <SlidersHorizontal className="w-12 h-12 text-gray-400" />
+        {!loading &&
+          !error &&
+          filteredWines.length === 0 &&
+          wines.length > 0 && (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <SlidersHorizontal className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+                No wines found
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Try adjusting your search or filter criteria
+              </p>
+              <Button
+                variant="accent"
+                onClick={() => {
+                  clearSearch();
+                  clearFilters();
+                }}
+              >
+                Clear All Filters
+              </Button>
             </div>
-            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
-              No wines found
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your search or filter criteria
-            </p>
-            <Button variant="accent" onClick={() => {
-              clearSearch();
-              clearFilters();
-            }}>
-              Clear All Filters
-            </Button>
-          </div>
-        )}
+          )}
 
         {/* Empty Inventory State */}
         {!loading && !error && wines.length === 0 && (

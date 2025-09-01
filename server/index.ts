@@ -3,9 +3,27 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleAdminLogin } from "./routes/auth";
-import { getAvailableInventory, getAllInventory, updateInventoryQuantities, addInventoryItem, updateInventoryItem, deleteInventoryItem } from "./routes/inventory";
-import { createOrder, getOrders, updateOrderStatus, deleteOrder, deleteOrderByNumber } from "./routes/orders";
-import { getBatches, createBatch, updateBatch, deleteBatch } from "./routes/batches";
+import {
+  getAvailableInventory,
+  getAllInventory,
+  updateInventoryQuantities,
+  addInventoryItem,
+  updateInventoryItem,
+  deleteInventoryItem,
+} from "./routes/inventory";
+import {
+  createOrder,
+  getOrders,
+  updateOrderStatus,
+  deleteOrder,
+  deleteOrderByNumber,
+} from "./routes/orders";
+import {
+  getBatches,
+  createBatch,
+  updateBatch,
+  deleteBatch,
+} from "./routes/batches";
 import { getMetricsData } from "./routes/metrics";
 
 export function createServer() {
@@ -75,7 +93,7 @@ export function createServer() {
       if (!email || !password) {
         return res.status(400).json({
           success: false,
-          error: "Email and password are required"
+          error: "Email and password are required",
         });
       }
 
@@ -89,7 +107,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -98,7 +116,10 @@ export function createServer() {
   app.get("/api/inventory", async (req, res) => {
     try {
       const { admin } = req.query;
-      const result = admin === 'true' ? await getAllInventory() : await getAvailableInventory();
+      const result =
+        admin === "true"
+          ? await getAllInventory()
+          : await getAvailableInventory();
 
       if (result.success) {
         res.json(result);
@@ -108,7 +129,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -125,7 +146,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -143,7 +164,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -161,7 +182,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -173,7 +194,7 @@ export function createServer() {
       if (!Array.isArray(updates)) {
         return res.status(400).json({
           success: false,
-          error: "Updates must be an array"
+          error: "Updates must be an array",
         });
       }
 
@@ -187,7 +208,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -197,10 +218,14 @@ export function createServer() {
     try {
       const orderData = req.body;
 
-      if (!orderData.orderNumber || !orderData.customerName || !orderData.email) {
+      if (
+        !orderData.orderNumber ||
+        !orderData.customerName ||
+        !orderData.email
+      ) {
         return res.status(400).json({
           success: false,
-          error: "Order number, customer name, and email are required"
+          error: "Order number, customer name, and email are required",
         });
       }
 
@@ -214,7 +239,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -231,7 +256,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -244,7 +269,7 @@ export function createServer() {
       if (!status) {
         return res.status(400).json({
           success: false,
-          error: "Status is required"
+          error: "Status is required",
         });
       }
 
@@ -258,7 +283,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -276,7 +301,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -294,7 +319,7 @@ export function createServer() {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Internal server error"
+        error: "Internal server error",
       });
     }
   });
@@ -347,12 +372,10 @@ export function createServer() {
     try {
       const RESEND_API_KEY = process.env.RESEND_API_KEY;
       if (!RESEND_API_KEY) {
-        return res
-          .status(500)
-          .json({
-            success: false,
-            error: "Email service not configured - missing RESEND_API_KEY",
-          });
+        return res.status(500).json({
+          success: false,
+          error: "Email service not configured - missing RESEND_API_KEY",
+        });
       }
 
       const fromEmail = process.env.VITE_FROM_EMAIL;

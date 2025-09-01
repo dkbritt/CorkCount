@@ -19,11 +19,15 @@ export async function getMetricsData() {
         .select("id,name,type,quantity,created_at,last_updated"),
       supabase
         .from("Orders")
-        .select("id,order_number,customer_name,email,bottles_ordered,status,created_at,pickup_date,pickup_time,payment_method,phone,notes")
+        .select(
+          "id,order_number,customer_name,email,bottles_ordered,status,created_at,pickup_date,pickup_time,payment_method,phone,notes",
+        )
         .order("created_at", { ascending: false }),
       supabase
         .from("Batches")
-        .select("id,name,type,vintage,quantity,aging_notes:aging_notes,created_at,date_started,estimated_aging_time,estimated_aging_unit,status,estimated_bottling"),
+        .select(
+          "id,name,type,vintage,quantity,aging_notes:aging_notes,created_at,date_started,estimated_aging_time,estimated_aging_unit,status,estimated_bottling",
+        ),
     ]);
 
     const errors: string[] = [];

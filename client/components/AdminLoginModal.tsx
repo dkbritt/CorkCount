@@ -20,7 +20,9 @@ export function AdminLoginModal({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [supabaseConfigured, setSupabaseConfigured] = useState<boolean | null>(null);
+  const [supabaseConfigured, setSupabaseConfigured] = useState<boolean | null>(
+    null,
+  );
 
   // Check Supabase configuration on mount
   useEffect(() => {
@@ -45,7 +47,8 @@ export function AdminLoginModal({
       setError("Admin login is disabled until Supabase is configured.");
       toast({
         title: "Supabase not configured",
-        description: "Database connection is not available. Please contact the administrator.",
+        description:
+          "Database connection is not available. Please contact the administrator.",
         variant: "destructive",
       });
       return;
@@ -59,10 +62,11 @@ export function AdminLoginModal({
     setIsLoading(true);
 
     try {
-      const { data, error: authError } = await secureSupabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
-      });
+      const { data, error: authError } =
+        await secureSupabase.auth.signInWithPassword({
+          email: email.trim(),
+          password: password,
+        });
 
       if (authError) {
         setError(authError.message || "Invalid email or password");
@@ -189,7 +193,8 @@ export function AdminLoginModal({
               <div className="text-sm text-gray-600">
                 <p className="font-medium mb-1">Database not configured</p>
                 <p>
-                  Admin login is disabled. Please contact the administrator to enable authentication.
+                  Admin login is disabled. Please contact the administrator to
+                  enable authentication.
                 </p>
               </div>
             </div>
@@ -202,9 +207,7 @@ export function AdminLoginModal({
               <Loader2 className="h-5 w-5 text-blue-400 mt-0.5 animate-spin" />
               <div className="text-sm text-blue-600">
                 <p className="font-medium mb-1">Checking configuration...</p>
-                <p>
-                  Verifying database connection.
-                </p>
+                <p>Verifying database connection.</p>
               </div>
             </div>
           </div>

@@ -9,7 +9,7 @@ import {
   PieChart,
   Calendar,
   Activity,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -48,8 +48,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
       action: "Loading recent activity...",
       user: "System",
       time: "Now",
-      status: "pending"
-    }
+      status: "pending",
+    },
   ]);
 
   // Fetch data from Supabase
@@ -82,11 +82,11 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           const recentOrders = orders.slice(0, 10).map((order: any) => ({
             id: `order-${order.id}`,
             action: `New order ${order.order_number}`,
-            user: order.customer_name || 'Unknown Customer',
+            user: order.customer_name || "Unknown Customer",
             time: getRelativeTime(order.created_at),
             status: order.status || "pending",
-            type: 'order',
-            timestamp: new Date(order.created_at).getTime()
+            type: "order",
+            timestamp: new Date(order.created_at).getTime(),
           }));
           allActivity.push(...recentOrders);
         }
@@ -94,17 +94,21 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         // Add recent inventory additions/updates
         if (inventory && inventory.length > 0) {
           const recentInventory = inventory
-            .filter(item => item.created_at)
-            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .filter((item) => item.created_at)
+            .sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
+            )
             .slice(0, 10)
             .map((item: any) => ({
               id: `inventory-${item.id}`,
-              action: `Added ${item.name || 'wine'} to inventory`,
-              user: 'Admin',
+              action: `Added ${item.name || "wine"} to inventory`,
+              user: "Admin",
               time: getRelativeTime(item.created_at),
-              status: 'completed',
-              type: 'inventory',
-              timestamp: new Date(item.created_at).getTime()
+              status: "completed",
+              type: "inventory",
+              timestamp: new Date(item.created_at).getTime(),
             }));
           allActivity.push(...recentInventory);
         }
@@ -112,17 +116,21 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         // Add recent batch additions/updates
         if (batches && batches.length > 0) {
           const recentBatches = batches
-            .filter(batch => batch.created_at)
-            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .filter((batch) => batch.created_at)
+            .sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
+            )
             .slice(0, 10)
             .map((batch: any) => ({
               id: `batch-${batch.id}`,
-              action: `Created batch ${batch.name || 'Unnamed Batch'}`,
-              user: 'Admin',
+              action: `Created batch ${batch.name || "Unnamed Batch"}`,
+              user: "Admin",
               time: getRelativeTime(batch.created_at),
-              status: batch.status || 'primary-fermentation',
-              type: 'batch',
-              timestamp: new Date(batch.created_at).getTime()
+              status: batch.status || "primary-fermentation",
+              type: "batch",
+              timestamp: new Date(batch.created_at).getTime(),
             }));
           allActivity.push(...recentBatches);
         }
@@ -136,20 +144,20 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         if (sortedActivity.length > 0) {
           setRecentActivity(sortedActivity);
         } else {
-          setRecentActivity([{
-            id: 1,
-            action: "No recent activity",
-            user: "System",
-            time: "--",
-            status: "info",
-            type: 'system'
-          }]);
+          setRecentActivity([
+            {
+              id: 1,
+              action: "No recent activity",
+              user: "System",
+              time: "--",
+              status: "info",
+              type: "system",
+            },
+          ]);
         }
-
-
       } catch (err) {
-        console.error('Error fetching metrics data:', formatError(err));
-        setError('Failed to load metrics data');
+        console.error("Error fetching metrics data:", formatError(err));
+        setError("Failed to load metrics data");
         toast({
           title: "Error",
           description: "Failed to load metrics data from the database.",
@@ -167,16 +175,20 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
   const getRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    const diffInMinutes = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60),
+    );
 
     if (diffInMinutes < 1) return "Just now";
-    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+    if (diffInMinutes < 60)
+      return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"} ago`;
 
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+    if (diffInHours < 24)
+      return `${diffInHours} hour${diffInHours === 1 ? "" : "s"} ago`;
 
     const diffInDays = Math.floor(diffInHours / 24);
-    return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+    return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
   };
 
   // Calculate metrics from Supabase data
@@ -188,66 +200,77 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         recentAdditions: 0,
         archivedBatches: 0,
         mostPopularType: "Loading...",
-        wineTypeBreakdown: "Loading..."
+        wineTypeBreakdown: "Loading...",
       };
     }
 
     // Total inventory count
     const totalInventory = inventoryData
-      .filter(item => item.quantity > 0)
+      .filter((item) => item.quantity > 0)
       .reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
 
     // Low stock alerts (quantity <= lowStockThreshold but > outOfStockThreshold)
-    const lowStockCount = inventoryData
-      .filter(item => {
-        const qty = parseInt(item.quantity) || 0;
-        return qty <= lowStockThreshold && qty > outOfStockThreshold;
-      })
-      .length;
+    const lowStockCount = inventoryData.filter((item) => {
+      const qty = parseInt(item.quantity) || 0;
+      return qty <= lowStockThreshold && qty > outOfStockThreshold;
+    }).length;
 
     // Recent additions (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const recentAdditions = inventoryData
-      .filter(item => {
-        const itemDate = new Date(item.created_at || item.last_updated || '1970-01-01');
+      .filter((item) => {
+        const itemDate = new Date(
+          item.created_at || item.last_updated || "1970-01-01",
+        );
         return itemDate >= sevenDaysAgo && (parseInt(item.quantity) || 0) > 0;
       })
       .reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
 
     // Completed/bottled batches count
-    const completedBatches = batchesData
-      .filter(batch => batch.status === "bottled" || batch.status === "completed")
-      .length;
+    const completedBatches = batchesData.filter(
+      (batch) => batch.status === "bottled" || batch.status === "completed",
+    ).length;
 
     // Most popular wine type
     const typeQuantities = inventoryData
-      .filter(item => (parseInt(item.quantity) || 0) > 0)
-      .reduce((acc, item) => {
-        const type = item.type || "Unknown";
-        acc[type] = (acc[type] || 0) + (parseInt(item.quantity) || 0);
-        return acc;
-      }, {} as Record<string, number>);
+      .filter((item) => (parseInt(item.quantity) || 0) > 0)
+      .reduce(
+        (acc, item) => {
+          const type = item.type || "Unknown";
+          acc[type] = (acc[type] || 0) + (parseInt(item.quantity) || 0);
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
-    const mostPopularType = Object.entries(typeQuantities)
-      .sort(([,a], [,b]) => b - a)[0]?.[0] || "No data";
+    const mostPopularType =
+      Object.entries(typeQuantities).sort(([, a], [, b]) => b - a)[0]?.[0] ||
+      "No data";
 
     // Calculate wine type percentages
-    const totalActiveQuantity = Object.values(typeQuantities).reduce((sum, qty) => sum + qty, 0);
+    const totalActiveQuantity = Object.values(typeQuantities).reduce(
+      (sum, qty) => sum + qty,
+      0,
+    );
     const typePercentages = Object.entries(typeQuantities)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .map(([type, quantity]) => ({
         type,
-        percentage: totalActiveQuantity > 0 ? Math.round((quantity / totalActiveQuantity) * 100) : 0
+        percentage:
+          totalActiveQuantity > 0
+            ? Math.round((quantity / totalActiveQuantity) * 100)
+            : 0,
       }));
 
     // Format top 3 types for display
-    const wineTypeBreakdown = typePercentages.length > 0
-      ? typePercentages
-          .slice(0, 3)
-          .map(item => `${item.type} ${item.percentage}%`)
-          .join(", ")
-      : "No inventory data";
+    const wineTypeBreakdown =
+      typePercentages.length > 0
+        ? typePercentages
+            .slice(0, 3)
+            .map((item) => `${item.type} ${item.percentage}%`)
+            .join(", ")
+        : "No inventory data";
 
     return {
       totalInventory,
@@ -255,7 +278,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
       recentAdditions,
       archivedBatches: completedBatches,
       mostPopularType,
-      wineTypeBreakdown
+      wineTypeBreakdown,
     };
   };
 
@@ -267,43 +290,43 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
       value: metrics.totalInventory.toLocaleString(),
       subtext: "Updated daily",
       icon: Wine,
-      color: "bg-federal"
+      color: "bg-federal",
     },
     {
       title: "Low Stock Alerts",
       value: metrics.lowStockCount,
       subtext: "Check Inventory tab",
       icon: AlertTriangle,
-      color: "bg-orange-500"
+      color: "bg-orange-500",
     },
     {
       title: "Recent Additions",
       value: metrics.recentAdditions,
       subtext: "Batch Management activity",
       icon: Plus,
-      color: "bg-green-500"
+      color: "bg-green-500",
     },
     {
       title: "Archived Batches",
       value: metrics.archivedBatches,
       subtext: "Stored for aging or review",
       icon: Archive,
-      color: "bg-eggplant"
+      color: "bg-eggplant",
     },
     {
       title: "Most Popular Type",
       value: metrics.mostPopularType,
       subtext: "Based on current inventory",
       icon: WineOff,
-      color: "bg-wine"
+      color: "bg-wine",
     },
     {
       title: "Wine Type Overview",
       value: metrics.wineTypeBreakdown || "No data",
       subtext: "Based on current inventory",
       icon: PieChart,
-      color: "bg-blue-600"
-    }
+      color: "bg-blue-600",
+    },
   ];
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -359,7 +382,9 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
               className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 ${metric.color} rounded-lg flex items-center justify-center shadow-sm`}>
+                <div
+                  className={`w-12 h-12 ${metric.color} rounded-lg flex items-center justify-center shadow-sm`}
+                >
                   {loading ? (
                     <Loader2 className="h-6 w-6 text-white animate-spin" />
                   ) : (
@@ -379,9 +404,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                     metric.value
                   )}
                 </p>
-                <p className="text-sm text-gray-500">
-                  {metric.subtext}
-                </p>
+                <p className="text-sm text-gray-500">{metric.subtext}</p>
               </div>
             </div>
           );
@@ -398,7 +421,9 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-600">Wine Type Breakdown</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Wine Type Breakdown
+                  </p>
                   <p className="text-lg text-gray-500">Loading...</p>
                 </div>
               </div>
@@ -406,28 +431,35 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           }
 
           const typeQuantities = inventoryData
-            .filter(item => (parseInt(item.quantity) || 0) > 0)
-            .reduce((acc, item) => {
-              const type = item.type || "Unknown";
-              acc[type] = (acc[type] || 0) + (parseInt(item.quantity) || 0);
-              return acc;
-            }, {} as Record<string, number>);
+            .filter((item) => (parseInt(item.quantity) || 0) > 0)
+            .reduce(
+              (acc, item) => {
+                const type = item.type || "Unknown";
+                acc[type] = (acc[type] || 0) + (parseInt(item.quantity) || 0);
+                return acc;
+              },
+              {} as Record<string, number>,
+            );
 
-          const totalQuantity = Object.values(typeQuantities).reduce((sum, qty) => sum + qty, 0);
+          const totalQuantity = Object.values(typeQuantities).reduce(
+            (sum, qty) => sum + qty,
+            0,
+          );
           const typeData = Object.entries(typeQuantities)
             .map(([type, quantity]) => ({
               type,
               quantity,
-              percentage: totalQuantity > 0 ? (quantity / totalQuantity) * 100 : 0
+              percentage:
+                totalQuantity > 0 ? (quantity / totalQuantity) * 100 : 0,
             }))
             .sort((a, b) => b.quantity - a.quantity);
 
           const colors = [
-            '#9C1B2A', // Wine
-            '#1F2937', // Federal
-            '#7C3AED', // Purple
-            '#059669', // Green
-            '#DC2626', // Red
+            "#9C1B2A", // Wine
+            "#1F2937", // Federal
+            "#7C3AED", // Purple
+            "#059669", // Green
+            "#DC2626", // Red
           ];
 
           if (typeData.length === 0) {
@@ -439,7 +471,9 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-600">Wine Type Breakdown</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Wine Type Breakdown
+                  </p>
                   <p className="text-lg text-gray-500">No inventory data</p>
                 </div>
               </div>
@@ -460,17 +494,26 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
               </div>
 
               <div className="space-y-4">
-                <p className="text-sm font-medium text-gray-600">Wine Type Breakdown</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Wine Type Breakdown
+                </p>
 
                 {/* SVG Pie Chart */}
                 <div className="flex flex-col lg:flex-row items-center gap-4">
                   <div className="flex-shrink-0">
-                    <svg width="200" height="200" viewBox="0 0 200 200" className="w-32 h-32 lg:w-40 lg:h-40">
+                    <svg
+                      width="200"
+                      height="200"
+                      viewBox="0 0 200 200"
+                      className="w-32 h-32 lg:w-40 lg:h-40"
+                    >
                       {typeData.map((data, index) => {
                         const startAngle = (cumulativePercentage / 100) * 360;
-                        const endAngle = startAngle + (data.percentage / 100) * 360;
+                        const endAngle =
+                          startAngle + (data.percentage / 100) * 360;
 
-                        const startAngleRad = (startAngle - 90) * (Math.PI / 180);
+                        const startAngleRad =
+                          (startAngle - 90) * (Math.PI / 180);
                         const endAngleRad = (endAngle - 90) * (Math.PI / 180);
 
                         const x1 = centerX + radius * Math.cos(startAngleRad);
@@ -484,8 +527,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                           `M ${centerX} ${centerY}`,
                           `L ${x1} ${y1}`,
                           `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-                          'Z'
-                        ].join(' ');
+                          "Z",
+                        ].join(" ");
 
                         cumulativePercentage += data.percentage;
 
@@ -506,21 +549,31 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                   {/* Legend */}
                   <div className="flex-1 space-y-2">
                     {typeData.map((data, index) => (
-                      <div key={data.type} className="flex items-center gap-2 text-sm">
+                      <div
+                        key={data.type}
+                        className="flex items-center gap-2 text-sm"
+                      >
                         <div
                           className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: colors[index % colors.length] }}
+                          style={{
+                            backgroundColor: colors[index % colors.length],
+                          }}
                         />
-                        <span className="font-medium text-gray-700">{data.type}</span>
+                        <span className="font-medium text-gray-700">
+                          {data.type}
+                        </span>
                         <span className="text-gray-500">
-                          {data.percentage.toFixed(1)}% ({data.quantity} bottles)
+                          {data.percentage.toFixed(1)}% ({data.quantity}{" "}
+                          bottles)
                         </span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-500">Based on current inventory</p>
+                <p className="text-sm text-gray-500">
+                  Based on current inventory
+                </p>
               </div>
             </div>
           );
@@ -537,10 +590,13 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
             </h2>
           </div>
         </div>
-        
+
         <div className="divide-y divide-gray-200">
           {recentActivity.map((activity) => (
-            <div key={activity.id} className="p-6 hover:bg-gray-50 transition-colors">
+            <div
+              key={activity.id}
+              className="p-6 hover:bg-gray-50 transition-colors"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900 mb-1">
@@ -552,7 +608,9 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
                     <span>{activity.time}</span>
                   </div>
                 </div>
-                <Badge className={`text-xs px-2 py-1 ${getStatusColor(activity.status)}`}>
+                <Badge
+                  className={`text-xs px-2 py-1 ${getStatusColor(activity.status)}`}
+                >
                   {activity.status}
                 </Badge>
               </div>

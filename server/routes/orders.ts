@@ -4,11 +4,11 @@ import { createClient } from "@supabase/supabase-js";
 function getSupabaseClient() {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  
+
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Missing Supabase configuration');
+    throw new Error("Missing Supabase configuration");
   }
-  
+
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
@@ -36,9 +36,9 @@ export interface OrderData {
 export async function createOrder(orderData: OrderData) {
   try {
     const supabase = getSupabaseClient();
-    
+
     const { data: supabaseOrder, error } = await supabase
-      .from('Orders')
+      .from("Orders")
       .insert([
         {
           order_number: orderData.orderNumber,
@@ -48,11 +48,11 @@ export async function createOrder(orderData: OrderData) {
           pickup_date: orderData.pickupDate,
           pickup_time: orderData.pickupTime,
           payment_method: orderData.paymentMethod,
-          status: 'pending',
+          status: "pending",
           notes: orderData.orderNotes || null,
           bottles_ordered: orderData.bottlesOrdered,
-          created_at: new Date().toISOString()
-        }
+          created_at: new Date().toISOString(),
+        },
       ])
       .select()
       .single();
@@ -60,18 +60,18 @@ export async function createOrder(orderData: OrderData) {
     if (error) {
       return {
         success: false,
-        error: error.message || 'Failed to create order'
+        error: error.message || "Failed to create order",
       };
     }
 
     return {
       success: true,
-      order: supabaseOrder
+      order: supabaseOrder,
     };
   } catch (err) {
     return {
       success: false,
-      error: 'An unexpected error occurred while creating order'
+      error: "An unexpected error occurred while creating order",
     };
   }
 }
@@ -80,67 +80,71 @@ export async function createOrder(orderData: OrderData) {
 export async function getOrders() {
   try {
     const supabase = getSupabaseClient();
-    
+
     const { data: orders, error } = await supabase
-      .from('Orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("Orders")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
       return {
         success: false,
-        error: error.message || 'Failed to fetch orders'
+        error: error.message || "Failed to fetch orders",
       };
     }
 
     return {
       success: true,
-      orders: orders || []
+      orders: orders || [],
     };
   } catch (err) {
     return {
       success: false,
-      error: 'An unexpected error occurred while fetching orders'
+      error: "An unexpected error occurred while fetching orders",
     };
   }
 }
 
 // Update order status
-export async function updateOrderStatus(orderId: string, status: string, note?: string) {
+export async function updateOrderStatus(
+  orderId: string,
+  status: string,
+  note?: string,
+) {
   try {
     const supabase = getSupabaseClient();
-    
+
     const updateData: any = {
       status,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
-    
+
     if (note) {
       updateData.admin_notes = note;
     }
-    
+
     const { data: updatedOrder, error } = await supabase
-      .from('Orders')
+      .from("Orders")
       .update(updateData)
-      .eq('id', orderId)
+      .eq("id", orderId)
       .select()
       .single();
 
     if (error) {
       return {
         success: false,
-        error: error.message || 'Failed to update order status'
+        error: error.message || "Failed to update order status",
       };
     }
 
     return {
       success: true,
-      order: updatedOrder
+      order: updatedOrder,
     };
   } catch (err) {
     return {
       success: false,
-      error: 'An unexpected error occurred while updating order status'
+      error: "An unexpected error occurred while updating order status",
     };
   }
 }
@@ -150,25 +154,22 @@ export async function deleteOrder(orderId: string) {
   try {
     const supabase = getSupabaseClient();
 
-    const { error } = await supabase
-      .from('Orders')
-      .delete()
-      .eq('id', orderId);
+    const { error } = await supabase.from("Orders").delete().eq("id", orderId);
 
     if (error) {
       return {
         success: false,
-        error: error.message || 'Failed to delete order'
+        error: error.message || "Failed to delete order",
       };
     }
 
     return {
-      success: true
+      success: true,
     };
   } catch (err) {
     return {
       success: false,
-      error: 'An unexpected error occurred while deleting order'
+      error: "An unexpected error occurred while deleting order",
     };
   }
 }
@@ -179,24 +180,24 @@ export async function deleteOrderByNumber(orderNumber: string) {
     const supabase = getSupabaseClient();
 
     const { error } = await supabase
-      .from('Orders')
+      .from("Orders")
       .delete()
-      .eq('order_number', orderNumber);
+      .eq("order_number", orderNumber);
 
     if (error) {
       return {
         success: false,
-        error: error.message || 'Failed to delete order'
+        error: error.message || "Failed to delete order",
       };
     }
 
     return {
-      success: true
+      success: true,
     };
   } catch (err) {
     return {
       success: false,
-      error: 'An unexpected error occurred while deleting order'
+      error: "An unexpected error occurred while deleting order",
     };
   }
 }
