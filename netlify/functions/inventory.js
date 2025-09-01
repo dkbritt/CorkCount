@@ -63,29 +63,35 @@ async function getAvailableInventory() {
     }
 
     // Transform data to match expected wine format
-    const transformedWines = (wines || []).map((wine) => ({
-      id: wine.id,
-      name: wine.name,
-      winery: wine.winery || "KB Winery",
-      vintage: wine.vintage,
-      region: wine.region || "",
-      type: wine.type,
-      price: wine.price,
-      inStock: wine.quantity,
-      rating: wine.rating || 0,
-      description: wine.description || "",
-      flavorNotes: wine.flavor_notes
-        ? Array.isArray(wine.flavor_notes)
-          ? wine.flavor_notes
-          : JSON.parse(wine.flavor_notes || "[]")
-        : [],
-      image: wine.image_url || "/placeholder.svg",
-      tags: wine.tags
-        ? Array.isArray(wine.tags)
-          ? wine.tags
-          : JSON.parse(wine.tags || "[]")
-        : [],
-    }));
+    const transformedWines = (wines || []).map((wine) => {
+      // Safe JSON parsing function
+      const safeParseJSON = (jsonString, fallback = []) => {
+        try {
+          if (!jsonString) return fallback;
+          if (Array.isArray(jsonString)) return jsonString;
+          return JSON.parse(jsonString);
+        } catch (error) {
+          console.warn("Invalid JSON in database field:", jsonString);
+          return fallback;
+        }
+      };
+
+      return {
+        id: wine.id,
+        name: wine.name,
+        winery: wine.winery || "KB Winery",
+        vintage: wine.vintage,
+        region: wine.region || "",
+        type: wine.type,
+        price: wine.price,
+        inStock: wine.quantity,
+        rating: wine.rating || 0,
+        description: wine.description || "",
+        flavorNotes: safeParseJSON(wine.flavor_notes, []),
+        image: wine.image_url || "/placeholder.svg",
+        tags: safeParseJSON(wine.tags, []),
+      };
+    });
 
     return {
       success: true,
