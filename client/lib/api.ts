@@ -15,12 +15,24 @@ function withTimeout<T>(p: Promise<T>, ms = 5000): Promise<T> {
   });
 }
 
-const CANDIDATE_BASES = ["/api", "/.netlify/functions/api"] as const;
+// Map endpoint paths to their corresponding function names
+const ENDPOINT_FUNCTION_MAP = {
+  '/ping': 'ping',
+  '/config/supabase': 'config/supabase',
+  '/config/email': 'config/email',
+  '/inventory': 'inventory',
+  '/orders': 'orders',
+  '/batches': 'batches',
+  '/metrics': 'metrics',
+  '/auth/login': 'auth/login',
+  '/email': 'email',
+} as const;
 
-async function tryPing(base: string): Promise<boolean> {
+async function tryPing(isNetlify: boolean): Promise<boolean> {
   try {
+    const url = isNetlify ? '/.netlify/functions/ping' : '/api/ping';
     const res = await withTimeout(
-      fetch(`${base}/ping`, { method: "GET" }),
+      fetch(url, { method: "GET" }),
       3000,
     );
     // Consume the response body to prevent "body stream already read" errors
@@ -37,20 +49,46 @@ async function tryPing(base: string): Promise<boolean> {
   }
 }
 
-export async function resolveApiBase(forceRefresh = false): Promise<string> {
-  if (!forceRefresh && cachedBase) return cachedBase;
+// Determine whether to use local API or Netlify functions
+let isNetlifyMode: boolean | null = null;
 
-  for (const candidate of CANDIDATE_BASES) {
-    const ok = await tryPing(candidate);
-    if (ok) {
-      cachedBase = candidate;
-      return cachedBase;
-    }
+export async function resolveApiMode(forceRefresh = false): Promise<boolean> {
+  if (!forceRefresh && isNetlifyMode !== null) return isNetlifyMode;
+
+  // Try local API first
+  const localWorks = await tryPing(false);
+  if (localWorks) {
+    isNetlifyMode = false;
+    return false;
   }
 
-  // As a last resort, assume /api
-  cachedBase = "/api";
-  return cachedBase;
+  // Fall back to Netlify functions
+  const netlifyWorks = await tryPing(true);
+  if (netlifyWorks) {
+    isNetlifyMode = true;
+    return true;
+  }
+
+  // Default to local API mode
+  isNetlifyMode = false;
+  return false;
+}
+
+function getEndpointUrl(inputPath: string, useNetlify: boolean): string {
+  if (useNetlify) {
+    // For Netlify functions, map paths to individual functions
+    for (const [path, func] of Object.entries(ENDPOINT_FUNCTION_MAP)) {
+      if (inputPath.startsWith(path)) {
+        const remainingPath = inputPath.substring(path.length);
+        return `/.netlify/functions/${func}${remainingPath}`;
+      }
+    }
+    // Fallback for unmapped paths
+    return `/.netlify/functions/api${inputPath}`;
+  } else {
+    // For local development, use the API prefix
+    return `/api${inputPath}`;
+  }
 }
 
 export async function apiFetch(
