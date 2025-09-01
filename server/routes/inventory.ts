@@ -12,9 +12,56 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
+// Check if Supabase is configured
+function isSupabaseConfigured(): boolean {
+  return !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+}
+
+// Mock data for development when Supabase is not configured
+const mockInventoryData = [
+  {
+    id: "mock-1",
+    name: "Château Margaux",
+    winery: "KB Winery",
+    vintage: 2015,
+    type: "Red",
+    quantity: 12,
+    price: 450.00,
+    created_at: new Date().toISOString(),
+    last_updated: new Date().toISOString(),
+    flavor_notes: "Rich, complex, with notes of blackcurrant and oak",
+    location: "Wine Cellar - Section A",
+    image_url: "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop",
+    tags: ["full-bodied", "oak", "blackcurrant"]
+  },
+  {
+    id: "mock-2",
+    name: "Sauvignon Blanc Reserve",
+    winery: "KB Winery",
+    vintage: 2022,
+    type: "White",
+    quantity: 24,
+    price: 35.00,
+    created_at: new Date().toISOString(),
+    last_updated: new Date().toISOString(),
+    flavor_notes: "Crisp, citrusy, with mineral notes",
+    location: "Refrigerator - Top Shelf",
+    image_url: "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=600&fit=crop",
+    tags: ["crisp", "citrus", "mineral"]
+  }
+];
+
 // Get all inventory for admin dashboard
 export async function getAllInventory() {
   try {
+    // Return mock data if Supabase is not configured
+    if (!isSupabaseConfigured()) {
+      return {
+        success: true,
+        inventory: mockInventoryData,
+      };
+    }
+
     const supabase = getSupabaseClient();
 
     const { data: inventory, error } = await supabase
@@ -45,6 +92,31 @@ export async function getAllInventory() {
 // Get available inventory (wines with quantity >= 1) for shop
 export async function getAvailableInventory() {
   try {
+    // Return mock data if Supabase is not configured
+    if (!isSupabaseConfigured()) {
+      const wines = mockInventoryData
+        .filter(item => item.quantity >= 1)
+        .map((item: any) => ({
+          id: item.id,
+          name: item.name || "Unnamed Wine",
+          winery: item.winery || "Unknown Winery",
+          vintage: item.vintage || new Date().getFullYear(),
+          region: "",
+          type: item.type || "Red Wine",
+          price: parseFloat(item.price) || 0,
+          inStock: parseInt(item.quantity) || 0,
+          rating: 0,
+          description: item.flavor_notes || "A wonderful wine experience",
+          flavorNotes: item.tags || ["Complex", "Balanced"],
+          image: item.image_url || "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop",
+        }));
+
+      return {
+        success: true,
+        wines,
+      };
+    }
+
     const supabase = getSupabaseClient();
 
     const { data: inventory, error } = await supabase
