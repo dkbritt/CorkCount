@@ -36,8 +36,8 @@ export function createServer() {
 
   // Configuration endpoints
   app.get("/api/config/supabase", (_req, res) => {
-    const url = process.env.VITE_SUPABASE_URL;
-    const key = process.env.VITE_SUPABASE_ANON_KEY;
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_ANON_KEY;
 
     res.json({
       isConfigured: Boolean(url && key),
