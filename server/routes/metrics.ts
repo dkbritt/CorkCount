@@ -9,30 +9,9 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
-// Check if Supabase is configured
-function isSupabaseConfigured(): boolean {
-  return !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
-}
 
 export async function getMetricsData() {
   try {
-    // Return mock data if Supabase is not configured
-    if (!isSupabaseConfigured()) {
-      return {
-        success: true,
-        inventory: [
-          { id: "mock-1", name: "Château Margaux", type: "Red", quantity: 12, created_at: new Date().toISOString() },
-          { id: "mock-2", name: "Sauvignon Blanc", type: "White", quantity: 24, created_at: new Date().toISOString() }
-        ],
-        orders: [
-          { id: "order-1", order_number: "ORD-001", customer_name: "John Doe", status: "pending", created_at: new Date().toISOString() }
-        ],
-        batches: [
-          { id: "batch-1", name: "2024 Red Blend", status: "fermentation", created_at: new Date().toISOString() }
-        ],
-      };
-    }
-
     const supabase = getSupabaseClient();
 
     const [invRes, ordRes, batRes] = await Promise.all([
