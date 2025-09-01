@@ -114,10 +114,12 @@ pnpm install
 Create a `.env` file in the root directory:
 
 ```env
-# Supabase Configuration
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Supabase Configuration (Server-side only - secure)
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# IMPORTANT: Do NOT use VITE_ prefixed Supabase variables as they expose secrets to the client
 
 # Email Configuration (Required)
 RESEND_API_KEY=your_resend_api_key
