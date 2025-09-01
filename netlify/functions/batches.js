@@ -1,9 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client server-side
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseAnonKey =
+    process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Missing Supabase configuration");
@@ -110,10 +111,7 @@ async function deleteBatch(id) {
   try {
     const supabase = getSupabaseClient();
 
-    const { error } = await supabase
-      .from("Batches")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("Batches").delete().eq("id", id);
 
     if (error) {
       return {
@@ -154,13 +152,13 @@ export const handler = async (event, context) => {
 
   try {
     // Handle both direct calls and redirected calls
-    let path = event.path || '';
-    if (path.startsWith('/.netlify/functions/batches')) {
-      path = path.replace('/.netlify/functions/batches', '');
-    } else if (path.startsWith('/api/batches')) {
-      path = path.replace('/api/batches', '');
+    let path = event.path || "";
+    if (path.startsWith("/.netlify/functions/batches")) {
+      path = path.replace("/.netlify/functions/batches", "");
+    } else if (path.startsWith("/api/batches")) {
+      path = path.replace("/api/batches", "");
     }
-    
+
     const method = event.httpMethod;
     const body = event.body ? JSON.parse(event.body) : {};
 
@@ -245,19 +243,19 @@ export const handler = async (event, context) => {
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Batches endpoint not found' 
+      body: JSON.stringify({
+        success: false,
+        error: "Batches endpoint not found",
       }),
     };
   } catch (error) {
-    console.error('Batches error:', error);
+    console.error("Batches error:", error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Internal server error' 
+      body: JSON.stringify({
+        success: false,
+        error: "Internal server error",
       }),
     };
   }

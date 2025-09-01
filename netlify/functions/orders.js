@@ -1,9 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client server-side
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseAnonKey =
+    process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Missing Supabase configuration");
@@ -115,10 +116,7 @@ async function deleteOrder(id) {
   try {
     const supabase = getSupabaseClient();
 
-    const { error } = await supabase
-      .from("Orders")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("Orders").delete().eq("id", id);
 
     if (error) {
       return {
@@ -171,35 +169,35 @@ async function deleteOrderByNumber(orderNumber) {
 export const handler = async (event, context) => {
   // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
   try {
     // Handle both direct calls and redirected calls
-    let path = event.path || '';
-    if (path.startsWith('/.netlify/functions/orders')) {
-      path = path.replace('/.netlify/functions/orders', '');
-    } else if (path.startsWith('/api/orders')) {
-      path = path.replace('/api/orders', '');
+    let path = event.path || "";
+    if (path.startsWith("/.netlify/functions/orders")) {
+      path = path.replace("/.netlify/functions/orders", "");
+    } else if (path.startsWith("/api/orders")) {
+      path = path.replace("/api/orders", "");
     }
-    
+
     const method = event.httpMethod;
     const body = event.body ? JSON.parse(event.body) : {};
 
     // GET /orders
-    if (method === 'GET' && (path === '' || path === '/')) {
+    if (method === "GET" && (path === "" || path === "/")) {
       const result = await getOrders();
 
       if (result.success) {
@@ -218,7 +216,7 @@ export const handler = async (event, context) => {
     }
 
     // POST /orders (create new order)
-    if (method === 'POST' && (path === '' || path === '/')) {
+    if (method === "POST" && (path === "" || path === "/")) {
       if (!body.orderNumber || !body.customerName || !body.email) {
         return {
           statusCode: 400,
@@ -248,8 +246,8 @@ export const handler = async (event, context) => {
     }
 
     // PUT /orders/:id/status
-    if (method === 'PUT' && path.includes('/status')) {
-      const id = path.split('/')[1]; // Extract ID from path like /abc123/status
+    if (method === "PUT" && path.includes("/status")) {
+      const id = path.split("/")[1]; // Extract ID from path like /abc123/status
       const { status, note } = body;
 
       if (!status) {
@@ -281,7 +279,11 @@ export const handler = async (event, context) => {
     }
 
     // DELETE /orders/:id
-    if (method === 'DELETE' && path.startsWith('/') && !path.includes('/by-number/')) {
+    if (
+      method === "DELETE" &&
+      path.startsWith("/") &&
+      !path.includes("/by-number/")
+    ) {
       const id = path.substring(1); // Remove leading slash
       const result = await deleteOrder(id);
 
@@ -301,8 +303,10 @@ export const handler = async (event, context) => {
     }
 
     // DELETE /orders/by-number/:orderNumber
-    if (method === 'DELETE' && path.startsWith('/by-number/')) {
-      const orderNumber = decodeURIComponent(path.substring('/by-number/'.length));
+    if (method === "DELETE" && path.startsWith("/by-number/")) {
+      const orderNumber = decodeURIComponent(
+        path.substring("/by-number/".length),
+      );
       const result = await deleteOrderByNumber(orderNumber);
 
       if (result.success) {
@@ -323,19 +327,19 @@ export const handler = async (event, context) => {
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Orders endpoint not found' 
+      body: JSON.stringify({
+        success: false,
+        error: "Orders endpoint not found",
       }),
     };
   } catch (error) {
-    console.error('Orders error:', error);
+    console.error("Orders error:", error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Internal server error' 
+      body: JSON.stringify({
+        success: false,
+        error: "Internal server error",
       }),
     };
   }

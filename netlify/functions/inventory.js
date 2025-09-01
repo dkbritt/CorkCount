@@ -1,10 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client server-side
 function getSupabaseClient() {
   // Check for both non-VITE and VITE prefixed environment variables
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseAnonKey =
+    process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Missing Supabase configuration");
@@ -73,11 +74,17 @@ async function getAvailableInventory() {
       inStock: wine.quantity,
       rating: wine.rating || 0,
       description: wine.description || "",
-      flavorNotes: wine.flavor_notes ? 
-        (Array.isArray(wine.flavor_notes) ? wine.flavor_notes : JSON.parse(wine.flavor_notes || '[]')) : [],
+      flavorNotes: wine.flavor_notes
+        ? Array.isArray(wine.flavor_notes)
+          ? wine.flavor_notes
+          : JSON.parse(wine.flavor_notes || "[]")
+        : [],
       image: wine.image_url || "/placeholder.svg",
-      tags: wine.tags ? 
-        (Array.isArray(wine.tags) ? wine.tags : JSON.parse(wine.tags || '[]')) : [],
+      tags: wine.tags
+        ? Array.isArray(wine.tags)
+          ? wine.tags
+          : JSON.parse(wine.tags || "[]")
+        : [],
     }));
 
     return {
@@ -161,10 +168,7 @@ async function deleteInventoryItem(id) {
   try {
     const supabase = getSupabaseClient();
 
-    const { error } = await supabase
-      .from("Inventory")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("Inventory").delete().eq("id", id);
 
     if (error) {
       return {
@@ -215,7 +219,7 @@ async function updateInventoryQuantities(updates) {
     }
 
     const failedUpdates = results.filter((r) => !r.success);
-    
+
     return {
       success: failedUpdates.length === 0,
       results,
@@ -250,13 +254,13 @@ export const handler = async (event, context) => {
 
   try {
     // Handle both direct calls and redirected calls
-    let path = event.path || '';
-    if (path.startsWith('/.netlify/functions/inventory')) {
-      path = path.replace('/.netlify/functions/inventory', '');
-    } else if (path.startsWith('/api/inventory')) {
-      path = path.replace('/api/inventory', '');
+    let path = event.path || "";
+    if (path.startsWith("/.netlify/functions/inventory")) {
+      path = path.replace("/.netlify/functions/inventory", "");
+    } else if (path.startsWith("/api/inventory")) {
+      path = path.replace("/api/inventory", "");
     }
-    
+
     const method = event.httpMethod;
     const queryParams = event.queryStringParameters || {};
     const body = event.body ? JSON.parse(event.body) : {};
@@ -264,7 +268,10 @@ export const handler = async (event, context) => {
     // GET /inventory
     if (method === "GET" && (path === "" || path === "/")) {
       const { admin } = queryParams;
-      const result = admin === "true" ? await getAllInventory() : await getAvailableInventory();
+      const result =
+        admin === "true"
+          ? await getAllInventory()
+          : await getAvailableInventory();
 
       if (result.success) {
         return {
@@ -377,7 +384,7 @@ export const handler = async (event, context) => {
       headers,
       body: JSON.stringify({
         success: false,
-        error: `Inventory endpoint not found: ${method} ${path || '/'}`,
+        error: `Inventory endpoint not found: ${method} ${path || "/"}`,
       }),
     };
   } catch (error) {
