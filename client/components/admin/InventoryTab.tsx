@@ -1043,6 +1043,53 @@ export function InventoryTab({
                 )}
               </div>
 
+              {/* Description */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    handleInputChange("description", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                  placeholder="General description of the wine..."
+                  rows={2}
+                />
+              </div>
+
+              {/* Region */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Region
+                </label>
+                <input
+                  type="text"
+                  value={formData.region}
+                  onChange={(e) => handleInputChange("region", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                  placeholder="e.g., Napa Valley, Bordeaux"
+                />
+              </div>
+
+              {/* Rating */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Rating (1-5)
+                </label>
+                <input
+                  type="number"
+                  value={formData.rating}
+                  onChange={(e) => handleInputChange("rating", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
+                  placeholder="4.0"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                />
+              </div>
+
               {/* Flavor Notes */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
