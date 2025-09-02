@@ -202,12 +202,22 @@ export const handler = async (event, context) => {
 
     const results = await Promise.allSettled(emailsToSend.map(sendOne));
     const failures = results
-      .map((r, i) => ({ r, i }))
+      .map((r, i) => ({ r, i, email: emailsToSend[i] }))
       .filter((x) => x.r.status === "rejected")
       .map((x) => ({
         index: x.i,
+        recipient: Array.isArray(x.email.to) ? x.email.to[0] : x.email.to,
+        type: x.email.type || 'customer',
         reason: x.r.reason?.message || String(x.r.reason) || "Unknown error",
       }));
+
+    const successes = results.filter(r => r.status === "fulfilled").length;
+    const customerEmails = emailsToSend.filter(e => !e.type || e.type === 'order_confirmation').length;
+    const adminEmails = emailsToSend.filter(e => e.type === 'admin_notification').length;
+    const customerSuccess = results.slice(0, customerEmails).every(r => r.status === "fulfilled");
+    const adminSuccess = adminEmails === 0 || results.slice(customerEmails).every(r => r.status === "fulfilled");
+
+    console.log(`Email results: ${successes}/${results.length} sent successfully. Customer: ${customerSuccess}, Admin: ${adminSuccess}`);
 
     return {
       statusCode: 200,
@@ -216,6 +226,11 @@ export const handler = async (event, context) => {
         success: failures.length === 0,
         failures,
         total: results.length,
+        sent: successes,
+        customerSuccess,
+        adminSuccess,
+        customerEmailCount: customerEmails,
+        adminEmailCount: adminEmails
       }),
     };
   } catch (error) {
