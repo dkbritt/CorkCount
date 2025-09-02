@@ -176,19 +176,33 @@ export const handler = async (event, context) => {
       }
     }
 
-    // Only require test email in strict development mode (when explicitly using development features)
-    if (isDevelopment && !testEmail && process.env.NODE_ENV !== "production") {
-      console.warn(
-        "Development mode detected but no VITE_TEST_EMAIL configured. Proceeding with caution.",
-      );
-      // Instead of failing, we'll just log a warning and proceed
-      // This allows the system to work even without VITE_TEST_EMAIL in development
+    // Log email processing summary
+    console.log(`Processed ${messages.length} message(s), prepared ${emailsToSend.length} email(s) for sending`);
+    if (skippedEmails.length > 0) {
+      console.warn(`Skipped ${skippedEmails.length} invalid email(s):`, skippedEmails);
     }
 
-    // In production mode, we should not require VITE_TEST_EMAIL
+    // If no valid emails to send, return early
+    if (emailsToSend.length === 0) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: "No valid email addresses found",
+          skipped: skippedEmails,
+        }),
+      };
+    }
+
+    // Production mode - no VITE_TEST_EMAIL dependency
     if (isProductionReady) {
       console.log(
-        "Running in production mode - bypassing VITE_TEST_EMAIL requirement",
+        "Running in production mode with verified domain - sending emails directly to recipients",
+      );
+    } else if (isDevelopment) {
+      console.log(
+        "Running in development mode - emails may be redirected based on configuration",
       );
     }
 
