@@ -392,22 +392,27 @@ export const handler = async (event, context) => {
     }
 
     // GET /inventory/:id (get single wine details)
-    if (method === "GET" && path.startsWith("/") && path !== "/" && !path.includes("?")) {
+    if (method === "GET" && path.startsWith("/") && path !== "/" && path.length > 1) {
       const id = path.substring(1); // Remove leading slash
-      const result = await getWineDetails(id);
+      // Check if this looks like a UUID (basic validation)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-      if (result.success) {
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify(result),
-        };
-      } else {
-        return {
-          statusCode: result.error === "Wine not found" ? 404 : 500,
-          headers,
-          body: JSON.stringify(result),
-        };
+      if (uuidRegex.test(id)) {
+        const result = await getWineDetails(id);
+
+        if (result.success) {
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(result),
+          };
+        } else {
+          return {
+            statusCode: result.error === "Wine not found" ? 404 : 500,
+            headers,
+            body: JSON.stringify(result),
+          };
+        }
       }
     }
 
