@@ -129,10 +129,7 @@ export async function getAvailableInventory(page = 1, limit = 50, detailed = fal
         total: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
         hasMore: (count || 0) > offset + limit
-      },
-      source: "express-server",
-      detailed: detailed,
-      fieldsSelected: selectFields
+      }
     };
   } catch (err) {
     console.error("Error in getAvailableInventory:", err);
