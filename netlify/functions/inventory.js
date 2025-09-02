@@ -64,10 +64,15 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     // Calculate offset
     const offset = (page - 1) * limit;
 
+    // Debug logging
+    console.log(`getAvailableInventory called with detailed=${detailed}, type=${typeof detailed}`);
+
     // Select fields based on whether detailed info is requested
     const selectFields = detailed
       ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
       : "id, name, winery, vintage, type, price, quantity, rating";
+
+    console.log(`Using selectFields: ${selectFields}`);
 
     const { data: wines, error, count } = await supabase
       .from("Inventory")
