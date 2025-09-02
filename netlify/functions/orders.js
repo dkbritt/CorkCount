@@ -230,9 +230,18 @@ exports.handler = async (event, context) => {
 
       // Calculate total price from bottles ordered if not provided
       let totalPrice = body.totalPrice;
-      if (!totalPrice && body.bottlesOrdered && Array.isArray(body.bottlesOrdered)) {
+      if (
+        !totalPrice &&
+        body.bottlesOrdered &&
+        Array.isArray(body.bottlesOrdered)
+      ) {
         totalPrice = body.bottlesOrdered.reduce((sum, bottle) => {
-          return sum + (bottle.total_price || (bottle.price_per_bottle * bottle.quantity) || 0);
+          return (
+            sum +
+            (bottle.total_price ||
+              bottle.price_per_bottle * bottle.quantity ||
+              0)
+          );
         }, 0);
       }
 
@@ -247,7 +256,7 @@ exports.handler = async (event, context) => {
         payment_method: body.paymentMethod,
         notes: body.orderNotes,
         bottles_ordered: body.bottlesOrdered, // Map bottlesOrdered to bottles_ordered
-        status: 'Pending',
+        status: "Pending",
         total_price: totalPrice,
       };
 

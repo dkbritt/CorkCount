@@ -718,7 +718,9 @@ export function InventoryTab({
       // Parse successful response (DELETE might not return JSON)
       let result = { success: true };
       try {
-        if (response.headers.get('content-type')?.includes('application/json')) {
+        if (
+          response.headers.get("content-type")?.includes("application/json")
+        ) {
           result = await response.json();
         }
       } catch (jsonError) {
@@ -1033,7 +1035,9 @@ export function InventoryTab({
                 <WineImageUpload
                   value={formData.image}
                   onChange={(imageUrl) => handleInputChange("image", imageUrl)}
-                  onError={(error) => setFormErrors(prev => ({ ...prev, image: error }))}
+                  onError={(error) =>
+                    setFormErrors((prev) => ({ ...prev, image: error }))
+                  }
                   disabled={formLoading}
                 />
                 {formErrors.image && (
