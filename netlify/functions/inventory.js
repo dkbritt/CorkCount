@@ -67,7 +67,7 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     // Select fields based on whether detailed info is requested
     const selectFields = detailed === true
       ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
-      : "id, name, winery, vintage, type, price, quantity, rating";
+      : "id, name, winery, vintage, type, price, quantity";
 
     const { data: wines, error, count } = await supabase
       .from("Inventory")
@@ -97,22 +97,18 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         }
       };
 
-      const baseWine = {
-        id: wine.id,
-        name: wine.name,
-        winery: wine.winery || "KB Winery",
-        vintage: wine.vintage,
-        type: wine.type,
-        price: wine.price,
-        inStock: wine.quantity,
-        rating: wine.rating || 0,
-      };
-
       // Add detailed fields only if requested
       if (detailed === true) {
         return {
-          ...baseWine,
+          id: wine.id,
+          name: wine.name,
+          winery: wine.winery || "KB Winery",
+          vintage: wine.vintage,
           region: wine.region || "",
+          type: wine.type,
+          price: wine.price,
+          inStock: wine.quantity,
+          rating: wine.rating || 0,
           description: wine.description || "",
           flavorNotes: safeParseJSON(wine.flavor_notes, []),
           image: wine.image_url || "/placeholder.svg",
@@ -120,9 +116,15 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         };
       }
 
-      // Basic mode: minimal fields, placeholder image
+      // Basic mode: only the fields we selected from database
       return {
-        ...baseWine,
+        id: wine.id,
+        name: wine.name,
+        winery: wine.winery || "KB Winery",
+        vintage: wine.vintage,
+        type: wine.type,
+        price: wine.price,
+        inStock: wine.quantity,
         image: "/placeholder.svg",
       };
     });
