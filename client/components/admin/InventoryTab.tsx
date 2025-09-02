@@ -452,6 +452,9 @@ export function InventoryTab({
         image_url: formData.image,
         tags: sanitizedTags, // Add auto-generated tags
         last_updated: new Date().toISOString(),
+        description: formData.description,
+        region: formData.region,
+        rating: parseFloat(formData.rating),
       };
 
       if (editingItem) {
@@ -520,6 +523,9 @@ export function InventoryTab({
           location: formData.location,
           image: formData.image,
           tags: sanitizedTags,
+          description: formData.description,
+          region: formData.region,
+          rating: parseFloat(formData.rating),
         };
 
         setInventory(
@@ -599,6 +605,9 @@ export function InventoryTab({
           location: formData.location,
           image: formData.image,
           tags: sanitizedTags,
+          description: formData.description,
+          region: formData.region,
+          rating: parseFloat(formData.rating),
         };
 
         setInventory([...inventory, newItem]);
