@@ -1,6 +1,6 @@
-const { isValidEmail, normalizeEmail } = require("./email-validation");
+import { isValidEmail, normalizeEmail } from "./email-validation.js";
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   // Set CORS headers
   const headers = {
     "Access-Control-Allow-Origin": "*",

@@ -45,7 +45,4 @@ function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
-module.exports = {
-  isValidEmail,
-  normalizeEmail,
-};
+export { isValidEmail, normalizeEmail };
