@@ -62,9 +62,7 @@ export const handler = async (event, context) => {
     // 2. If we have a verified domain (not resend.dev)
     // 3. If VITE_TEST_EMAIL is not set (indicating production intent)
     const isProductionReady =
-      process.env.NODE_ENV === "production" ||
-      hasVerifiedDomain ||
-      !testEmail;
+      process.env.NODE_ENV === "production" || hasVerifiedDomain || !testEmail;
     const isDevelopment = !isProductionReady;
 
     console.log(
@@ -138,7 +136,9 @@ export const handler = async (event, context) => {
 
     // Only require test email in strict development mode (when explicitly using development features)
     if (isDevelopment && !testEmail && process.env.NODE_ENV !== "production") {
-      console.warn("Development mode detected but no VITE_TEST_EMAIL configured. Proceeding with caution.");
+      console.warn(
+        "Development mode detected but no VITE_TEST_EMAIL configured. Proceeding with caution.",
+      );
       // Instead of failing, we'll just log a warning and proceed
       // This allows the system to work even without VITE_TEST_EMAIL in development
     }
