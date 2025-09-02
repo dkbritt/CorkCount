@@ -133,6 +133,59 @@
     z-index: 10;
   }
 
+  /* Enhanced text overlay for better readability */
+  .hero-text-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 0 auto;
+  }
+
+  /* Hero text styling with high contrast and shadows */
+  .hero-main-title {
+    color: #fefefe;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.6));
+  }
+
+  .hero-subtitle {
+    color: #f5e6c4;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  }
+
+  .hero-headline {
+    color: #fefefe;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    line-height: 1.2;
+  }
+
+  .hero-description {
+    color: #f5e6c4;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Fade-in animation for hero content */
+  .hero-fade-in {
+    animation: heroFadeIn 1.2s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  @keyframes heroFadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger animation delays for different elements */
+  .hero-fade-in:nth-child(1) { animation-delay: 0.2s; }
+  .hero-fade-in:nth-child(2) { animation-delay: 0.4s; }
+  .hero-fade-in:nth-child(3) { animation-delay: 0.6s; }
+  .hero-fade-in:nth-child(4) { animation-delay: 0.8s; }
+  .hero-fade-in:nth-child(5) { animation-delay: 1.0s; }
+
   /* Responsive background handling */
   @media (max-width: 768px) {
     .hero-wine-gradient {

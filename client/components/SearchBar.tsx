@@ -10,7 +10,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ 
-  placeholder = "Search your cellar…", 
+  placeholder = "Search by wine name or type", 
   onSearch, 
   onClear,
   className = ""
@@ -71,7 +71,7 @@ export function SearchBar({
           <Button
             type="submit"
             size="sm"
-            className="h-9 px-4 text-sm font-cormorant font-medium bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white border-0 shadow-sm"
+            className="h-9 px-4 text-sm font-cormorant font-medium bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white border-0 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95"
             disabled={!query.trim()}
           >
             Search

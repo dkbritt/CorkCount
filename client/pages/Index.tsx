@@ -337,23 +337,25 @@ export default function Index() {
       <div className="hero-wine-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center hero-content">
-            <div className="font-elegant text-6xl sm:text-8xl text-wine-100 mb-2 drop-shadow-sm">
-              KB Winery
-            </div>
-            <div className="font-script text-lg sm:text-2xl text-wine-200 mb-6 tracking-wide">
-              Est. 2010&nbsp;• Handcrafted Excellence
-            </div>
-            <h1 className="font-cormorant text-2xl sm:text-4xl font-medium mb-6 text-wine-50">
-              Sip Happens — Find Your Vintage
-            </h1>
-            <p className="font-baskerville text-lg sm:text-xl mb-8 text-wine-100 max-w-3xl mx-auto leading-relaxed">
-              Curated collection of premium wines from KB Winery. From everyday
-              favorites to rare vintages, each bottle tells a story of passion and tradition.
-            </p>
+            <div className="hero-text-overlay max-w-4xl">
+              <div className="font-elegant text-6xl sm:text-8xl lg:text-9xl hero-main-title mb-2 hero-fade-in">
+                KB Winery
+              </div>
+              <div className="font-script text-lg sm:text-2xl lg:text-3xl hero-subtitle mb-6 tracking-wide hero-fade-in">
+                Est. 2010&nbsp;• Handcrafted Excellence
+              </div>
+              <h1 className="font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in">
+                Sip Happens — Find Your Vintage
+              </h1>
+              <p className="font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in">
+                Curated collection of premium wines from KB Winery. From everyday
+                favorites to rare vintages, each bottle tells a story of passion and tradition.
+              </p>
 
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto mb-8">
-              <SearchBar onSearch={handleSearch} onClear={clearSearch} />
+              {/* Search Bar */}
+              <div className="max-w-2xl mx-auto mb-8 hero-fade-in">
+                <SearchBar onSearch={handleSearch} onClear={clearSearch} placeholder="Search by wine name or type" />
+              </div>
             </div>
           </div>
         </div>
