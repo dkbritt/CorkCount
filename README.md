@@ -276,13 +276,23 @@ For detailed documentation, see [AUTO_TAGGING_GUIDE.md](docs/AUTO_TAGGING_GUIDE.
 ### Available Scripts
 
 ```bash
-pnpm dev          # Start development server
-pnpm build        # Build for production
+pnpm dev          # Start development server (includes Netlify Functions)
+pnpm build        # Build for production (client + server + functions)
 pnpm start        # Start production server
 pnpm test         # Run tests
 pnpm typecheck    # Type checking
 pnpm format.fix   # Format code
 ```
+
+### Local Development
+
+The development server runs both the React frontend and Netlify Functions locally:
+
+- **Frontend**: `http://localhost:8080`
+- **API Functions**: `http://localhost:8080/api/*` (proxied to Netlify Functions)
+- **Direct Function Access**: `http://localhost:8080/.netlify/functions/*`
+
+Functions are automatically rebuilt when changed during development.
 
 ### API Endpoints
 
