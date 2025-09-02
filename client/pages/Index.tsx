@@ -162,7 +162,7 @@ export default function Index() {
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const searchableText =
-          `${wine.name} ${wine.winery} ${wine.region} ${wine.type}`.toLowerCase();
+          `${wine.name} ${wine.winery} ${wine.type}`.toLowerCase();
         if (!searchableText.includes(query)) return false;
       }
 
