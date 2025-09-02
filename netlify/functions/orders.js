@@ -228,7 +228,22 @@ exports.handler = async (event, context) => {
         };
       }
 
-      const result = await createOrder(body);
+      // Map camelCase frontend fields to snake_case database fields
+      const orderData = {
+        order_number: body.orderNumber,
+        customer_name: body.customerName,
+        email: body.email,
+        phone: body.phone,
+        pickup_date: body.pickupDate,
+        pickup_time: body.pickupTime,
+        payment_method: body.paymentMethod,
+        notes: body.orderNotes,
+        bottles_ordered: body.bottlesOrdered, // Map bottlesOrdered to bottles_ordered
+        status: 'Pending',
+        total_price: body.totalPrice || null,
+      };
+
+      const result = await createOrder(orderData);
 
       if (result.success) {
         return {
