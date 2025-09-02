@@ -137,6 +137,8 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         price: wine.price,
         inStock: wine.quantity,
         image: wine.image_url || "/placeholder.svg",
+        flavorNotes: wine.flavor_notes || "",
+        description: wine.flavor_notes || "", // Use flavorNotes as description for shop
       };
     });
 
