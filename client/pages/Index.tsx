@@ -314,7 +314,7 @@ export default function Index() {
               KB Winery
             </div>
             <div className="font-script text-lg sm:text-2xl text-wine-200 mb-6 tracking-wide">
-              Est. 2020 • Handcrafted Excellence
+              Est. 2010&nbsp;• Handcrafted Excellence
             </div>
             <h1 className="font-cormorant text-2xl sm:text-4xl font-medium mb-6 text-wine-50">
               Sip Happens — Find Your Vintage
