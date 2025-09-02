@@ -236,24 +236,6 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
           </Badge>
         </div>
 
-        {/* Flavor Notes */}
-        {variant === "storefront" && wine.flavorNotes && wine.flavorNotes.length > 0 && (
-          <div className="text-sm">
-            <p className="text-gray-600 font-medium mb-1">Flavor Notes:</p>
-            <div className="flex flex-wrap gap-1">
-              {wine.flavorNotes.slice(0, 3).map((note, index) => (
-                <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 rounded-full">
-                  {note}
-                </Badge>
-              ))}
-              {wine.flavorNotes.length > 3 && (
-                <Badge variant="secondary" className="text-xs px-2 py-0.5 rounded-full">
-                  +{wine.flavorNotes.length - 3} more
-                </Badge>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Admin-specific info */}
         {variant === "admin" && (
