@@ -138,7 +138,10 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         total: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
         hasMore: (count || 0) > offset + limit
-      }
+      },
+      source: "netlify-function",
+      detailed: detailed,
+      fieldsSelected: selectFields
     };
   } catch (error) {
     console.error("Error in getAvailableInventory:", error);
