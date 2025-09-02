@@ -293,6 +293,9 @@ export const handler = async (event, context) => {
         adminSuccess,
         customerEmailCount: customerEmails,
         adminEmailCount: adminEmails,
+        skipped: skippedEmails,
+        domain: verifiedDomain,
+        fromAddress: fromEmail,
       }),
     };
   } catch (error) {
