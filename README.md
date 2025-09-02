@@ -98,7 +98,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 │       ├── auth.js           # Authentication API
 │       ├── email.js          # Email notifications
 │       ├── metrics.js        # Analytics API
-│       ├─��� config.js         # Configuration API
+│       ├── config.js         # Configuration API
 │       └── ping.js           # Health check
 ├── docs/                     # Documentation
 ├── sql_migrations/           # Database migrations
@@ -138,6 +138,7 @@ SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # IMPORTANT: Do NOT use VITE_ prefixed Supabase variables as they expose secrets to the client
+# Netlify Functions use non-VITE prefixed variables for server-side security
 
 # Email Configuration (Required)
 RESEND_API_KEY=your_resend_api_key
