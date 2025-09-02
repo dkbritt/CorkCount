@@ -4,9 +4,10 @@ const { createClient } = require("@supabase/supabase-js");
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // Use service role key for storage operations
-  
+
   if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Missing Supabase configuration for storage operations");
+    console.warn("Missing Supabase configuration for storage operations");
+    return null;
   }
 
   return createClient(supabaseUrl, supabaseServiceKey);
