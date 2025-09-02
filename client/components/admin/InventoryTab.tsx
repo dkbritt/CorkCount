@@ -421,7 +421,7 @@ export function InventoryTab({
       // Generate auto-tags from flavor notes and wine data
       const autoTags = autoTagWine({
         flavorNotes: formData.flavorNotes,
-        description: "", // No description field in current form
+        description: formData.flavorNotes, // Use flavorNotes as the description for tagging
         name: formData.bottleName,
         type: formData.type,
       });
@@ -440,9 +440,6 @@ export function InventoryTab({
         image_url: formData.image,
         tags: sanitizedTags, // Add auto-generated tags
         last_updated: new Date().toISOString(),
-        description: formData.description,
-        region: formData.region,
-        rating: parseFloat(formData.rating),
       };
 
       if (editingItem) {
@@ -665,10 +662,7 @@ export function InventoryTab({
       batchLink: item.batchId || "",
       status: getFormStatus(item.status),
       location: item.location || "",
-      image: item.image || "",
-      description: item.description || "",
-      region: item.region || "Unknown Region",
-      rating: (item.rating || 4.0).toString(),
+      image: item.image || "", // Explicitly preserve existing image_url
     });
     setEditingItem(item);
     setShowAddForm(true);
