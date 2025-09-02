@@ -132,7 +132,7 @@ function createQueryBuilder(tableName: string) {
 
         if (tableName === "Inventory" && queryBuilder._select) {
           // Handle inventory fetching
-          const response = await api.fetch("/inventory");
+          const response = await api.fetch("/inventory?detailed=true");
           const apiResult = await response.json();
 
           if (!response.ok || !apiResult.success) {
