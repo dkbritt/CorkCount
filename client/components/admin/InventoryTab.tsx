@@ -437,13 +437,45 @@ export function InventoryTab({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(inventoryData),
         });
-        const result = await response.json();
 
-        if (!response.ok || !result.success) {
+        // Handle response with proper error checking
+        if (!response.ok) {
+          let errorMessage = "Failed to update inventory item";
+          try {
+            const errorResult = await response.json();
+            errorMessage = errorResult.error || errorMessage;
+          } catch {
+            errorMessage = response.statusText || errorMessage;
+          }
+
+          console.error("Error updating inventory:", errorMessage);
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Parse successful response
+        let result;
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          console.error("Invalid response format:", jsonError);
+          toast({
+            title: "Error",
+            description: "Invalid response from server. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (!result.success) {
           console.error("Error updating inventory:", result.error);
           toast({
             title: "Error",
-            description: "Failed to update inventory item. Please try again.",
+            description: result.error || "Failed to update inventory item",
             variant: "destructive",
           });
           return;
@@ -483,13 +515,45 @@ export function InventoryTab({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(inventoryData),
         });
-        const result = await response.json();
 
-        if (!response.ok || !result.success) {
+        // Handle response with proper error checking
+        if (!response.ok) {
+          let errorMessage = "Failed to add inventory item";
+          try {
+            const errorResult = await response.json();
+            errorMessage = errorResult.error || errorMessage;
+          } catch {
+            errorMessage = response.statusText || errorMessage;
+          }
+
+          console.error("Error adding inventory:", errorMessage);
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Parse successful response
+        let result;
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          console.error("Invalid response format:", jsonError);
+          toast({
+            title: "Error",
+            description: "Invalid response from server. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (!result.success) {
           console.error("Error adding inventory:", result.error);
           toast({
             title: "Error",
-            description: "Failed to add inventory item. Please try again.",
+            description: result.error || "Failed to add inventory item",
             variant: "destructive",
           });
           return;
