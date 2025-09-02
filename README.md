@@ -489,6 +489,31 @@ Tests are written with Vitest and cover:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**502 Bad Gateway Errors:**
+- Check environment variables are set correctly
+- Verify Supabase connection in `/api/config/supabase`
+- Ensure all required environment variables are configured
+
+**Inventory API Issues:**
+- Use `?detailed=true` for full wine information
+- Check pagination parameters (`page`, `limit`)
+- Verify admin authentication for admin endpoints
+
+**Build Failures:**
+- Run `pnpm install` to ensure dependencies are current
+- Check TypeScript errors with `pnpm typecheck`
+- Verify environment variables are properly configured
+
+**Development Server:**
+- Frontend runs on port 8080
+- Netlify Functions are accessible at `/api/*`
+- Check browser console for client-side errors
+- Check terminal output for server-side errors
+
 ## 🆘 Support
 
 ### Documentation
