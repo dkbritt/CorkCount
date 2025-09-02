@@ -154,29 +154,6 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
             </div>
           </div>
 
-          {/* Description */}
-          {wine.description && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Description</h4>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {wine.description}
-              </p>
-            </div>
-          )}
-
-          {/* Flavor Notes */}
-          {wine.flavorNotes && wine.flavorNotes.length > 0 && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Flavor Notes</h4>
-              <div className="flex flex-wrap gap-2">
-                {wine.flavorNotes.map((note, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm px-3 py-1">
-                    {note}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Add to Cart Section */}
           {isAvailable && (
