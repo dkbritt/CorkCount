@@ -71,7 +71,7 @@ export function WineDetailsModal({
         return "bg-pink-500 text-white";
       case "sparkling":
         return "bg-federal text-white";
-      case "dessert wine":
+      case "dessert":
         return "bg-amber-600 text-white";
       default:
         return "bg-gray-500 text-white";
