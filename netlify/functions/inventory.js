@@ -266,7 +266,7 @@ async function updateInventoryItem(id, itemData) {
       .from("Inventory")
       .update(itemData)
       .eq("id", id)
-      .select("id, name, winery, vintage, type, price, quantity")
+      .select("id, name, winery, vintage, type, price, quantity, flavor_notes, batch_id, location, image_url, tags, created_at")
       .single();
 
     if (error) {
