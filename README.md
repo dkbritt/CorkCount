@@ -275,6 +275,46 @@ pnpm format.fix   # Format code
 - `POST /api/email` - Send transactional emails
 - `POST /api/auth/login` - Admin authentication
 
+#### Query Parameters
+
+**Inventory API Parameters:**
+- `page` - Page number for pagination (default: 1)
+- `limit` - Items per page (default: 50, max: 100)
+- `admin` - Set to "true" for admin view (includes all wines)
+- `detailed` - Set to "true" for detailed wine information
+
+**Detailed vs Basic Response:**
+```javascript
+// Basic response (?detailed=false or omitted)
+{
+  "id": "uuid",
+  "name": "Wine Name",
+  "winery": "KB Winery",
+  "vintage": 2024,
+  "type": "Red",
+  "price": 25.99,
+  "inStock": 12,
+  "image": "/placeholder.svg"
+}
+
+// Detailed response (?detailed=true)
+{
+  "id": "uuid",
+  "name": "Wine Name",
+  "winery": "KB Winery",
+  "vintage": 2024,
+  "region": "Napa Valley",
+  "type": "Red",
+  "price": 25.99,
+  "inStock": 12,
+  "rating": 4.5,
+  "description": "Full wine description",
+  "flavorNotes": ["berry", "chocolate", "vanilla"],
+  "image": "actual_image_url",
+  "tags": ["premium", "organic"]
+}
+```
+
 ### Adding Features
 
 #### New API Route
