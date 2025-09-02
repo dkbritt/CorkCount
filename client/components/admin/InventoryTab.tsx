@@ -635,6 +635,9 @@ export function InventoryTab({
       status: "Active",
       location: "",
       image: "",
+      description: "",
+      region: "Unknown Region",
+      rating: "4.0",
     });
     setFormErrors({});
     setShowAddForm(false);
@@ -669,6 +672,9 @@ export function InventoryTab({
       status: getFormStatus(item.status),
       location: item.location || "",
       image: item.image || "",
+      description: item.description || "",
+      region: item.region || "Unknown Region",
+      rating: (item.rating || 4.0).toString(),
     });
     setEditingItem(item);
     setShowAddForm(true);
