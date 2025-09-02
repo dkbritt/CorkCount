@@ -77,6 +77,10 @@ export default function Index() {
           const hasInterference = detectAnalyticsInterference();
           if (hasInterference) {
             console.warn('⚠️ Analytics interference detected during app load');
+            toast({
+              title: "Loading wines...",
+              description: "Using optimized connection for analytics compatibility.",
+            });
           }
         }
 
