@@ -201,13 +201,13 @@ export default function Checkout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderNumber,
-          customerName: formData.customerName,
-          email: formData.email,
-          phone: formData.phone || null,
+          customerName: formData.customerName.trim(),
+          email: formData.email.trim().toLowerCase(),
+          phone: formData.phone?.trim() || null,
           pickupDate: formData.pickupDate,
           pickupTime: formData.pickupTime,
           paymentMethod: formData.paymentMethod,
-          orderNotes: formData.orderNotes || null,
+          orderNotes: formData.orderNotes?.trim() || null,
           bottlesOrdered,
         }),
       });
