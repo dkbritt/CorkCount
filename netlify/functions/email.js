@@ -136,20 +136,15 @@ export const handler = async (event, context) => {
       }
     }
 
-    // Validate test email is configured for development mode only
-    if (isDevelopment && !testEmail) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({
-          success: false,
-          error: "Development mode requires VITE_TEST_EMAIL to be configured",
-        }),
-      };
+    // Only require test email in strict development mode (when explicitly using development features)
+    if (isDevelopment && !testEmail && process.env.NODE_ENV !== "production") {
+      console.warn("Development mode detected but no VITE_TEST_EMAIL configured. Proceeding with caution.");
+      // Instead of failing, we'll just log a warning and proceed
+      // This allows the system to work even without VITE_TEST_EMAIL in development
     }
 
     // In production mode, we should not require VITE_TEST_EMAIL
-    if (isProductionReady && !isDevelopment) {
+    if (isProductionReady) {
       console.log(
         "Running in production mode - bypassing VITE_TEST_EMAIL requirement",
       );
