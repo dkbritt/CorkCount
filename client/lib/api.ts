@@ -19,8 +19,56 @@ function getEndpointUrl(inputPath: string): string {
   return `/api${inputPath}`;
 }
 
-// Store original fetch in case it gets overridden by analytics
-const originalFetch = window.fetch;
+// XMLHttpRequest-based fetch implementation to bypass analytics interference
+function xhrFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const method = (options.method || 'GET').toUpperCase();
+
+    xhr.open(method, url, true);
+
+    // Set headers
+    if (options.headers) {
+      const headers = options.headers as Record<string, string>;
+      Object.entries(headers).forEach(([key, value]) => {
+        xhr.setRequestHeader(key, value);
+      });
+    }
+
+    // Handle timeout
+    xhr.timeout = 10000; // 10 seconds
+
+    xhr.onload = () => {
+      // Create Response-like object
+      const response = {
+        ok: xhr.status >= 200 && xhr.status < 300,
+        status: xhr.status,
+        statusText: xhr.statusText,
+        headers: new Headers(),
+        text: () => Promise.resolve(xhr.responseText),
+        json: () => Promise.resolve(JSON.parse(xhr.responseText)),
+        clone: () => response,
+      } as Response;
+
+      resolve(response);
+    };
+
+    xhr.onerror = () => {
+      reject(new Error(`XHR Network Error: ${xhr.status} ${xhr.statusText}`));
+    };
+
+    xhr.ontimeout = () => {
+      reject(new Error('Request timed out'));
+    };
+
+    // Send request
+    if (options.body) {
+      xhr.send(options.body as string);
+    } else {
+      xhr.send();
+    }
+  });
+}
 
 export async function apiFetch(
   inputPath: string,
@@ -28,20 +76,16 @@ export async function apiFetch(
 ): Promise<Response> {
   const url = getEndpointUrl(inputPath);
 
+  console.log(`🔄 API Request: ${url}`);
+
   try {
-    // Add timeout to prevent hanging requests
+    // First attempt with standard fetch
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    console.log(`🔄 API Request: ${url}`);
-
-    // Try with current fetch first, fallback to original if needed
-    let fetchFunction = window.fetch;
-
-    const response = await fetchFunction(url, {
+    const response = await fetch(url, {
       ...init,
       signal: controller.signal,
-      // Add explicit headers to help with analytics interference
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -52,39 +96,47 @@ export async function apiFetch(
     clearTimeout(timeoutId);
     console.log(`✅ API Response: ${response.status} ${response.statusText}`);
     return response;
-  } catch (error) {
-    console.error(`❌ API Error for ${url}:`, error);
 
+  } catch (error) {
+    console.error(`❌ Fetch failed, trying XHR fallback:`, error);
+
+    // Analytics interference detected - use XHR fallback
+    if (error instanceof Error &&
+        (error.stack?.includes('fullstory') ||
+         error.stack?.includes('fs.js') ||
+         error.message.includes('Failed to fetch'))) {
+
+      console.warn('⚠️ Analytics interference detected, using XHR fallback...');
+
+      try {
+        const xhrResponse = await xhrFetch(url, {
+          ...init,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...init?.headers,
+          },
+        });
+
+        console.log(`✅ XHR Fallback Success: ${xhrResponse.status}`);
+        return xhrResponse;
+
+      } catch (xhrError) {
+        console.error(`❌ XHR Fallback also failed:`, xhrError);
+        throw new Error('Network error: Both fetch and XHR failed. Please check your connection.');
+      }
+    }
+
+    // Handle other errors
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
         throw new Error('Request timed out. Please try again.');
       }
-
-      // Check if analytics might be interfering
-      if (error.stack?.includes('fullstory') || error.stack?.includes('fs.js')) {
-        console.warn('⚠️ Analytics interference detected, trying fallback...');
-
-        // Try with original fetch as fallback
-        try {
-          const fallbackResponse = await originalFetch(url, {
-            ...init,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              ...init?.headers,
-            },
-          });
-          console.log(`✅ Fallback API Response: ${fallbackResponse.status}`);
-          return fallbackResponse;
-        } catch (fallbackError) {
-          console.error(`❌ Fallback also failed:`, fallbackError);
-        }
-      }
-
       if (error.message.includes('fetch')) {
         throw new Error('Network error connecting to database. Please check your internet connection and ensure the service is online.');
       }
     }
+
     throw error;
   }
 }
