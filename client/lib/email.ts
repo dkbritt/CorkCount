@@ -288,10 +288,20 @@ const generateStatusUpdateHTML = (data: StatusUpdateEmailData): string => {
   `;
 };
 
+// Enhanced response interface
+interface EmailResponse {
+  success: boolean;
+  error?: string;
+  customerSuccess?: boolean;
+  adminSuccess?: boolean;
+  partialSuccess?: boolean;
+  emailsSent?: number;
+}
+
 // Send order confirmation email - now relies entirely on server-side configuration
 export async function sendOrderConfirmationEmail(
   orderData: OrderEmailData,
-): Promise<{ success: boolean; error?: string }> {
+): Promise<EmailResponse> {
   try {
     // Check if server is available first
     const serverAvailable = await checkServerAvailability();
@@ -381,7 +391,7 @@ export async function sendOrderConfirmationEmail(
 // Send status update email - now relies entirely on server-side configuration
 export async function sendStatusUpdateEmail(
   data: StatusUpdateEmailData,
-): Promise<{ success: boolean; error?: string }> {
+): Promise<EmailResponse> {
   try {
     // Check if server is available first
     const serverAvailable = await checkServerAvailability();
