@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Minus } from "lucide-react";
+import { autoTagWine, formatTagsForDisplay } from "@/lib/autoTagger";
 
 export interface Wine {
   id: string;
@@ -35,6 +36,18 @@ export function WineCard({
   const [quantity, setQuantity] = useState(1);
   const isAvailable = wine.inStock > 0;
   const isLowStock = wine.inStock > 0 && wine.inStock <= 5;
+
+  // Generate tags from flavor notes and description
+  const displayTags = useMemo(() => {
+    const autoTags = autoTagWine({
+      flavorNotes: wine.flavorNotes || wine.description,
+      description: wine.description,
+      name: wine.name,
+      type: wine.type,
+    });
+    const finalTags = wine.tags && wine.tags.length > 0 ? wine.tags : autoTags;
+    return formatTagsForDisplay(finalTags.slice(0, 3)); // Limit to 3 tags for display
+  }, [wine.flavorNotes, wine.description, wine.name, wine.type, wine.tags]);
 
   const incrementQuantity = () => {
     if (quantity < wine.inStock) {
