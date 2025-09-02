@@ -41,21 +41,18 @@ export const handler = async (event, context) => {
       };
     }
 
-    const fromEmail = process.env.VITE_FROM_EMAIL;
-    if (!fromEmail) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({
-          success: false,
-          error: "Email service not configured - missing FROM_EMAIL",
-        }),
-      };
+    // Use the new verified domain for CorkCount
+    const fromEmail = process.env.VITE_FROM_EMAIL || "orders@corkcount.app";
+    const verifiedDomain = "corkcount.app";
+
+    // Validate that we're using the correct verified domain
+    if (!fromEmail.includes(verifiedDomain)) {
+      console.warn(`Email from address ${fromEmail} does not use verified domain ${verifiedDomain}`);
     }
 
     const filEmail = process.env.VITE_FIL_EMAIL;
     const testEmail = process.env.VITE_TEST_EMAIL;
-    const hasVerifiedDomain = !fromEmail.includes("resend.dev");
+    const hasVerifiedDomain = fromEmail.includes(verifiedDomain);
 
     // Improved production detection - prioritize explicit production setting
     // 1. If NODE_ENV is explicitly set to production (highest priority)
