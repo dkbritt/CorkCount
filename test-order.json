@@ -1,0 +1,21 @@
+{
+  "orderNumber": "ORD-TEST-001",
+  "customerName": "Test Customer",
+  "email": "test@example.com",
+  "phone": "+1234567890",
+  "pickupDate": "2024-01-15",
+  "pickupTime": "2:00 PM",
+  "paymentMethod": "zelle",
+  "orderNotes": "Test order",
+  "bottlesOrdered": [
+    {
+      "wine_id": "7252d90c-5b2d-4a40-9ee0-9cefce946a75",
+      "wine_name": "Moscato",
+      "wine_vintage": 2024,
+      "wine_winery": "KB Winery",
+      "quantity": 2,
+      "price_per_bottle": 20,
+      "total_price": 40
+    }
+  ]
+}
