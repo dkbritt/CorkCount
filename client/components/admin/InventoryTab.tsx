@@ -285,9 +285,21 @@ export function InventoryTab({
     const fetchBatches = async () => {
       try {
         const response = await apiFetch("/batches");
-        const result = await response.json();
 
-        if (response.ok && result.success) {
+        if (!response.ok) {
+          console.error("Error fetching batches: API request failed");
+          return;
+        }
+
+        let result;
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          console.error("Error fetching batches: Invalid JSON response");
+          return;
+        }
+
+        if (result.success) {
           const batchItems: BatchItem[] = (result.batches || []).map(
             (batch: any) => ({
               id: batch.id,
