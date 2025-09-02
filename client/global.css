@@ -88,3 +88,93 @@
     @apply font-playfair;
   }
 }
+
+@layer components {
+  /* Wine-inspired hero section with radial gradient and glass shine */
+  .hero-wine-gradient {
+    background: radial-gradient(ellipse at center, #f8d7da 0%, #e8b4b8 25%, #d4919a 50%, #b85d6b 75%, #5c1a1b 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-wine-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 30%, rgba(255, 255, 255, 0.0) 60%, rgba(255, 255, 255, 0.1) 100%);
+    pointer-events: none;
+  }
+
+  .hero-wine-gradient::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.0) 100%);
+    transform: rotate(15deg);
+    pointer-events: none;
+  }
+
+  /* Wine label-inspired search bar */
+  .wine-label-search {
+    background: linear-gradient(135deg, #faf9f7 0%, #f4f1eb 100%);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    box-shadow:
+      0 4px 12px rgba(212, 175, 55, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wine-label-search::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .wine-label-search:hover {
+    border-color: #c9a426;
+    box-shadow:
+      0 6px 16px rgba(212, 175, 55, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
+  }
+
+  .wine-label-search:focus-within {
+    border-color: #b8941f;
+    box-shadow:
+      0 8px 20px rgba(212, 175, 55, 0.4),
+      0 0 0 3px rgba(212, 175, 55, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  /* Wine label typography */
+  .wine-label-text {
+    color: #5d4037;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+
+  .wine-label-placeholder::placeholder {
+    color: #8d6e63;
+    opacity: 0.8;
+  }
+}
