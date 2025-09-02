@@ -22,14 +22,14 @@ async function getAllInventory(page = 1, limit = 50) {
     // Calculate offset
     const offset = (page - 1) * limit;
 
-    // Get essential fields only to reduce payload size
+    // Get all fields for admin dashboard to support editing
     const {
       data: inventory,
       error,
       count,
     } = await supabase
       .from("Inventory")
-      .select("id, name, winery, vintage, type, price, quantity, created_at", {
+      .select("*", {
         count: "exact",
       })
       .order("created_at", { ascending: false })
