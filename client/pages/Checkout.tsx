@@ -18,6 +18,7 @@ import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { validateEmail, normalizeEmail, validateCheckoutForm, type CheckoutFormData as ValidatedCheckoutFormData } from "@/lib/validation";
 
 interface CheckoutFormData {
   customerName: string;
