@@ -242,7 +242,7 @@ export const handler = async (event, context) => {
             "Return-Path": fromEmail,
             Sender: fromEmail,
           },
-          // Add tags for tracking with verified domain
+          // Add tags for tracking (only ASCII letters, numbers, underscores, dashes)
           tags: [
             {
               name: "category",
@@ -250,11 +250,11 @@ export const handler = async (event, context) => {
             },
             {
               name: "source",
-              value: "corkcount-app",
+              value: "corkcount_app",
             },
             {
               name: "domain",
-              value: verifiedDomain,
+              value: "corkcount_app",
             },
           ],
         }),
