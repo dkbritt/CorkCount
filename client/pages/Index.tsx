@@ -309,7 +309,7 @@ export default function Index() {
       {/* Hero Section */}
       <div className="hero-wine-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
-          <div className="text-center">
+          <div className="text-center hero-content">
             <div className="font-elegant text-6xl sm:text-8xl text-wine-100 mb-2 drop-shadow-sm">
               KB Winery
             </div>

@@ -90,13 +90,18 @@
 }
 
 @layer components {
-  /* Wine-inspired hero section with radial gradient and glass shine */
+  /* Wine-inspired hero section with cork texture background */
   .hero-wine-gradient {
-    background: radial-gradient(ellipse at center, #f8d7da 0%, #e8b4b8 25%, #d4919a 50%, #b85d6b 75%, #5c1a1b 100%);
+    background-image: url('https://images.pexels.com/photos/9958000/pexels-photo-9958000.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     position: relative;
     overflow: hidden;
   }
 
+  /* Semi-transparent overlay for text readability */
   .hero-wine-gradient::before {
     content: '';
     position: absolute;
@@ -104,20 +109,36 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 30%, rgba(255, 255, 255, 0.0) 60%, rgba(255, 255, 255, 0.1) 100%);
+    background: rgba(0, 0, 0, 0.4);
     pointer-events: none;
+    z-index: 1;
   }
 
+  /* Additional subtle wine-colored overlay for warmth */
   .hero-wine-gradient::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -20%;
-    width: 40%;
-    height: 200%;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.0) 100%);
-    transform: rotate(15deg);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(114, 47, 55, 0.15);
     pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Ensure hero content is above overlays */
+  .hero-content {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Responsive background handling */
+  @media (max-width: 768px) {
+    .hero-wine-gradient {
+      background-attachment: scroll;
+      background-size: cover;
+    }
   }
 
   /* Wine label-inspired search bar */
