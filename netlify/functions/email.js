@@ -120,7 +120,7 @@ export const handler = async (event, context) => {
       }
     }
 
-    // Validate test email is configured for development mode
+    // Validate test email is configured for development mode only
     if (isDevelopment && !testEmail) {
       return {
         statusCode: 500,
@@ -130,6 +130,11 @@ export const handler = async (event, context) => {
           error: "Development mode requires VITE_TEST_EMAIL to be configured",
         }),
       };
+    }
+
+    // In production mode, we should not require VITE_TEST_EMAIL
+    if (isProductionReady && !isDevelopment) {
+      console.log("Running in production mode - bypassing VITE_TEST_EMAIL requirement");
     }
 
     const sendOne = async (msg) => {
