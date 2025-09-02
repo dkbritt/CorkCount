@@ -508,9 +508,6 @@ export function InventoryTab({
           location: formData.location,
           image: formData.image,
           tags: sanitizedTags,
-          description: formData.description,
-          region: formData.region,
-          rating: parseFloat(formData.rating),
         };
 
         setInventory(
@@ -590,9 +587,6 @@ export function InventoryTab({
           location: formData.location,
           image: formData.image,
           tags: sanitizedTags,
-          description: formData.description,
-          region: formData.region,
-          rating: parseFloat(formData.rating),
         };
 
         setInventory([...inventory, newItem]);
