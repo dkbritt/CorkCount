@@ -391,13 +391,37 @@ export const handler = async (event, context) => {
       }
     }
 
-    // GET /inventory
+    // GET /inventory/:id (get single wine details)
+    if (method === "GET" && path.startsWith("/") && path !== "/" && !path.includes("?")) {
+      const id = path.substring(1); // Remove leading slash
+      const result = await getWineDetails(id);
+
+      if (result.success) {
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify(result),
+        };
+      } else {
+        return {
+          statusCode: result.error === "Wine not found" ? 404 : 500,
+          headers,
+          body: JSON.stringify(result),
+        };
+      }
+    }
+
+    // GET /inventory (list wines with pagination)
     if (method === "GET" && (path === "" || path === "/")) {
-      const { admin } = queryParams;
-      const result =
-        admin === "true"
-          ? await getAllInventory()
-          : await getAvailableInventory();
+      const { admin, page = "1", limit = "50", detailed = "false" } = queryParams;
+
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50)); // Max 100 items per page
+      const isDetailed = detailed === "true";
+
+      const result = admin === "true"
+        ? await getAllInventory(pageNum, limitNum)
+        : await getAvailableInventory(pageNum, limitNum, isDetailed);
 
       if (result.success) {
         return {
