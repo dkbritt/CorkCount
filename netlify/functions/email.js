@@ -134,39 +134,45 @@ export const handler = async (event, context) => {
         html: finalHtml,
       });
 
-      // ALWAYS send to admin for order confirmations if admin email is configured
+      // ALWAYS send to admin for order confirmations if admin email is configured and valid
       if (msg.type === "order_confirmation" && filEmail && msg.orderData) {
-        const adminRecipient =
-          isDevelopment && testEmail ? testEmail : filEmail;
-        const adminSubject = isDevelopment
-          ? `[TEST] New Order - ${msg.orderData.orderNumber} (for ${filEmail})`
-          : `New Order Received - ${msg.orderData.orderNumber}`;
+        // Validate admin email
+        const adminEmailToUse = isDevelopment && testEmail && isValidEmail(testEmail) ? testEmail : filEmail;
 
-        // Create admin-specific email content
-        const adminHtml = isDevelopment
-          ? `<p><strong>TEST EMAIL - Original recipient: ${filEmail}</strong></p>
-             <div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc;">
-               <h4 style="margin: 0; color: #0066cc;">Admin Notification</h4>
-               <p style="margin: 5px 0 0 0;">This is a copy of the customer order confirmation.</p>
-             </div>
-             ${msg.html}`
-          : `<div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc;">
-               <h4 style="margin: 0; color: #0066cc;">Admin Notification</h4>
-               <p style="margin: 5px 0 0 0;">This is a copy of the customer order confirmation for order ${msg.orderData.orderNumber}.</p>
-             </div>
-             ${msg.html}`;
+        if (isValidEmail(adminEmailToUse)) {
+          const adminSubject = isDevelopment
+            ? `[TEST] New Order - ${msg.orderData.orderNumber} (for ${filEmail})`
+            : `New Order Received - ${msg.orderData.orderNumber}`;
 
-        console.log(
-          `Adding admin email: ${adminRecipient} (dev mode: ${isDevelopment}, production: ${isProductionReady})`,
-        );
+          // Create admin-specific email content
+          const adminHtml = isDevelopment
+            ? `<p><strong>TEST EMAIL - Original recipient: ${filEmail}</strong></p>
+               <div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc;">
+                 <h4 style="margin: 0; color: #0066cc;">Admin Notification</h4>
+                 <p style="margin: 5px 0 0 0;">This is a copy of the customer order confirmation.</p>
+               </div>
+               ${msg.html}`
+            : `<div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc;">
+                 <h4 style="margin: 0; color: #0066cc;">Admin Notification</h4>
+                 <p style="margin: 5px 0 0 0;">This is a copy of the customer order confirmation for order ${msg.orderData.orderNumber}.</p>
+               </div>
+               ${msg.html}`;
 
-        emailsToSend.push({
-          from: msg.from || defaultFrom,
-          to: [adminRecipient],
-          subject: adminSubject,
-          html: adminHtml,
-          type: "admin_notification",
-        });
+          console.log(
+            `Adding admin email: ${adminEmailToUse} (dev mode: ${isDevelopment}, production: ${isProductionReady})`,
+          );
+
+          emailsToSend.push({
+            from: msg.from || defaultFrom,
+            to: [adminEmailToUse],
+            subject: adminSubject,
+            html: adminHtml,
+            type: "admin_notification",
+          });
+        } else {
+          console.warn(`Invalid admin email address: ${adminEmailToUse}, skipping admin notification`);
+          skippedEmails.push({ email: adminEmailToUse, reason: 'Invalid admin email format' });
+        }
       }
     }
 
