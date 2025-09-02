@@ -59,6 +59,14 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 - **Prettier** for code formatting
 - **PNPM** for package management
 
+### Serverless Architecture
+
+- **Netlify Functions** for API endpoints
+  - Auto-scaling serverless compute
+  - Edge deployment for low latency
+  - Built-in CORS handling
+  - Environment variable management
+
 ### Deployment
 
 - **Netlify** for hosting and serverless functions
@@ -90,7 +98,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 │       ├── auth.js           # Authentication API
 │       ├── email.js          # Email notifications
 │       ├── metrics.js        # Analytics API
-│       ├── config.js         # Configuration API
+│       ├─��� config.js         # Configuration API
 │       └── ping.js           # Health check
 ├── docs/                     # Documentation
 ├── sql_migrations/           # Database migrations
