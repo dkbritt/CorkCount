@@ -89,7 +89,7 @@ export default function Checkout() {
 
   // Scroll to top when checkout form opens
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);

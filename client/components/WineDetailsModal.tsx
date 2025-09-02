@@ -182,7 +182,9 @@ export function WineDetailsModal({
           {/* Flavor Notes */}
           {(wine.flavorNotes || wine.description) && (
             <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-semibold text-gray-900 mb-2">Tasting Notes</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">
+                Tasting Notes
+              </h4>
               <p className="text-gray-700 text-sm leading-relaxed">
                 {wine.flavorNotes || wine.description}
               </p>
@@ -192,7 +194,9 @@ export function WineDetailsModal({
           {/* Wine Tags */}
           {displayTags.length > 0 && (
             <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Flavor Profile</h4>
+              <h4 className="font-semibold text-gray-900 mb-3">
+                Flavor Profile
+              </h4>
               <div className="flex flex-wrap gap-2">
                 {displayTags.map((tag, index) => (
                   <Badge
