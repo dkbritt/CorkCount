@@ -461,7 +461,12 @@ export default function Checkout() {
                     formErrors.email ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter your email address"
+                  required
+                  autoComplete="email"
                 />
+                <p className="mt-1 text-xs text-gray-500">
+                  You'll receive order confirmation and pickup notifications at this email
+                </p>
                 {formErrors.email && (
                   <p className="mt-1 text-sm text-red-600">
                     {formErrors.email}
