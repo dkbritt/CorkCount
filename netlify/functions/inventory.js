@@ -64,15 +64,10 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     // Calculate offset
     const offset = (page - 1) * limit;
 
-    // Debug logging
-    console.log(`getAvailableInventory called with: page=${page}, limit=${limit}, detailed=${detailed} (type: ${typeof detailed})`);
-
     // Select fields based on whether detailed info is requested
     const selectFields = detailed === true
       ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
       : "id, name, winery, vintage, type, price, quantity";
-
-    console.log(`Using selectFields: ${selectFields}`);
 
     const { data: wines, error, count } = await supabase
       .from("Inventory")
@@ -102,8 +97,27 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         }
       };
 
-      // Force minimal response structure for size optimization
-      const baseWine = {
+      // Transform based on what fields were actually selected from database
+      if (detailed === true) {
+        return {
+          id: wine.id,
+          name: wine.name,
+          winery: wine.winery || "KB Winery",
+          vintage: wine.vintage,
+          region: wine.region || "",
+          type: wine.type,
+          price: wine.price,
+          inStock: wine.quantity,
+          rating: wine.rating || 0,
+          description: wine.description || "",
+          flavorNotes: safeParseJSON(wine.flavor_notes, []),
+          image: wine.image_url || "/placeholder.svg",
+          tags: safeParseJSON(wine.tags, []),
+        };
+      }
+
+      // Basic mode: only return fields we selected from database (minimal payload)
+      return {
         id: wine.id,
         name: wine.name,
         winery: wine.winery || "KB Winery",
@@ -113,22 +127,6 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         inStock: wine.quantity,
         image: "/placeholder.svg",
       };
-
-      // Add detailed fields only if explicitly requested AND detailed=true
-      if (detailed === true) {
-        return {
-          ...baseWine,
-          region: wine.region || "",
-          rating: wine.rating || 0,
-          description: wine.description || "",
-          flavorNotes: safeParseJSON(wine.flavor_notes, []),
-          image: wine.image_url || "/placeholder.svg",
-          tags: safeParseJSON(wine.tags, []),
-        };
-      }
-
-      // Always return minimal fields for basic mode
-      return baseWine;
     });
 
     return {
@@ -431,10 +429,6 @@ export const handler = async (event, context) => {
       const pageNum = Math.max(1, parseInt(page) || 1);
       const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50)); // Max 100 items per page
       const isDetailed = detailed === "true" || detailed === true;
-
-      // Debug logging
-      console.log(`Query params: admin=${admin}, page=${page}, limit=${limit}, detailed=${detailed}`);
-      console.log(`Processed: pageNum=${pageNum}, limitNum=${limitNum}, isDetailed=${isDetailed}`);
 
       const result = admin === "true"
         ? await getAllInventory(pageNum, limitNum)
