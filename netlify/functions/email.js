@@ -84,23 +84,47 @@ export const handler = async (event, context) => {
       };
     }
 
+    // Helper function to validate email addresses
+    const isValidEmail = (email) => {
+      if (!email || typeof email !== 'string') return false;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email.trim());
+    };
+
     // Process messages and handle development mode
     const emailsToSend = [];
+    const skippedEmails = [];
 
     for (const msg of messages) {
       const recipients = Array.isArray(msg.to) ? msg.to : [msg.to];
 
+      // Filter out invalid email addresses
+      const validRecipients = recipients.filter(email => {
+        const isValid = isValidEmail(email);
+        if (!isValid) {
+          console.warn(`Skipping invalid email address: ${email}`);
+          skippedEmails.push({ email, reason: 'Invalid email format' });
+        }
+        return isValid;
+      });
+
+      // Skip if no valid recipients
+      if (validRecipients.length === 0) {
+        console.warn('No valid recipients found for message, skipping');
+        continue;
+      }
+
       // In development mode, redirect emails to test address
       const finalRecipients =
-        isDevelopment && testEmail ? [testEmail] : recipients;
+        isDevelopment && testEmail && isValidEmail(testEmail) ? [testEmail] : validRecipients;
 
       // Adjust subject and content for development mode
       const finalSubject = isDevelopment
-        ? `[TEST] ${msg.subject} (for ${recipients.join(", ")})`
+        ? `[TEST] ${msg.subject} (for ${validRecipients.join(", ")})`
         : msg.subject;
 
       const finalHtml = isDevelopment
-        ? `<p><strong>TEST EMAIL - Original recipients: ${recipients.join(", ")}</strong></p>${msg.html}`
+        ? `<p><strong>TEST EMAIL - Original recipients: ${validRecipients.join(", ")}</strong></p>${msg.html}`
         : msg.html;
 
       emailsToSend.push({
