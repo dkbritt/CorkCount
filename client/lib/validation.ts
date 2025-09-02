@@ -10,13 +10,19 @@ export const emailSchema = z
   .email("Please enter a valid email address");
 
 // Helper function to validate a single email address
-export function validateEmail(email: string): { isValid: boolean; error?: string } {
+export function validateEmail(email: string): {
+  isValid: boolean;
+  error?: string;
+} {
   try {
     emailSchema.parse(email);
     return { isValid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { isValid: false, error: error.errors[0]?.message || "Invalid email" };
+      return {
+        isValid: false,
+        error: error.errors[0]?.message || "Invalid email",
+      };
     }
     return { isValid: false, error: "Invalid email format" };
   }
@@ -41,8 +47,8 @@ export const checkoutFormSchema = z.object({
 export type CheckoutFormData = z.infer<typeof checkoutFormSchema>;
 
 // Validate checkout form data
-export function validateCheckoutForm(data: any): { 
-  isValid: boolean; 
+export function validateCheckoutForm(data: any): {
+  isValid: boolean;
   errors: Partial<Record<keyof CheckoutFormData, string>>;
   data?: CheckoutFormData;
 } {

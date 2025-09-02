@@ -16,7 +16,7 @@ function isValidEmail(email) {
   }
 
   const trimmedEmail = email.trim();
-  
+
   // Check length constraints (similar to Zod)
   if (trimmedEmail.length === 0 || trimmedEmail.length > 254) {
     return false;
@@ -27,8 +27,9 @@ function isValidEmail(email) {
   // - Periods in local part (before @)
   // - Plus signs and other special characters
   // - International domain names
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-  
+  const emailRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
   return emailRegex.test(trimmedEmail);
 }
 
@@ -46,5 +47,5 @@ function normalizeEmail(email) {
 
 module.exports = {
   isValidEmail,
-  normalizeEmail
+  normalizeEmail,
 };

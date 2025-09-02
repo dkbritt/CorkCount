@@ -18,7 +18,12 @@ import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 import { sendOrderConfirmationEmail } from "@/lib/email";
-import { validateEmail, normalizeEmail, validateCheckoutForm, type CheckoutFormData as ValidatedCheckoutFormData } from "@/lib/validation";
+import {
+  validateEmail,
+  normalizeEmail,
+  validateCheckoutForm,
+  type CheckoutFormData as ValidatedCheckoutFormData,
+} from "@/lib/validation";
 
 interface CheckoutFormData {
   customerName: string;
@@ -457,7 +462,8 @@ export default function Checkout() {
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   You'll receive order confirmation and pickup notifications at
-                  this email. Accepts all standard formats including periods (e.g., user.name@domain.com)
+                  this email. Accepts all standard formats including periods
+                  (e.g., user.name@domain.com)
                 </p>
                 {formErrors.email && (
                   <p className="mt-1 text-sm text-red-600">
