@@ -122,12 +122,16 @@ export function createServer() {
       const { admin, page = "1", limit = "50", detailed = "false" } = req.query;
 
       const pageNum = Math.max(1, parseInt(page as string) || 1);
-      const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 50)); // Max 100 items per page
+      const limitNum = Math.min(
+        100,
+        Math.max(1, parseInt(limit as string) || 50),
+      ); // Max 100 items per page
       const isDetailed = detailed === "true" || detailed === true;
 
-      const result = admin === "true"
-        ? await getAllInventory()
-        : await getAvailableInventory(pageNum, limitNum, isDetailed);
+      const result =
+        admin === "true"
+          ? await getAllInventory()
+          : await getAvailableInventory(pageNum, limitNum, isDetailed);
 
       if (result.success) {
         res.json(result);

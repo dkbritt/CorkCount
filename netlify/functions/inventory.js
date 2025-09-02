@@ -23,9 +23,15 @@ async function getAllInventory(page = 1, limit = 50) {
     const offset = (page - 1) * limit;
 
     // Get essential fields only to reduce payload size
-    const { data: inventory, error, count } = await supabase
+    const {
+      data: inventory,
+      error,
+      count,
+    } = await supabase
       .from("Inventory")
-      .select("id, name, winery, vintage, type, price, quantity, created_at", { count: 'exact' })
+      .select("id, name, winery, vintage, type, price, quantity, created_at", {
+        count: "exact",
+      })
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -44,8 +50,8 @@ async function getAllInventory(page = 1, limit = 50) {
         limit,
         total: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
-        hasMore: (count || 0) > offset + limit
-      }
+        hasMore: (count || 0) > offset + limit,
+      },
     };
   } catch (error) {
     console.error("Error in getAllInventory:", error);
@@ -65,13 +71,18 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     const offset = (page - 1) * limit;
 
     // Select fields based on whether detailed info is requested
-    const selectFields = detailed === true
-      ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
-      : "id, name, winery, vintage, type, price, quantity";
+    const selectFields =
+      detailed === true
+        ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
+        : "id, name, winery, vintage, type, price, quantity";
 
-    const { data: wines, error, count } = await supabase
+    const {
+      data: wines,
+      error,
+      count,
+    } = await supabase
       .from("Inventory")
-      .select(selectFields, { count: 'exact' })
+      .select(selectFields, { count: "exact" })
       .gt("quantity", 0)
       .order("name", { ascending: true })
       .range(offset, offset + limit - 1);
@@ -137,8 +148,8 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         limit,
         total: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
-        hasMore: (count || 0) > offset + limit
-      }
+        hasMore: (count || 0) > offset + limit,
+      },
     };
   } catch (error) {
     console.error("Error in getAvailableInventory:", error);
@@ -398,10 +409,16 @@ export const handler = async (event, context) => {
     }
 
     // GET /inventory/:id (get single wine details)
-    if (method === "GET" && path.startsWith("/") && path !== "/" && path.length > 1) {
+    if (
+      method === "GET" &&
+      path.startsWith("/") &&
+      path !== "/" &&
+      path.length > 1
+    ) {
       const id = path.substring(1); // Remove leading slash
       // Check if this looks like a UUID (basic validation)
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
       if (uuidRegex.test(id)) {
         const result = await getWineDetails(id);
@@ -424,15 +441,21 @@ export const handler = async (event, context) => {
 
     // GET /inventory (list wines with pagination)
     if (method === "GET" && (path === "" || path === "/")) {
-      const { admin, page = "1", limit = "50", detailed = "false" } = queryParams;
+      const {
+        admin,
+        page = "1",
+        limit = "50",
+        detailed = "false",
+      } = queryParams;
 
       const pageNum = Math.max(1, parseInt(page) || 1);
       const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50)); // Max 100 items per page
       const isDetailed = detailed === "true" || detailed === true;
 
-      const result = admin === "true"
-        ? await getAllInventory(pageNum, limitNum)
-        : await getAvailableInventory(pageNum, limitNum, isDetailed);
+      const result =
+        admin === "true"
+          ? await getAllInventory(pageNum, limitNum)
+          : await getAvailableInventory(pageNum, limitNum, isDetailed);
 
       if (result.success) {
         return {

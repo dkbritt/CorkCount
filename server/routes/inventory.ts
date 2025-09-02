@@ -48,7 +48,11 @@ export async function getAllInventory() {
 }
 
 // Get available inventory with pagination and field optimization
-export async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
+export async function getAvailableInventory(
+  page = 1,
+  limit = 50,
+  detailed = false,
+) {
   try {
     const supabase = getSupabaseClient();
 
@@ -56,13 +60,18 @@ export async function getAvailableInventory(page = 1, limit = 50, detailed = fal
     const offset = (page - 1) * limit;
 
     // Select fields based on whether detailed info is requested
-    const selectFields = detailed === true
-      ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
-      : "id, name, winery, vintage, type, price, quantity";
+    const selectFields =
+      detailed === true
+        ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
+        : "id, name, winery, vintage, type, price, quantity";
 
-    const { data: inventory, error, count } = await supabase
+    const {
+      data: inventory,
+      error,
+      count,
+    } = await supabase
       .from("Inventory")
-      .select(selectFields, { count: 'exact' })
+      .select(selectFields, { count: "exact" })
       .gt("quantity", 0)
       .order("name", { ascending: true })
       .range(offset, offset + limit - 1);
@@ -128,8 +137,8 @@ export async function getAvailableInventory(page = 1, limit = 50, detailed = fal
         limit,
         total: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
-        hasMore: (count || 0) > offset + limit
-      }
+        hasMore: (count || 0) > offset + limit,
+      },
     };
   } catch (err) {
     console.error("Error in getAvailableInventory:", err);
