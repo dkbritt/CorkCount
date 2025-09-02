@@ -174,14 +174,17 @@ export const handler = async (event, context) => {
           to: msg.to,
           subject: msg.subject,
           html: msg.html,
-          // Add headers to improve deliverability
+          reply_to: `support@${verifiedDomain}`,
+          // Add headers to improve deliverability with verified domain
           headers: {
-            "X-Entity-Ref-ID": `kb-winery-${Date.now()}`,
-            "List-Unsubscribe": "<mailto:unsubscribe@kbwinery.com>",
+            "X-Entity-Ref-ID": `corkcount-${Date.now()}`,
+            "List-Unsubscribe": `<mailto:unsubscribe@${verifiedDomain}>`,
             "X-Priority": "3",
-            "X-Mailer": "KB Winery Order System",
+            "X-Mailer": "CorkCount Order System",
+            "Return-Path": fromEmail,
+            "Sender": fromEmail,
           },
-          // Add tags for tracking
+          // Add tags for tracking with verified domain
           tags: [
             {
               name: "category",
@@ -189,7 +192,11 @@ export const handler = async (event, context) => {
             },
             {
               name: "source",
-              value: "kb-winery-app",
+              value: "corkcount-app",
+            },
+            {
+              name: "domain",
+              value: verifiedDomain,
             },
           ],
         }),
