@@ -8,13 +8,9 @@ export interface Wine {
   name: string;
   winery: string;
   vintage: number;
-  region: string;
   type: string;
   price: number;
   inStock: number;
-  rating: number;
-  description: string;
-  flavorNotes: string[];
   image?: string;
 }
 
