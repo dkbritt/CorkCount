@@ -36,8 +36,6 @@ exports.handler = async (event, context) => {
       path = path.replace("/api/config", "");
     }
 
-    console.log('Config path:', path);
-    
     if (path === '/supabase') {
       // Check for both non-VITE and VITE prefixed environment variables
       const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
