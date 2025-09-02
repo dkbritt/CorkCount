@@ -70,6 +70,16 @@ function xhrFetch(url: string, options: RequestInit = {}): Promise<Response> {
   });
 }
 
+// Check if FullStory is present and causing issues
+function shouldUseXHROnly(): boolean {
+  const hasFullStory = !!(window as any).FS;
+  const fetchStr = window.fetch.toString();
+  const isModifiedFetch = !fetchStr.includes('[native code]');
+
+  // Force XHR if FullStory is detected
+  return hasFullStory && isModifiedFetch;
+}
+
 export async function apiFetch(
   inputPath: string,
   init?: RequestInit,
@@ -78,22 +88,32 @@ export async function apiFetch(
 
   console.log(`🔄 API Request: ${url}`);
 
-  // Disable FullStory monitoring for this request
   const requestOptions = {
     ...init,
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      // Headers to disable various analytics tracking
-      'X-FS-Exclude': 'true',          // FullStory exclusion
-      'X-Analytics-Exclude': 'true',   // General analytics exclusion
-      'Cache-Control': 'no-cache',     // Prevent caching issues
+      'Cache-Control': 'no-cache',
       ...init?.headers,
     },
   };
 
+  // If FullStory is detected, skip fetch entirely and go straight to XHR
+  if (shouldUseXHROnly()) {
+    console.warn('🚨 FullStory detected - using XHR-only mode to avoid interference');
+
+    try {
+      const xhrResponse = await xhrFetch(url, requestOptions);
+      console.log(`✅ XHR Direct Success: ${xhrResponse.status}`);
+      return xhrResponse;
+    } catch (xhrError) {
+      console.error(`❌ XHR Direct failed:`, xhrError);
+      throw new Error('Network error: XHR request failed. Please check your connection.');
+    }
+  }
+
+  // Standard fetch path (only if no FullStory detected)
   try {
-    // First attempt with standard fetch + analytics exclusion
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -109,46 +129,27 @@ export async function apiFetch(
   } catch (error) {
     console.error(`❌ Fetch failed, trying XHR fallback:`, error);
 
-    // Check if this is analytics interference
-    const isAnalyticsError = error instanceof Error && (
-      error.stack?.includes('fullstory') ||
-      error.stack?.includes('fs.js') ||
-      error.stack?.includes('edge.fullstory.com') ||
-      error.message.includes('Failed to fetch')
-    );
+    // Any fetch error gets XHR fallback
+    try {
+      console.warn('🔄 Using XHR fallback due to fetch error...');
+      const xhrResponse = await xhrFetch(url, requestOptions);
+      console.log(`✅ XHR Fallback Success: ${xhrResponse.status}`);
+      return xhrResponse;
 
-    if (isAnalyticsError) {
-      console.warn('⚠️ Analytics interference detected, using XHR fallback...');
+    } catch (xhrError) {
+      console.error(`❌ XHR Fallback also failed:`, xhrError);
 
-      try {
-        const xhrResponse = await xhrFetch(url, requestOptions);
-        console.log(`✅ XHR Fallback Success: ${xhrResponse.status}`);
-        return xhrResponse;
-
-      } catch (xhrError) {
-        console.error(`❌ XHR Fallback also failed:`, xhrError);
-        throw new Error('Network error: Both fetch and XHR failed. Please check your connection.');
-      }
-    }
-
-    // Handle other errors
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please try again.');
-      }
-      if (error.message.includes('fetch')) {
-        // Try XHR as fallback for any fetch-related error
-        try {
-          console.warn('🔄 Retrying with XHR due to fetch error...');
-          const xhrResponse = await xhrFetch(url, requestOptions);
-          console.log(`✅ XHR Retry Success: ${xhrResponse.status}`);
-          return xhrResponse;
-        } catch (xhrError) {
-          throw new Error('Network error connecting to database. Please check your internet connection and ensure the service is online.');
+      // Final error handling
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out. Please try again.');
+        }
+        if (error.message.includes('fetch') || error.stack?.includes('fullstory')) {
+          throw new Error('Network error: Analytics interference detected. Please disable ad blockers or try refreshing the page.');
         }
       }
-    }
 
-    throw error;
+      throw new Error('Network error connecting to database. Please check your internet connection and ensure the service is online.');
+    }
   }
 }
