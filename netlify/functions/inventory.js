@@ -217,7 +217,7 @@ async function addInventoryItem(itemData) {
     const { data, error } = await supabase
       .from("Inventory")
       .insert([itemData])
-      .select()
+      .select("id, name, winery, vintage, type, price, quantity")
       .single();
 
     if (error) {
@@ -249,7 +249,7 @@ async function updateInventoryItem(id, itemData) {
       .from("Inventory")
       .update(itemData)
       .eq("id", id)
-      .select()
+      .select("id, name, winery, vintage, type, price, quantity")
       .single();
 
     if (error) {
@@ -309,7 +309,7 @@ async function updateInventoryQuantities(updates) {
         .from("Inventory")
         .update({ quantity: update.newQuantity })
         .eq("id", update.id)
-        .select()
+        .select("id, name, quantity")
         .single();
 
       if (error) {
