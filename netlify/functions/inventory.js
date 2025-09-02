@@ -260,7 +260,27 @@ async function addInventoryItem(itemData) {
 // Update inventory item
 async function updateInventoryItem(id, itemData) {
   try {
+    console.log("Updating inventory item:", id, "with data keys:", Object.keys(itemData));
+
     const supabase = getSupabaseClient();
+
+    // Validate required fields
+    if (!id) {
+      return {
+        success: false,
+        error: "Item ID is required for update",
+      };
+    }
+
+    // Check if image_url is too large (if it's a data URL)
+    if (itemData.image_url && typeof itemData.image_url === 'string' && itemData.image_url.startsWith('data:')) {
+      const sizeInMB = (itemData.image_url.length * 0.75) / (1024 * 1024); // Rough base64 size calculation
+      console.log("Image data size:", Math.round(sizeInMB * 100) / 100, "MB");
+
+      if (sizeInMB > 5) {
+        console.warn("Large image detected, may cause issues");
+      }
+    }
 
     const { data, error } = await supabase
       .from("Inventory")
@@ -270,12 +290,21 @@ async function updateInventoryItem(id, itemData) {
       .single();
 
     if (error) {
+      console.error("Supabase update error:", error);
       return {
         success: false,
         error: error.message || "Failed to update inventory item",
       };
     }
 
+    if (!data) {
+      return {
+        success: false,
+        error: "No item found with the provided ID",
+      };
+    }
+
+    console.log("Successfully updated inventory item:", data.id);
     return {
       success: true,
       item: data,
