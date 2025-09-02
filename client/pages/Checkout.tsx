@@ -87,6 +87,11 @@ export default function Checkout() {
     }
   }, [cartItems, navigate]);
 
+  // Scroll to top when checkout form opens
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.wine.price * item.quantity,
