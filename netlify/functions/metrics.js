@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+const { createClient } = require("@supabase/supabase-js");
 
 // Initialize Supabase client server-side
 function getSupabaseClient() {
@@ -57,7 +57,7 @@ async function getMetricsData() {
   }
 }
 
-export const handler = async (event, context) => {
+exports.handler = async (event, context) => {
   // Set CORS headers
   const headers = {
     "Access-Control-Allow-Origin": "*",
