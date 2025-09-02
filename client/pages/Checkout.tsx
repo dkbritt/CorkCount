@@ -107,8 +107,16 @@ export default function Checkout() {
 
     if (!formData.email.trim()) {
       errors.email = "Email address is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = "Please enter a valid email address";
+    } else {
+      // More robust email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const trimmedEmail = formData.email.trim().toLowerCase();
+
+      if (!emailRegex.test(trimmedEmail)) {
+        errors.email = "Please enter a valid email address";
+      } else if (trimmedEmail.length > 254) {
+        errors.email = "Email address is too long";
+      }
     }
 
     if (!formData.pickupDate) {
