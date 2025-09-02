@@ -142,86 +142,14 @@ export const handler = async (event, context) => {
 
     // POST /storage/upload - Upload image
     if (method === 'POST' && path === '/upload') {
-      // Parse multipart form data
-      const boundary = event.headers['content-type']?.split('boundary=')[1];
-      if (!boundary || !event.body) {
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({
-            success: false,
-            error: 'Invalid request format'
-          }),
-        };
-      }
-
-      try {
-        // Parse the multipart form data
-        const body = Buffer.from(event.body, 'base64');
-        const parts = body.toString().split(`--${boundary}`);
-        
-        let filename = '';
-        let fileBuffer = null;
-        
-        for (const part of parts) {
-          if (part.includes('name="filename"')) {
-            const lines = part.split('\r\n');
-            filename = lines[lines.length - 2];
-          } else if (part.includes('name="file"')) {
-            const contentStart = part.indexOf('\r\n\r\n') + 4;
-            const contentEnd = part.lastIndexOf('\r\n');
-            if (contentStart > 3 && contentEnd > contentStart) {
-              const fileContent = part.slice(contentStart, contentEnd);
-              fileBuffer = Buffer.from(fileContent, 'binary');
-            }
-          }
-        }
-
-        if (!filename || !fileBuffer) {
-          return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({
-              success: false,
-              error: 'File or filename missing'
-            }),
-          };
-        }
-
-        const result = await uploadFile(supabase, fileBuffer, filename);
-
-        if (result.success) {
-          return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({
-              success: true,
-              filename: filename,
-              publicUrl: result.publicUrl
-            }),
-          };
-        } else {
-          return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({
-              success: false,
-              error: result.error
-            }),
-          };
-        }
-
-      } catch (parseError) {
-        console.error('Error parsing multipart data:', parseError);
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({
-            success: false,
-            error: 'Failed to parse upload data'
-          }),
-        };
-      }
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: 'Direct file upload not supported yet. Please use external URLs for now.'
+        }),
+      };
     }
 
     // DELETE /storage/delete - Delete image
