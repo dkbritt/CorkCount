@@ -36,6 +36,9 @@ interface InventoryItem {
   location?: string;
   image?: string;
   tags?: string[];
+  description?: string;
+  region?: string;
+  rating?: number;
 }
 
 interface AddInventoryForm {
@@ -49,6 +52,9 @@ interface AddInventoryForm {
   status: string;
   location: string;
   image: string;
+  description: string;
+  region: string;
+  rating: string;
 }
 
 interface BatchItem {
