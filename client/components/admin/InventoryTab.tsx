@@ -902,7 +902,7 @@ export function InventoryTab({
                   value={formData.image}
                   onChange={(imageUrl) => handleInputChange("image", imageUrl)}
                   onError={(error) => setFormErrors(prev => ({ ...prev, image: error }))}
-                  disabled={isSubmitting}
+                  disabled={formLoading}
                 />
                 {formErrors.image && (
                   <p className="mt-1 text-sm text-red-600">
