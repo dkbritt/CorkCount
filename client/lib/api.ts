@@ -26,9 +26,26 @@ export async function apiFetch(
   const url = getEndpointUrl(inputPath);
 
   try {
-    const response = await fetch(url, init);
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    const response = await fetch(url, {
+      ...init,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
     return response;
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. Please try again.');
+      }
+      if (error.message.includes('fetch')) {
+        throw new Error('Network error connecting to database. Please check your internet connection and ensure the service is online.');
+      }
+    }
     throw error;
   }
 }
