@@ -12,6 +12,9 @@ export interface Wine {
   price: number;
   inStock: number;
   image?: string;
+  flavorNotes?: string;
+  description?: string;
+  tags?: string[];
 }
 
 interface WineCardProps {
