@@ -62,6 +62,7 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 ### Deployment
 
 - **Netlify** for hosting and serverless functions
+- **Netlify Functions** for API endpoints (auto-scaling, edge deployment)
 - **Supabase** for managed database
 - **Environment-based configuration**
 
@@ -261,7 +262,7 @@ const tags = autoTagWine({
 
 For detailed documentation, see [AUTO_TAGGING_GUIDE.md](docs/AUTO_TAGGING_GUIDE.md)
 
-## ���� Development
+## 🔧 Development
 
 ### Available Scripts
 
