@@ -36,9 +36,6 @@ interface InventoryItem {
   location?: string;
   image?: string;
   tags?: string[];
-  description?: string;
-  region?: string;
-  rating?: number;
 }
 
 interface AddInventoryForm {
@@ -52,9 +49,6 @@ interface AddInventoryForm {
   status: string;
   location: string;
   image: string;
-  description: string;
-  region: string;
-  rating: string;
 }
 
 interface BatchItem {
@@ -213,9 +207,6 @@ export function InventoryTab({
     status: "Active",
     location: "",
     image: "",
-    description: "",
-    region: "Unknown Region",
-    rating: "4.0",
   });
   const [formErrors, setFormErrors] = useState<Partial<AddInventoryForm>>({});
   const [availableBatches, setAvailableBatches] = useState<BatchItem[]>([]);
@@ -275,9 +266,6 @@ export function InventoryTab({
             location: item.location || "",
             image: item.image_url || item.image || "",
             tags: item.tags || [],
-            description: item.description || "",
-            region: item.region || "Unknown Region",
-            rating: parseFloat(item.rating) || 4.0,
           }),
         );
 
@@ -644,9 +632,6 @@ export function InventoryTab({
       status: "Active",
       location: "",
       image: "",
-      description: "",
-      region: "Unknown Region",
-      rating: "4.0",
     });
     setFormErrors({});
     setShowAddForm(false);
