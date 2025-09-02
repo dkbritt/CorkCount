@@ -130,7 +130,7 @@ exports.handler = async (event, context) => {
 
   try {
     const supabase = getSupabaseClient();
-    
+
     // Handle different routes
     let path = event.path || "";
     if (path.startsWith("/.netlify/functions/storage")) {
@@ -140,6 +140,32 @@ exports.handler = async (event, context) => {
     }
 
     const method = event.httpMethod;
+
+    // GET /storage/health - Health check
+    if (method === 'GET' && path === '/health') {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          storage: supabase ? 'ready' : 'not_configured',
+          bucket: BUCKET_NAME,
+          message: supabase ? 'Supabase storage ready' : 'Supabase not configured - external URLs only'
+        }),
+      };
+    }
+
+    // Return early if Supabase is not configured for operations that need it
+    if (!supabase && (method === 'POST' || method === 'DELETE')) {
+      return {
+        statusCode: 503,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: 'Supabase storage not configured. Only external URLs are supported.'
+        }),
+      };
+    }
 
     // POST /storage/upload - Upload image
     if (method === 'POST' && path === '/upload') {
