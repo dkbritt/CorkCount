@@ -207,6 +207,17 @@ exports.handler = async (event, context) => {
         };
       }
 
+      if (!supabase) {
+        return {
+          statusCode: 503,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: 'Supabase storage not configured'
+          }),
+        };
+      }
+
       const result = await deleteFile(supabase, filename);
 
       if (result.success) {
