@@ -143,6 +143,72 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
   }
 }
 
+// Get single wine with full details
+async function getWineDetails(id) {
+  try {
+    const supabase = getSupabaseClient();
+
+    const { data: wine, error } = await supabase
+      .from("Inventory")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message || "Failed to fetch wine details",
+      };
+    }
+
+    if (!wine) {
+      return {
+        success: false,
+        error: "Wine not found",
+      };
+    }
+
+    // Safe JSON parsing function
+    const safeParseJSON = (jsonString, fallback = []) => {
+      try {
+        if (!jsonString) return fallback;
+        if (Array.isArray(jsonString)) return jsonString;
+        return JSON.parse(jsonString);
+      } catch (error) {
+        console.warn("Invalid JSON in database field:", jsonString);
+        return fallback;
+      }
+    };
+
+    const transformedWine = {
+      id: wine.id,
+      name: wine.name,
+      winery: wine.winery || "KB Winery",
+      vintage: wine.vintage,
+      region: wine.region || "",
+      type: wine.type,
+      price: wine.price,
+      inStock: wine.quantity,
+      rating: wine.rating || 0,
+      description: wine.description || "",
+      flavorNotes: safeParseJSON(wine.flavor_notes, []),
+      image: wine.image_url || "/placeholder.svg",
+      tags: safeParseJSON(wine.tags, []),
+    };
+
+    return {
+      success: true,
+      wine: transformedWine,
+    };
+  } catch (error) {
+    console.error("Error in getWineDetails:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+}
+
 // Add new inventory item
 async function addInventoryItem(itemData) {
   try {
