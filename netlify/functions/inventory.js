@@ -64,10 +64,15 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     // Calculate offset
     const offset = (page - 1) * limit;
 
+    // Debug logging
+    console.log(`getAvailableInventory called with: page=${page}, limit=${limit}, detailed=${detailed} (type: ${typeof detailed})`);
+
     // Select fields based on whether detailed info is requested
     const selectFields = detailed === true
       ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
       : "id, name, winery, vintage, type, price, quantity";
+
+    console.log(`Using selectFields: ${selectFields}`);
 
     const { data: wines, error, count } = await supabase
       .from("Inventory")
@@ -426,6 +431,10 @@ export const handler = async (event, context) => {
       const pageNum = Math.max(1, parseInt(page) || 1);
       const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50)); // Max 100 items per page
       const isDetailed = detailed === "true" || detailed === true;
+
+      // Debug logging
+      console.log(`Query params: admin=${admin}, page=${page}, limit=${limit}, detailed=${detailed}`);
+      console.log(`Processed: pageNum=${pageNum}, limitNum=${limitNum}, isDetailed=${isDetailed}`);
 
       const result = admin === "true"
         ? await getAllInventory(pageNum, limitNum)
