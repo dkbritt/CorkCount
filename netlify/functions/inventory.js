@@ -14,15 +14,20 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
-// Get all inventory for admin dashboard
-async function getAllInventory() {
+// Get all inventory for admin dashboard with pagination
+async function getAllInventory(page = 1, limit = 50) {
   try {
     const supabase = getSupabaseClient();
 
-    const { data: inventory, error } = await supabase
+    // Calculate offset
+    const offset = (page - 1) * limit;
+
+    // Get essential fields only to reduce payload size
+    const { data: inventory, error, count } = await supabase
       .from("Inventory")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .select("id, name, winery, vintage, type, price, quantity, created_at", { count: 'exact' })
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       return {
@@ -34,6 +39,13 @@ async function getAllInventory() {
     return {
       success: true,
       inventory: inventory || [],
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / limit),
+        hasMore: (count || 0) > offset + limit
+      }
     };
   } catch (error) {
     console.error("Error in getAllInventory:", error);
