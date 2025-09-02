@@ -121,7 +121,7 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
           inStock: wine.quantity,
           rating: wine.rating || 0,
           description: wine.description || "",
-          flavorNotes: safeParseJSON(wine.flavor_notes, []),
+          flavorNotes: wine.flavor_notes || "",
           image: wine.image_url || "/placeholder.svg",
           tags: safeParseJSON(wine.tags, []),
         };
