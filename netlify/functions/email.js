@@ -56,7 +56,9 @@ export const handler = async (event, context) => {
     const filEmail = process.env.VITE_FIL_EMAIL;
     const testEmail = process.env.VITE_TEST_EMAIL;
     const hasVerifiedDomain = !fromEmail.includes("resend.dev");
-    const isProductionReady = hasVerifiedDomain && process.env.NODE_ENV === "production";
+    // In production, we should bypass test email requirements if we have a verified domain
+    // OR if NODE_ENV is explicitly set to production
+    const isProductionReady = hasVerifiedDomain || process.env.NODE_ENV === "production";
     const isDevelopment = !isProductionReady;
 
     const defaultFrom = `KB Winery <${fromEmail}>`;
