@@ -57,13 +57,13 @@ export const handler = async (event, context) => {
     const testEmail = process.env.VITE_TEST_EMAIL;
     const hasVerifiedDomain = !fromEmail.includes("resend.dev");
 
-    // More flexible production detection:
-    // 1. If NODE_ENV is explicitly set to production
+    // Improved production detection - prioritize explicit production setting
+    // 1. If NODE_ENV is explicitly set to production (highest priority)
     // 2. If we have a verified domain (not resend.dev)
-    // 3. If VITE_TEST_EMAIL is not set (indicating production intent)
-    const isProductionReady =
-      process.env.NODE_ENV === "production" || hasVerifiedDomain || !testEmail;
-    const isDevelopment = !isProductionReady;
+    // 3. If explicitly not development (fallback)
+    const isExplicitProduction = process.env.NODE_ENV === "production";
+    const isProductionReady = isExplicitProduction || hasVerifiedDomain || (!testEmail && process.env.NODE_ENV !== "development");
+    const isDevelopment = !isProductionReady && !isExplicitProduction;
 
     console.log(
       `Email mode detection: NODE_ENV=${process.env.NODE_ENV}, hasVerifiedDomain=${hasVerifiedDomain}, hasTestEmail=${!!testEmail}, isProductionReady=${isProductionReady}, isDevelopment=${isDevelopment}`,
@@ -110,19 +110,29 @@ export const handler = async (event, context) => {
         html: finalHtml,
       });
 
-      // For order confirmations, also send to admin if configured
+      // ALWAYS send to admin for order confirmations if admin email is configured
       if (msg.type === "order_confirmation" && filEmail && msg.orderData) {
-        const adminRecipient =
-          isDevelopment && testEmail ? testEmail : filEmail;
+        const adminRecipient = isDevelopment && testEmail ? testEmail : filEmail;
         const adminSubject = isDevelopment
           ? `[TEST] New Order - ${msg.orderData.orderNumber} (for ${filEmail})`
           : `New Order Received - ${msg.orderData.orderNumber}`;
+
+        // Create admin-specific email content
         const adminHtml = isDevelopment
-          ? `<p><strong>TEST EMAIL - Original recipient: ${filEmail}</strong></p>${msg.html}`
-          : msg.html;
+          ? `<p><strong>TEST EMAIL - Original recipient: ${filEmail}</strong></p>
+             <div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc;">
+               <h4 style="margin: 0; color: #0066cc;">Admin Notification</h4>
+               <p style="margin: 5px 0 0 0;">This is a copy of the customer order confirmation.</p>
+             </div>
+             ${msg.html}`
+          : `<div style="background: #f0f8ff; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc;">
+               <h4 style="margin: 0; color: #0066cc;">Admin Notification</h4>
+               <p style="margin: 5px 0 0 0;">This is a copy of the customer order confirmation for order ${msg.orderData.orderNumber}.</p>
+             </div>
+             ${msg.html}`;
 
         console.log(
-          `Adding admin email: ${adminRecipient} (dev mode: ${isDevelopment})`,
+          `Adding admin email: ${adminRecipient} (dev mode: ${isDevelopment}, production: ${isProductionReady})`,
         );
 
         emailsToSend.push({
@@ -130,6 +140,7 @@ export const handler = async (event, context) => {
           to: [adminRecipient],
           subject: adminSubject,
           html: adminHtml,
+          type: 'admin_notification'
         });
       }
     }
