@@ -111,6 +111,8 @@ export const handler = async (event, context) => {
           ? `<p><strong>TEST EMAIL - Original recipient: ${filEmail}</strong></p>${msg.html}`
           : msg.html;
 
+        console.log(`Adding admin email: ${adminRecipient} (dev mode: ${isDevelopment})`);
+
         emailsToSend.push({
           from: msg.from || defaultFrom,
           to: [adminRecipient],
