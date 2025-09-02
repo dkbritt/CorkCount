@@ -61,6 +61,8 @@ export const handler = async (event, context) => {
     const isProductionReady = hasVerifiedDomain || process.env.NODE_ENV === "production";
     const isDevelopment = !isProductionReady;
 
+    console.log(`Email mode detection: NODE_ENV=${process.env.NODE_ENV}, hasVerifiedDomain=${hasVerifiedDomain}, isProductionReady=${isProductionReady}, isDevelopment=${isDevelopment}`);
+
     const defaultFrom = `KB Winery <${fromEmail}>`;
     const body = event.body ? JSON.parse(event.body) : {};
     const { messages } = body;
