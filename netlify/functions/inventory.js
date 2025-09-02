@@ -56,16 +56,25 @@ async function getAllInventory(page = 1, limit = 50) {
   }
 }
 
-// Get available inventory for public shop (includes wine details)
-async function getAvailableInventory() {
+// Get available inventory for public shop with pagination and essential fields
+async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
   try {
     const supabase = getSupabaseClient();
 
-    const { data: wines, error } = await supabase
+    // Calculate offset
+    const offset = (page - 1) * limit;
+
+    // Select fields based on whether detailed info is requested
+    const selectFields = detailed
+      ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
+      : "id, name, winery, vintage, type, price, quantity, rating, image_url";
+
+    const { data: wines, error, count } = await supabase
       .from("Inventory")
-      .select("*")
+      .select(selectFields, { count: 'exact' })
       .gt("quantity", 0)
-      .order("name", { ascending: true });
+      .order("name", { ascending: true })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       return {
@@ -76,7 +85,7 @@ async function getAvailableInventory() {
 
     // Transform data to match expected wine format
     const transformedWines = (wines || []).map((wine) => {
-      // Safe JSON parsing function
+      // Safe JSON parsing function (only for detailed requests)
       const safeParseJSON = (jsonString, fallback = []) => {
         try {
           if (!jsonString) return fallback;
@@ -88,26 +97,42 @@ async function getAvailableInventory() {
         }
       };
 
-      return {
+      const baseWine = {
         id: wine.id,
         name: wine.name,
         winery: wine.winery || "KB Winery",
         vintage: wine.vintage,
-        region: wine.region || "",
         type: wine.type,
         price: wine.price,
         inStock: wine.quantity,
         rating: wine.rating || 0,
-        description: wine.description || "",
-        flavorNotes: safeParseJSON(wine.flavor_notes, []),
         image: wine.image_url || "/placeholder.svg",
-        tags: safeParseJSON(wine.tags, []),
       };
+
+      // Add detailed fields only if requested
+      if (detailed) {
+        return {
+          ...baseWine,
+          region: wine.region || "",
+          description: wine.description || "",
+          flavorNotes: safeParseJSON(wine.flavor_notes, []),
+          tags: safeParseJSON(wine.tags, []),
+        };
+      }
+
+      return baseWine;
     });
 
     return {
       success: true,
       wines: transformedWines,
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / limit),
+        hasMore: (count || 0) > offset + limit
+      }
     };
   } catch (error) {
     console.error("Error in getAvailableInventory:", error);
