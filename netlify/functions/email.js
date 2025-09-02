@@ -1,3 +1,5 @@
+const { isValidEmail, normalizeEmail } = require('./email-validation');
+
 export const handler = async (event, context) => {
   // Set CORS headers
   const headers = {
@@ -86,12 +88,7 @@ export const handler = async (event, context) => {
       };
     }
 
-    // Helper function to validate email addresses
-    const isValidEmail = (email) => {
-      if (!email || typeof email !== "string") return false;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email.trim());
-    };
+    // Using enhanced email validation from shared utility
 
     // Process messages and handle development mode
     const emailsToSend = [];

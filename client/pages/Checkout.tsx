@@ -100,29 +100,12 @@ export default function Checkout() {
   );
 
   const validateForm = (): boolean => {
-    const errors: Partial<CheckoutFormData> = {};
+    // Use Zod-based validation
+    const validation = validateCheckoutForm(formData);
 
-    if (!formData.customerName.trim()) {
-      errors.customerName = "Customer name is required";
-    }
-
-    if (!formData.email.trim()) {
-      errors.email = "Email address is required";
-    } else {
-      // More robust email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const trimmedEmail = formData.email.trim().toLowerCase();
-
-      if (!emailRegex.test(trimmedEmail)) {
-        errors.email = "Please enter a valid email address";
-      } else if (trimmedEmail.length > 254) {
-        errors.email = "Email address is too long";
-      }
-    }
-
-    if (!formData.pickupDate) {
-      errors.pickupDate = "Pickup date is required";
-    } else {
+    // Add custom validation for pickup date (not in past)
+    const errors = { ...validation.errors };
+    if (formData.pickupDate) {
       const selectedDate = new Date(formData.pickupDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -131,16 +114,8 @@ export default function Checkout() {
       }
     }
 
-    if (!formData.pickupTime) {
-      errors.pickupTime = "Pickup time is required";
-    }
-
-    if (!formData.paymentMethod) {
-      errors.paymentMethod = "Payment method is required";
-    }
-
     setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    return validation.isValid && !errors.pickupDate;
   };
 
   const generateOrderNumber = (): string => {
@@ -156,6 +131,14 @@ export default function Checkout() {
     // Clear error when user starts typing
     if (formErrors[field]) {
       setFormErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+
+    // Real-time email validation using Zod
+    if (field === "email" && value.trim()) {
+      const emailValidation = validateEmail(value);
+      if (!emailValidation.isValid) {
+        setFormErrors((prev) => ({ ...prev, email: emailValidation.error }));
+      }
     }
 
     // Handle payment method selection
@@ -203,7 +186,7 @@ export default function Checkout() {
         body: JSON.stringify({
           orderNumber,
           customerName: formData.customerName.trim(),
-          email: formData.email.trim().toLowerCase(),
+          email: normalizeEmail(formData.email),
           phone: formData.phone?.trim() || null,
           pickupDate: formData.pickupDate,
           pickupTime: formData.pickupTime,
@@ -260,7 +243,7 @@ export default function Checkout() {
         const emailResult = await sendOrderConfirmationEmail({
           orderNumber,
           customerName: formData.customerName.trim(),
-          customerEmail: formData.email.trim().toLowerCase(),
+          customerEmail: normalizeEmail(formData.email),
           phone: formData.phone?.trim() || "",
           pickupDate: formData.pickupDate,
           pickupTime: formData.pickupTime,
@@ -474,7 +457,7 @@ export default function Checkout() {
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   You'll receive order confirmation and pickup notifications at
-                  this email
+                  this email. Accepts all standard formats including periods (e.g., user.name@domain.com)
                 </p>
                 {formErrors.email && (
                   <p className="mt-1 text-sm text-red-600">
