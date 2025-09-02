@@ -656,13 +656,42 @@ export function InventoryTab({
       const response = await apiFetch(`/inventory/${itemId}`, {
         method: "DELETE",
       });
-      const result = await response.json().catch(() => ({}));
 
-      if (!response.ok || result.success === false) {
+      // Handle response with proper error checking
+      if (!response.ok) {
+        let errorMessage = "Failed to delete inventory item";
+        try {
+          const errorResult = await response.json();
+          errorMessage = errorResult.error || errorMessage;
+        } catch {
+          errorMessage = response.statusText || errorMessage;
+        }
+
+        console.error("Error deleting inventory item:", errorMessage);
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Parse successful response (DELETE might not return JSON)
+      let result = { success: true };
+      try {
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          result = await response.json();
+        }
+      } catch (jsonError) {
+        // If no JSON response, assume success since response was OK
+        result = { success: true };
+      }
+
+      if (result.success === false) {
         console.error("Error deleting inventory item:", result.error);
         toast({
           title: "Error",
-          description: "Failed to delete inventory item. Please try again.",
+          description: result.error || "Failed to delete inventory item",
           variant: "destructive",
         });
         return;
