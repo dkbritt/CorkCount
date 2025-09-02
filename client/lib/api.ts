@@ -78,19 +78,28 @@ export async function apiFetch(
 
   console.log(`🔄 API Request: ${url}`);
 
+  // Disable FullStory monitoring for this request
+  const requestOptions = {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      // Headers to disable various analytics tracking
+      'X-FS-Exclude': 'true',          // FullStory exclusion
+      'X-Analytics-Exclude': 'true',   // General analytics exclusion
+      'Cache-Control': 'no-cache',     // Prevent caching issues
+      ...init?.headers,
+    },
+  };
+
   try {
-    // First attempt with standard fetch
+    // First attempt with standard fetch + analytics exclusion
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     const response = await fetch(url, {
-      ...init,
+      ...requestOptions,
       signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...init?.headers,
-      },
     });
 
     clearTimeout(timeoutId);
@@ -100,24 +109,19 @@ export async function apiFetch(
   } catch (error) {
     console.error(`❌ Fetch failed, trying XHR fallback:`, error);
 
-    // Analytics interference detected - use XHR fallback
-    if (error instanceof Error &&
-        (error.stack?.includes('fullstory') ||
-         error.stack?.includes('fs.js') ||
-         error.message.includes('Failed to fetch'))) {
+    // Check if this is analytics interference
+    const isAnalyticsError = error instanceof Error && (
+      error.stack?.includes('fullstory') ||
+      error.stack?.includes('fs.js') ||
+      error.stack?.includes('edge.fullstory.com') ||
+      error.message.includes('Failed to fetch')
+    );
 
+    if (isAnalyticsError) {
       console.warn('⚠️ Analytics interference detected, using XHR fallback...');
 
       try {
-        const xhrResponse = await xhrFetch(url, {
-          ...init,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            ...init?.headers,
-          },
-        });
-
+        const xhrResponse = await xhrFetch(url, requestOptions);
         console.log(`✅ XHR Fallback Success: ${xhrResponse.status}`);
         return xhrResponse;
 
@@ -133,7 +137,15 @@ export async function apiFetch(
         throw new Error('Request timed out. Please try again.');
       }
       if (error.message.includes('fetch')) {
-        throw new Error('Network error connecting to database. Please check your internet connection and ensure the service is online.');
+        // Try XHR as fallback for any fetch-related error
+        try {
+          console.warn('🔄 Retrying with XHR due to fetch error...');
+          const xhrResponse = await xhrFetch(url, requestOptions);
+          console.log(`✅ XHR Retry Success: ${xhrResponse.status}`);
+          return xhrResponse;
+        } catch (xhrError) {
+          throw new Error('Network error connecting to database. Please check your internet connection and ensure the service is online.');
+        }
       }
     }
 

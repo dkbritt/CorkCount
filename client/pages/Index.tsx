@@ -20,6 +20,7 @@ import {
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
+import { detectAnalyticsInterference } from "@/lib/analytics-utils";
 
 export default function Index() {
   const { toast } = useToast();
@@ -70,6 +71,14 @@ export default function Index() {
       try {
         setLoading(true);
         setError(null);
+
+        // Detect and log analytics interference
+        if (retryCount === 0) {
+          const hasInterference = detectAnalyticsInterference();
+          if (hasInterference) {
+            console.warn('⚠️ Analytics interference detected during app load');
+          }
+        }
 
         const response = await apiFetch("/inventory");
 
