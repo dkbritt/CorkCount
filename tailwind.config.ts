@@ -35,6 +35,26 @@ export default {
           800: "#8D242D",
           900: "#722F37",
         },
+        rosé: {
+          light: "#f8d7da",
+          DEFAULT: "#e8b4b8",
+          medium: "#d4919a",
+          dark: "#b85d6b",
+        },
+        cabernet: {
+          DEFAULT: "#5c1a1b",
+          dark: "#4a1516",
+        },
+        cork: {
+          light: "#faf9f7",
+          DEFAULT: "#f4f1eb",
+          brown: "#8b4513",
+        },
+        gold: {
+          muted: "#d4af37",
+          DEFAULT: "#c9a426",
+          dark: "#b8941f",
+        },
         eggplant: {
           DEFAULT: "#573446",
           50: "#FAF8F9",
