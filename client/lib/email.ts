@@ -461,20 +461,38 @@ export async function sendStatusUpdateEmail(
 
     const result = await response.json();
     if (!result.success) {
-      const detail = Array.isArray(result.failures)
-        ? result.failures
-            .map(
-              (f: any) =>
-                `${f.type === "admin_notification" ? "Admin" : "Customer"} email failed: ${f.reason}`,
-            )
-            .join("; ")
-        : result.error || "Unknown error";
+      let detail = "";
+
+      // Handle skipped emails
+      if (result.skipped && result.skipped.length > 0) {
+        const skippedDetails = result.skipped
+          .map((s: any) => `${s.email}: ${s.reason}`)
+          .join("; ");
+        detail += `Skipped emails: ${skippedDetails}. `;
+      }
+
+      // Handle failed emails
+      if (Array.isArray(result.failures)) {
+        const failureDetails = result.failures
+          .map(
+            (f: any) =>
+              `${f.type === "admin_notification" ? "Admin" : "Customer"} email failed: ${f.reason}`,
+          )
+          .join("; ");
+        detail += failureDetails;
+      } else {
+        detail += result.error || "Unknown error";
+      }
+
       return {
         success: false,
-        error: detail,
+        error: detail.trim(),
         customerSuccess: result.customerSuccess || false,
         adminSuccess: result.adminSuccess || false,
         partialSuccess: result.sent > 0,
+        skipped: result.skipped,
+        domain: result.domain,
+        fromAddress: result.fromAddress
       };
     }
 
@@ -483,6 +501,9 @@ export async function sendStatusUpdateEmail(
       customerSuccess: result.customerSuccess || true,
       adminSuccess: result.adminSuccess || true,
       emailsSent: result.sent || result.total || 1,
+      skipped: result.skipped,
+      domain: result.domain,
+      fromAddress: result.fromAddress
     };
   } catch (error) {
     console.error("Error sending status update email:", error);
