@@ -81,7 +81,16 @@ A modern, full-stack wine e-commerce platform with advanced inventory management
 │   ├── routes/               # API route handlers
 │   └── index.ts              # Server configuration
 ├── shared/                   # Shared types and utilities
-├── netlify/                  # Netlify functions
+├── netlify/                  # Netlify serverless functions
+│   └── functions/
+│       ├── inventory.js      # Wine inventory API
+│       ├── orders.js         # Order management API
+│       ├── batches.js        # Batch tracking API
+│       ├── auth.js           # Authentication API
+│       ├── email.js          # Email notifications
+│       ├── metrics.js        # Analytics API
+│       ├── config.js         # Configuration API
+│       └── ping.js           # Health check
 ├── docs/                     # Documentation
 ├── sql_migrations/           # Database migrations
 └── ...                       # Config files
