@@ -310,15 +310,18 @@ export default function Index() {
       <div className="bg-gradient-to-r from-wine to-wine/90 text-white">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center">
-            <div className="font-script text-5xl sm:text-7xl text-wine-100 mb-4 font-semibold">
+            <div className="font-elegant text-6xl sm:text-8xl text-wine-100 mb-2 drop-shadow-sm">
               KB Winery
             </div>
-            <h1 className="font-playfair text-2xl sm:text-4xl font-bold mb-6">
+            <div className="font-script text-lg sm:text-2xl text-wine-200 mb-6 tracking-wide">
+              Est. 2020 • Handcrafted Excellence
+            </div>
+            <h1 className="font-cormorant text-2xl sm:text-4xl font-medium mb-6 text-wine-50">
               Sip Happens — Find Your Vintage
             </h1>
-            <p className="text-lg sm:text-xl mb-8 text-wine-100 max-w-3xl mx-auto">
+            <p className="font-baskerville text-lg sm:text-xl mb-8 text-wine-100 max-w-3xl mx-auto leading-relaxed">
               Curated collection of premium wines from KB Winery. From everyday
-              favorites to rare vintages.
+              favorites to rare vintages, each bottle tells a story of passion and tradition.
             </p>
 
             {/* Search Bar */}
@@ -392,7 +395,7 @@ export default function Index() {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Loader2 className="w-12 h-12 text-gray-400 animate-spin" />
             </div>
-            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="font-cormorant text-xl font-semibold text-gray-900 mb-2">
               Loading wines...
             </h3>
             <p className="text-gray-600">
@@ -407,7 +410,7 @@ export default function Index() {
             <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="w-12 h-12 text-red-400" />
             </div>
-            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="font-cormorant text-xl font-semibold text-gray-900 mb-2">
               Unable to load wines
             </h3>
             <p className="text-gray-600 mb-4">{error}</p>
@@ -448,7 +451,7 @@ export default function Index() {
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <SlidersHorizontal className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="font-cormorant text-xl font-semibold text-gray-900 mb-2">
                 No wines found
               </h3>
               <p className="text-gray-600 mb-4">
@@ -472,7 +475,7 @@ export default function Index() {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <SlidersHorizontal className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="font-playfair text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="font-cormorant text-xl font-semibold text-gray-900 mb-2">
               No wines available
             </h3>
             <p className="text-gray-600">
