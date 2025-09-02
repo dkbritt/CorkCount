@@ -11,7 +11,12 @@ interface WineDetailsModalProps {
   onAddToCart?: (wine: Wine, quantity: number) => void;
 }
 
-export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDetailsModalProps) {
+export function WineDetailsModal({
+  wine,
+  isOpen,
+  onClose,
+  onAddToCart,
+}: WineDetailsModalProps) {
   const [quantity, setQuantity] = useState(1);
 
   if (!isOpen) return null;
@@ -45,23 +50,26 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
 
   const getWineTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'red wine':
-        return 'bg-wine text-white';
-      case 'white wine':
-        return 'bg-yellow-500 text-white';
-      case 'rosé':
-        return 'bg-pink-500 text-white';
-      case 'sparkling':
-        return 'bg-federal text-white';
-      case 'dessert wine':
-        return 'bg-amber-600 text-white';
+      case "red wine":
+        return "bg-wine text-white";
+      case "white wine":
+        return "bg-yellow-500 text-white";
+      case "rosé":
+        return "bg-pink-500 text-white";
+      case "sparkling":
+        return "bg-federal text-white";
+      case "dessert wine":
+        return "bg-amber-600 text-white";
       default:
-        return 'bg-gray-500 text-white';
+        return "bg-gray-500 text-white";
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={handleBackdropClick}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -91,8 +99,8 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
             <div className="flex-shrink-0">
               <div className="w-48 h-64 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg overflow-hidden mx-auto md:mx-0">
                 {wine.image ? (
-                  <img 
-                    src={wine.image} 
+                  <img
+                    src={wine.image}
                     alt={wine.name}
                     className="w-full h-full object-cover"
                   />
@@ -112,9 +120,7 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
                 <h3 className="font-playfair text-2xl font-bold text-gray-900 mb-2">
                   {wine.name}
                 </h3>
-                <p className="text-lg text-gray-600 mb-3">
-                  {wine.winery}
-                </p>
+                <p className="text-lg text-gray-600 mb-3">{wine.winery}</p>
               </div>
 
               {/* Wine Details Grid */}
@@ -128,7 +134,9 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
                 <div className="flex items-center gap-2">
                   <WineIcon className="h-4 w-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Type:</span>
-                  <Badge className={`text-xs px-2 py-1 ${getWineTypeColor(wine.type)}`}>
+                  <Badge
+                    className={`text-xs px-2 py-1 ${getWineTypeColor(wine.type)}`}
+                  >
                     {wine.type}
                   </Badge>
                 </div>
@@ -137,8 +145,12 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
               {/* Stock Status */}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Stock:</span>
-                <span className={`text-sm font-medium ${!isAvailable ? 'text-red-600' : isLowStock ? 'text-orange-600' : 'text-green-600'}`}>
-                  {isAvailable ? `${wine.inStock} bottles available` : 'Out of stock'}
+                <span
+                  className={`text-sm font-medium ${!isAvailable ? "text-red-600" : isLowStock ? "text-orange-600" : "text-green-600"}`}
+                >
+                  {isAvailable
+                    ? `${wine.inStock} bottles available`
+                    : "Out of stock"}
                 </span>
                 {isLowStock && (
                   <Badge className="bg-orange-500 text-white text-xs px-2 py-1">
@@ -154,12 +166,11 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
             </div>
           </div>
 
-
           {/* Add to Cart Section */}
           {isAvailable && (
             <div className="bg-gray-50 rounded-lg p-4 space-y-4">
               <h4 className="font-semibold text-gray-900">Add to Cart</h4>
-              
+
               {/* Quantity Selector */}
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-600">Quantity:</span>
@@ -204,10 +215,7 @@ export function WineDetailsModal({ wine, isOpen, onClose, onAddToCart }: WineDet
 
         {/* Footer Actions */}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-          <Button
-            variant="outline"
-            onClick={onClose}
-          >
+          <Button variant="outline" onClick={onClose}>
             Close
           </Button>
           {isAvailable && (

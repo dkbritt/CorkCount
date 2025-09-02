@@ -22,7 +22,13 @@ interface WineCardProps {
   layout?: "grid" | "list";
 }
 
-export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefront", layout = "grid" }: WineCardProps) {
+export function WineCard({
+  wine,
+  onAddToCart,
+  onViewDetails,
+  variant = "storefront",
+  layout = "grid",
+}: WineCardProps) {
   const [quantity, setQuantity] = useState(1);
   const isAvailable = wine.inStock > 0;
   const isLowStock = wine.inStock > 0 && wine.inStock <= 5;
@@ -46,18 +52,18 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
 
   const getWineTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'red':
-        return 'bg-red-100 text-red-800 border border-red-200';
-      case 'white':
-        return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
-      case 'rosé':
-        return 'bg-pink-100 text-pink-800 border border-pink-200';
-      case 'sparkling':
-        return 'bg-blue-100 text-blue-800 border border-blue-200';
-      case 'dessert':
-        return 'bg-amber-100 text-amber-800 border border-amber-200';
+      case "red":
+        return "bg-red-100 text-red-800 border border-red-200";
+      case "white":
+        return "bg-yellow-100 text-yellow-800 border border-yellow-200";
+      case "rosé":
+        return "bg-pink-100 text-pink-800 border border-pink-200";
+      case "sparkling":
+        return "bg-blue-100 text-blue-800 border border-blue-200";
+      case "dessert":
+        return "bg-amber-100 text-amber-800 border border-amber-200";
       default:
-        return 'bg-gray-100 text-gray-800 border border-gray-200';
+        return "bg-gray-100 text-gray-800 border border-gray-200";
     }
   };
 
@@ -76,8 +82,12 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="w-8 h-10 bg-wine/20 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-wine" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 2v6h.01L6 8.01 10 12l-4 4-.01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6z"/>
+                  <svg
+                    className="w-4 h-4 text-wine"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M6 2v6h.01L6 8.01 10 12l-4 4-.01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6z" />
                   </svg>
                 </div>
               </div>
@@ -99,7 +109,10 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
 
               {/* Wine Type */}
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Badge variant="outline" className={`text-xs px-2 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}>
+                <Badge
+                  variant="outline"
+                  className={`text-xs px-2 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}
+                >
                   {wine.type}
                 </Badge>
               </div>
@@ -194,8 +207,12 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <div className="w-16 h-20 bg-wine/20 rounded-lg flex items-center justify-center">
-              <svg className="w-8 h-8 text-wine" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 2v6h.01L6 8.01 10 12l-4 4-.01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6z"/>
+              <svg
+                className="w-8 h-8 text-wine"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 2v6h.01L6 8.01 10 12l-4 4-.01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6z" />
               </svg>
             </div>
           </div>
@@ -214,7 +231,6 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
             </Badge>
           )}
         </div>
-
       </div>
 
       {/* Wine Details */}
@@ -231,11 +247,13 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
 
         {/* Wine Type Badge */}
         <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Badge variant="outline" className={`text-xs px-3 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}>
+          <Badge
+            variant="outline"
+            className={`text-xs px-3 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}
+          >
             {wine.type}
           </Badge>
         </div>
-
 
         {/* Admin-specific info */}
         {variant === "admin" && (
@@ -316,10 +334,7 @@ export function WineCard({ wine, onAddToCart, onViewDetails, variant = "storefro
             >
               Edit
             </Button>
-            <Button
-              variant="wine"
-              size="sm"
-            >
+            <Button variant="wine" size="sm">
               Manage
             </Button>
           </div>
