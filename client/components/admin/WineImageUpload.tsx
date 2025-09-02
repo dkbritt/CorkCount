@@ -27,35 +27,65 @@ export function WineImageUpload({
   const [previewUrl, setPreviewUrl] = useState(value);
   const [activeTab, setActiveTab] = useState<'upload' | 'url'>('upload');
 
+  // Compress image to reduce size
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        // Calculate new dimensions (max 800px width/height)
+        const maxSize = 800;
+        let { width, height } = img;
+
+        if (width > height && width > maxSize) {
+          height = (height * maxSize) / width;
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = (width * maxSize) / height;
+          height = maxSize;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7); // 70% quality
+        resolve(compressedDataUrl);
+      };
+
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   // Handle file upload
   const handleFileUpload = async (file: File) => {
     if (!file) return;
 
     setIsUploading(true);
     try {
-      // For now, convert to data URL since direct upload isn't fully implemented
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        setPreviewUrl(result);
-        onChange(result);
-        toast({
-          title: "Image processed",
-          description: "Image has been processed. For production use, consider using external URLs.",
-        });
-        setIsUploading(false);
-      };
-      reader.onerror = () => {
-        const errorMessage = "Failed to process image file";
-        onError?.(errorMessage);
-        toast({
-          title: "Processing failed",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        setIsUploading(false);
-      };
-      reader.readAsDataURL(file);
+      // Check file size before processing
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > 10) {
+        throw new Error('Image file is too large. Please use a file smaller than 10MB.');
+      }
+
+      // Compress image to reduce data size
+      const compressedDataUrl = await compressImage(file);
+
+      // Check final size
+      const finalSizeMB = (compressedDataUrl.length * 0.75) / (1024 * 1024);
+      console.log('Compressed image size:', Math.round(finalSizeMB * 100) / 100, 'MB');
+
+      setPreviewUrl(compressedDataUrl);
+      onChange(compressedDataUrl);
+      toast({
+        title: "Image processed",
+        description: `Image compressed to ${Math.round(finalSizeMB * 100) / 100}MB. For better performance, consider using external URLs.`,
+      });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown upload error";
       onError?.(errorMessage);
@@ -64,6 +94,7 @@ export function WineImageUpload({
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
       setIsUploading(false);
     }
   };
