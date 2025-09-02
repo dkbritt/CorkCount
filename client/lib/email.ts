@@ -296,6 +296,9 @@ interface EmailResponse {
   adminSuccess?: boolean;
   partialSuccess?: boolean;
   emailsSent?: number;
+  skipped?: Array<{ email: string; reason: string }>;
+  domain?: string;
+  fromAddress?: string;
 }
 
 // Send order confirmation email - now relies entirely on server-side configuration
