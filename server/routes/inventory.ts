@@ -63,7 +63,7 @@ export async function getAvailableInventory(
     const selectFields =
       detailed === true
         ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
-        : "id, name, winery, vintage, type, price, quantity";
+        : "id, name, winery, vintage, type, price, quantity, image_url";
 
     const {
       data: inventory,
@@ -125,7 +125,7 @@ export async function getAvailableInventory(
         type: item.type || "Red Wine",
         price: parseFloat(item.price) || 0,
         inStock: parseInt(item.quantity) || 0,
-        image: "/placeholder.svg",
+        image: item.image_url || "/placeholder.svg",
       };
     });
 
