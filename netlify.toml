@@ -72,3 +72,9 @@
   from = "/api/email"
   status = 200
   to = "/.netlify/functions/email"
+
+[[redirects]]
+  force = true
+  from = "/api/storage/*"
+  status = 200
+  to = "/.netlify/functions/storage/:splat"
