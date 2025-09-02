@@ -97,27 +97,8 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         }
       };
 
-      // Add detailed fields only if requested
-      if (detailed === true) {
-        return {
-          id: wine.id,
-          name: wine.name,
-          winery: wine.winery || "KB Winery",
-          vintage: wine.vintage,
-          region: wine.region || "",
-          type: wine.type,
-          price: wine.price,
-          inStock: wine.quantity,
-          rating: wine.rating || 0,
-          description: wine.description || "",
-          flavorNotes: safeParseJSON(wine.flavor_notes, []),
-          image: wine.image_url || "/placeholder.svg",
-          tags: safeParseJSON(wine.tags, []),
-        };
-      }
-
-      // Basic mode: only the fields we selected from database
-      return {
+      // Force minimal response structure for size optimization
+      const baseWine = {
         id: wine.id,
         name: wine.name,
         winery: wine.winery || "KB Winery",
@@ -127,6 +108,22 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         inStock: wine.quantity,
         image: "/placeholder.svg",
       };
+
+      // Add detailed fields only if explicitly requested AND detailed=true
+      if (detailed === true) {
+        return {
+          ...baseWine,
+          region: wine.region || "",
+          rating: wine.rating || 0,
+          description: wine.description || "",
+          flavorNotes: safeParseJSON(wine.flavor_notes, []),
+          image: wine.image_url || "/placeholder.svg",
+          tags: safeParseJSON(wine.tags, []),
+        };
+      }
+
+      // Always return minimal fields for basic mode
+      return baseWine;
     });
 
     return {

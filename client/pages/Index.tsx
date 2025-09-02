@@ -71,7 +71,7 @@ export default function Index() {
         setLoading(true);
         setError(null);
 
-        const response = await apiFetch("/inventory?detailed=true");
+        const response = await apiFetch("/inventory");
 
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
