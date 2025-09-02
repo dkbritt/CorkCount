@@ -123,14 +123,23 @@ export function WineCard({
                 </p>
               </div>
 
-              {/* Wine Type */}
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              {/* Wine Type and Tags */}
+              <div className="flex items-center gap-1 text-sm text-gray-500 flex-wrap">
                 <Badge
                   variant="outline"
                   className={`text-xs px-2 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}
                 >
                   {wine.type}
                 </Badge>
+                {displayTags.map((tag, index) => (
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600 border-0"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
               </div>
 
               {/* Stock Status */}
@@ -261,14 +270,23 @@ export function WineCard({
           </p>
         </div>
 
-        {/* Wine Type Badge */}
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        {/* Wine Type Badge and Tags */}
+        <div className="flex items-center gap-1 text-sm text-gray-500 flex-wrap">
           <Badge
             variant="outline"
             className={`text-xs px-3 py-1 rounded-full border-0 ${getWineTypeColor(wine.type)}`}
           >
             {wine.type}
           </Badge>
+          {displayTags.map((tag, index) => (
+            <Badge
+              key={index}
+              variant="secondary"
+              className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600 border-0"
+            >
+              {tag}
+            </Badge>
+          ))}
         </div>
 
         {/* Admin-specific info */}
