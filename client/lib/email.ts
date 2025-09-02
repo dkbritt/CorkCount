@@ -379,7 +379,7 @@ export async function sendOrderConfirmationEmail(
         partialSuccess: result.sent > 0,
         skipped: result.skipped,
         domain: result.domain,
-        fromAddress: result.fromAddress
+        fromAddress: result.fromAddress,
       };
     }
     return {
@@ -389,7 +389,7 @@ export async function sendOrderConfirmationEmail(
       emailsSent: result.sent || result.total || 1,
       skipped: result.skipped,
       domain: result.domain,
-      fromAddress: result.fromAddress
+      fromAddress: result.fromAddress,
     };
   } catch (error) {
     console.error("Error sending order confirmation email:", error);
@@ -492,7 +492,7 @@ export async function sendStatusUpdateEmail(
         partialSuccess: result.sent > 0,
         skipped: result.skipped,
         domain: result.domain,
-        fromAddress: result.fromAddress
+        fromAddress: result.fromAddress,
       };
     }
 
@@ -503,7 +503,7 @@ export async function sendStatusUpdateEmail(
       emailsSent: result.sent || result.total || 1,
       skipped: result.skipped,
       domain: result.domain,
-      fromAddress: result.fromAddress
+      fromAddress: result.fromAddress,
     };
   } catch (error) {
     console.error("Error sending status update email:", error);

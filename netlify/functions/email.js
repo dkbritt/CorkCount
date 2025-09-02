@@ -47,7 +47,9 @@ export const handler = async (event, context) => {
 
     // Validate that we're using the correct verified domain
     if (!fromEmail.includes(verifiedDomain)) {
-      console.warn(`Email from address ${fromEmail} does not use verified domain ${verifiedDomain}`);
+      console.warn(
+        `Email from address ${fromEmail} does not use verified domain ${verifiedDomain}`,
+      );
     }
 
     const filEmail = process.env.VITE_FIL_EMAIL;
@@ -86,7 +88,7 @@ export const handler = async (event, context) => {
 
     // Helper function to validate email addresses
     const isValidEmail = (email) => {
-      if (!email || typeof email !== 'string') return false;
+      if (!email || typeof email !== "string") return false;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email.trim());
     };
@@ -99,24 +101,26 @@ export const handler = async (event, context) => {
       const recipients = Array.isArray(msg.to) ? msg.to : [msg.to];
 
       // Filter out invalid email addresses
-      const validRecipients = recipients.filter(email => {
+      const validRecipients = recipients.filter((email) => {
         const isValid = isValidEmail(email);
         if (!isValid) {
           console.warn(`Skipping invalid email address: ${email}`);
-          skippedEmails.push({ email, reason: 'Invalid email format' });
+          skippedEmails.push({ email, reason: "Invalid email format" });
         }
         return isValid;
       });
 
       // Skip if no valid recipients
       if (validRecipients.length === 0) {
-        console.warn('No valid recipients found for message, skipping');
+        console.warn("No valid recipients found for message, skipping");
         continue;
       }
 
       // In development mode, redirect emails to test address
       const finalRecipients =
-        isDevelopment && testEmail && isValidEmail(testEmail) ? [testEmail] : validRecipients;
+        isDevelopment && testEmail && isValidEmail(testEmail)
+          ? [testEmail]
+          : validRecipients;
 
       // Adjust subject and content for development mode
       const finalSubject = isDevelopment
@@ -137,7 +141,10 @@ export const handler = async (event, context) => {
       // ALWAYS send to admin for order confirmations if admin email is configured and valid
       if (msg.type === "order_confirmation" && filEmail && msg.orderData) {
         // Validate admin email
-        const adminEmailToUse = isDevelopment && testEmail && isValidEmail(testEmail) ? testEmail : filEmail;
+        const adminEmailToUse =
+          isDevelopment && testEmail && isValidEmail(testEmail)
+            ? testEmail
+            : filEmail;
 
         if (isValidEmail(adminEmailToUse)) {
           const adminSubject = isDevelopment
@@ -170,16 +177,26 @@ export const handler = async (event, context) => {
             type: "admin_notification",
           });
         } else {
-          console.warn(`Invalid admin email address: ${adminEmailToUse}, skipping admin notification`);
-          skippedEmails.push({ email: adminEmailToUse, reason: 'Invalid admin email format' });
+          console.warn(
+            `Invalid admin email address: ${adminEmailToUse}, skipping admin notification`,
+          );
+          skippedEmails.push({
+            email: adminEmailToUse,
+            reason: "Invalid admin email format",
+          });
         }
       }
     }
 
     // Log email processing summary
-    console.log(`Processed ${messages.length} message(s), prepared ${emailsToSend.length} email(s) for sending`);
+    console.log(
+      `Processed ${messages.length} message(s), prepared ${emailsToSend.length} email(s) for sending`,
+    );
     if (skippedEmails.length > 0) {
-      console.warn(`Skipped ${skippedEmails.length} invalid email(s):`, skippedEmails);
+      console.warn(
+        `Skipped ${skippedEmails.length} invalid email(s):`,
+        skippedEmails,
+      );
     }
 
     // If no valid emails to send, return early
@@ -226,7 +243,7 @@ export const handler = async (event, context) => {
             "X-Priority": "3",
             "X-Mailer": "CorkCount Order System",
             "Return-Path": fromEmail,
-            "Sender": fromEmail,
+            Sender: fromEmail,
           },
           // Add tags for tracking with verified domain
           tags: [
