@@ -236,9 +236,35 @@ pnpm format.fix   # Format code
 
 ### API Endpoints
 
+#### Core APIs
 - `GET /api/ping` - Health check
+- `GET /api/config/supabase` - Supabase configuration status
+
+#### Inventory Management
+- `GET /api/inventory` - List wines with pagination
+- `GET /api/inventory?detailed=true` - List wines with detailed fields (region, rating, description, flavor notes, image, tags)
+- `GET /api/inventory/:id` - Get single wine details
+- `POST /api/inventory` - Add new wine (admin)
+- `PUT /api/inventory/:id` - Update wine (admin)
+- `PUT /api/inventory/update` - Bulk update quantities (admin)
+- `DELETE /api/inventory/:id` - Delete wine (admin)
+
+#### Order Management
+- `GET /api/orders` - List orders with pagination (admin)
+- `POST /api/orders` - Create new order
+- `PUT /api/orders/:id` - Update order status (admin)
+- `DELETE /api/orders/:id` - Delete order (admin)
+
+#### Batch Management
+- `GET /api/batches` - List wine batches (admin)
+- `POST /api/batches` - Create new batch (admin)
+- `PUT /api/batches/:id` - Update batch (admin)
+- `DELETE /api/batches/:id` - Delete batch (admin)
+
+#### Analytics & Utilities
+- `GET /api/metrics` - Sales and inventory metrics (admin)
 - `POST /api/email` - Send transactional emails
-- `GET /api/demo` - Demo endpoint
+- `POST /api/auth/login` - Admin authentication
 
 ### Adding Features
 
