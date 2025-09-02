@@ -29,7 +29,14 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const path = event.path.replace('/.netlify/functions/config', '');
+    let path = event.path || "";
+    if (path.startsWith("/.netlify/functions/config")) {
+      path = path.replace("/.netlify/functions/config", "");
+    } else if (path.startsWith("/api/config")) {
+      path = path.replace("/api/config", "");
+    }
+
+    console.log('Config path:', path);
     
     if (path === '/supabase') {
       // Check for both non-VITE and VITE prefixed environment variables
