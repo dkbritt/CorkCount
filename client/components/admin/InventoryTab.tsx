@@ -1117,6 +1117,11 @@ export function InventoryTab({
             <table className="w-full min-w-[800px]">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="px-4 py-3 text-left w-20">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Image
+                    </span>
+                  </th>
                   <th className="px-4 py-3 text-left">
                     <button
                       onClick={() => handleSort("name")}
@@ -1186,6 +1191,24 @@ export function InventoryTab({
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-4 py-4">
+                      <div className="flex-shrink-0">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="h-12 w-12 rounded-lg object-cover border border-gray-200"
+                            onError={(e) => {
+                              e.currentTarget.src = '/placeholder.svg';
+                            }}
+                          />
+                        ) : (
+                          <div className="h-12 w-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No image</span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <div>
                         <div className="font-playfair font-medium text-gray-900">
                           {item.name}
@@ -1249,7 +1272,23 @@ export function InventoryTab({
               key={item.id}
               className="bg-white rounded-lg border border-gray-200 p-4"
             >
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start gap-4 mb-3">
+                <div className="flex-shrink-0">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-16 w-16 rounded-lg object-cover border border-gray-200"
+                      onError={(e) => {
+                        e.currentTarget.src = '/placeholder.svg';
+                      }}
+                    />
+                  ) : (
+                    <div className="h-16 w-16 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                      <span className="text-gray-400 text-xs text-center">No<br/>image</span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-playfair font-medium text-gray-900 truncate">
                     {item.name}
@@ -1258,7 +1297,7 @@ export function InventoryTab({
                     {item.winery} • {item.vintage}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 ml-2">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
