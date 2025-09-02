@@ -22,50 +22,83 @@ function getEndpointUrl(inputPath: string): string {
 // XMLHttpRequest-based fetch implementation to bypass analytics interference
 function xhrFetch(url: string, options: RequestInit = {}): Promise<Response> {
   return new Promise((resolve, reject) => {
+    console.log(`📡 XHR Request: ${options.method || 'GET'} ${url}`);
+
     const xhr = new XMLHttpRequest();
     const method = (options.method || 'GET').toUpperCase();
 
-    xhr.open(method, url, true);
+    try {
+      xhr.open(method, url, true);
 
-    // Set headers
-    if (options.headers) {
-      const headers = options.headers as Record<string, string>;
-      Object.entries(headers).forEach(([key, value]) => {
-        xhr.setRequestHeader(key, value);
-      });
-    }
+      // Set headers with error handling
+      if (options.headers) {
+        const headers = options.headers as Record<string, string>;
+        Object.entries(headers).forEach(([key, value]) => {
+          try {
+            xhr.setRequestHeader(key, value);
+          } catch (headerError) {
+            console.warn(`⚠️ Failed to set header ${key}:`, headerError);
+          }
+        });
+      }
 
-    // Handle timeout
-    xhr.timeout = 10000; // 10 seconds
+      // Handle timeout
+      xhr.timeout = 15000; // 15 seconds for better reliability
 
-    xhr.onload = () => {
-      // Create Response-like object
-      const response = {
-        ok: xhr.status >= 200 && xhr.status < 300,
-        status: xhr.status,
-        statusText: xhr.statusText,
-        headers: new Headers(),
-        text: () => Promise.resolve(xhr.responseText),
-        json: () => Promise.resolve(JSON.parse(xhr.responseText)),
-        clone: () => response,
-      } as Response;
+      xhr.onload = () => {
+        console.log(`📡 XHR Response: ${xhr.status} ${xhr.statusText}`);
 
-      resolve(response);
-    };
+        // Create Response-like object with better error handling
+        const response = {
+          ok: xhr.status >= 200 && xhr.status < 300,
+          status: xhr.status,
+          statusText: xhr.statusText,
+          headers: new Headers(),
+          text: () => Promise.resolve(xhr.responseText),
+          json: () => {
+            try {
+              return Promise.resolve(JSON.parse(xhr.responseText));
+            } catch (parseError) {
+              console.error('❌ XHR JSON Parse Error:', parseError);
+              return Promise.reject(new Error('Failed to parse JSON response'));
+            }
+          },
+          clone: () => response,
+        } as Response;
 
-    xhr.onerror = () => {
-      reject(new Error(`XHR Network Error: ${xhr.status} ${xhr.statusText}`));
-    };
+        resolve(response);
+      };
 
-    xhr.ontimeout = () => {
-      reject(new Error('Request timed out'));
-    };
+      xhr.onerror = (event) => {
+        console.error('❌ XHR Network Error:', event);
+        reject(new Error(`XHR Network Error: ${xhr.status} ${xhr.statusText || 'Unknown network error'}`));
+      };
 
-    // Send request
-    if (options.body) {
-      xhr.send(options.body as string);
-    } else {
-      xhr.send();
+      xhr.ontimeout = () => {
+        console.error('❌ XHR Timeout');
+        reject(new Error('XHR request timed out after 15 seconds'));
+      };
+
+      xhr.onabort = () => {
+        console.warn('⚠️ XHR Request Aborted');
+        reject(new Error('XHR request was aborted'));
+      };
+
+      // Send request with error handling
+      try {
+        if (options.body) {
+          xhr.send(options.body as string);
+        } else {
+          xhr.send();
+        }
+      } catch (sendError) {
+        console.error('❌ XHR Send Error:', sendError);
+        reject(new Error(`Failed to send XHR request: ${sendError}`));
+      }
+
+    } catch (setupError) {
+      console.error('❌ XHR Setup Error:', setupError);
+      reject(new Error(`Failed to setup XHR request: ${setupError}`));
     }
   });
 }
