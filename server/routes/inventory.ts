@@ -47,15 +47,25 @@ export async function getAllInventory() {
   }
 }
 
-// Get available inventory (wines with quantity >= 1) for shop
-export async function getAvailableInventory() {
+// Get available inventory with pagination and field optimization
+export async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
   try {
     const supabase = getSupabaseClient();
 
-    const { data: inventory, error } = await supabase
+    // Calculate offset
+    const offset = (page - 1) * limit;
+
+    // Select fields based on whether detailed info is requested
+    const selectFields = detailed === true
+      ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
+      : "id, name, winery, vintage, type, price, quantity";
+
+    const { data: inventory, error, count } = await supabase
       .from("Inventory")
-      .select("*")
-      .gte("quantity", 1);
+      .select(selectFields, { count: 'exact' })
+      .gt("quantity", 0)
+      .order("name", { ascending: true })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       return {
@@ -64,37 +74,65 @@ export async function getAvailableInventory() {
       };
     }
 
+    // Safe JSON parsing function
+    const safeParseJSON = (jsonString: any, fallback = []) => {
+      try {
+        if (!jsonString) return fallback;
+        if (Array.isArray(jsonString)) return jsonString;
+        return JSON.parse(jsonString);
+      } catch (error) {
+        console.warn("Invalid JSON in database field:", jsonString);
+        return fallback;
+      }
+    };
+
     // Convert Supabase inventory data to Wine format
-    const wines = (inventory || []).map((item: any) => ({
-      id: item.id,
-      name: item.name || "Unnamed Wine",
-      winery: item.winery || "Unknown Winery",
-      vintage: item.vintage || new Date().getFullYear(),
-      region: "", // Not displayed on shop page
-      type: item.type || "Red Wine",
-      price: parseFloat(item.price) || 0,
-      inStock: parseInt(item.quantity) || 0,
-      rating: 0, // Not displayed on shop page
-      description:
-        item.description || item.flavor_notes || "A wonderful wine experience",
-      flavorNotes:
-        // Use auto-generated tags if available, otherwise parse flavor_notes
-        item.tags && Array.isArray(item.tags) && item.tags.length > 0
-          ? item.tags.map(
-              (tag: string) => tag.charAt(0).toUpperCase() + tag.slice(1),
-            )
-          : item.flavor_notes
-            ? item.flavor_notes.split(",").map((note: string) => note.trim())
-            : ["Complex", "Balanced"],
-      image:
-        item.image_url ||
-        item.image ||
-        "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=600&fit=crop",
-    }));
+    const wines = (inventory || []).map((item: any) => {
+      // Transform based on what fields were actually selected from database
+      if (detailed === true) {
+        return {
+          id: item.id,
+          name: item.name || "Unnamed Wine",
+          winery: item.winery || "Unknown Winery",
+          vintage: item.vintage || new Date().getFullYear(),
+          region: item.region || "",
+          type: item.type || "Red Wine",
+          price: parseFloat(item.price) || 0,
+          inStock: parseInt(item.quantity) || 0,
+          rating: item.rating || 0,
+          description: item.description || "A wonderful wine experience",
+          flavorNotes: safeParseJSON(item.flavor_notes, []),
+          image: item.image_url || "/placeholder.svg",
+          tags: safeParseJSON(item.tags, []),
+        };
+      }
+
+      // Basic mode: only return fields we selected from database (minimal payload)
+      return {
+        id: item.id,
+        name: item.name || "Unnamed Wine",
+        winery: item.winery || "Unknown Winery",
+        vintage: item.vintage || new Date().getFullYear(),
+        type: item.type || "Red Wine",
+        price: parseFloat(item.price) || 0,
+        inStock: parseInt(item.quantity) || 0,
+        image: "/placeholder.svg",
+      };
+    });
 
     return {
       success: true,
       wines,
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / limit),
+        hasMore: (count || 0) > offset + limit
+      },
+      source: "express-server",
+      detailed: detailed,
+      fieldsSelected: selectFields
     };
   } catch (err) {
     console.error("Error in getAvailableInventory:", err);
