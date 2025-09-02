@@ -62,7 +62,10 @@ export const handler = async (event, context) => {
     // 2. If we have a verified domain (not resend.dev)
     // 3. If explicitly not development (fallback)
     const isExplicitProduction = process.env.NODE_ENV === "production";
-    const isProductionReady = isExplicitProduction || hasVerifiedDomain || (!testEmail && process.env.NODE_ENV !== "development");
+    const isProductionReady =
+      isExplicitProduction ||
+      hasVerifiedDomain ||
+      (!testEmail && process.env.NODE_ENV !== "development");
     const isDevelopment = !isProductionReady && !isExplicitProduction;
 
     console.log(
@@ -112,7 +115,8 @@ export const handler = async (event, context) => {
 
       // ALWAYS send to admin for order confirmations if admin email is configured
       if (msg.type === "order_confirmation" && filEmail && msg.orderData) {
-        const adminRecipient = isDevelopment && testEmail ? testEmail : filEmail;
+        const adminRecipient =
+          isDevelopment && testEmail ? testEmail : filEmail;
         const adminSubject = isDevelopment
           ? `[TEST] New Order - ${msg.orderData.orderNumber} (for ${filEmail})`
           : `New Order Received - ${msg.orderData.orderNumber}`;
@@ -140,7 +144,7 @@ export const handler = async (event, context) => {
           to: [adminRecipient],
           subject: adminSubject,
           html: adminHtml,
-          type: 'admin_notification'
+          type: "admin_notification",
         });
       }
     }
@@ -175,22 +179,22 @@ export const handler = async (event, context) => {
           html: msg.html,
           // Add headers to improve deliverability
           headers: {
-            'X-Entity-Ref-ID': `kb-winery-${Date.now()}`,
-            'List-Unsubscribe': '<mailto:unsubscribe@kbwinery.com>',
-            'X-Priority': '3',
-            'X-Mailer': 'KB Winery Order System',
+            "X-Entity-Ref-ID": `kb-winery-${Date.now()}`,
+            "List-Unsubscribe": "<mailto:unsubscribe@kbwinery.com>",
+            "X-Priority": "3",
+            "X-Mailer": "KB Winery Order System",
           },
           // Add tags for tracking
           tags: [
             {
-              name: 'category',
-              value: msg.type || 'order_confirmation'
+              name: "category",
+              value: msg.type || "order_confirmation",
             },
             {
-              name: 'source',
-              value: 'kb-winery-app'
-            }
-          ]
+              name: "source",
+              value: "kb-winery-app",
+            },
+          ],
         }),
       });
       if (!response.ok) {
@@ -207,17 +211,27 @@ export const handler = async (event, context) => {
       .map((x) => ({
         index: x.i,
         recipient: Array.isArray(x.email.to) ? x.email.to[0] : x.email.to,
-        type: x.email.type || 'customer',
+        type: x.email.type || "customer",
         reason: x.r.reason?.message || String(x.r.reason) || "Unknown error",
       }));
 
-    const successes = results.filter(r => r.status === "fulfilled").length;
-    const customerEmails = emailsToSend.filter(e => !e.type || e.type === 'order_confirmation').length;
-    const adminEmails = emailsToSend.filter(e => e.type === 'admin_notification').length;
-    const customerSuccess = results.slice(0, customerEmails).every(r => r.status === "fulfilled");
-    const adminSuccess = adminEmails === 0 || results.slice(customerEmails).every(r => r.status === "fulfilled");
+    const successes = results.filter((r) => r.status === "fulfilled").length;
+    const customerEmails = emailsToSend.filter(
+      (e) => !e.type || e.type === "order_confirmation",
+    ).length;
+    const adminEmails = emailsToSend.filter(
+      (e) => e.type === "admin_notification",
+    ).length;
+    const customerSuccess = results
+      .slice(0, customerEmails)
+      .every((r) => r.status === "fulfilled");
+    const adminSuccess =
+      adminEmails === 0 ||
+      results.slice(customerEmails).every((r) => r.status === "fulfilled");
 
-    console.log(`Email results: ${successes}/${results.length} sent successfully. Customer: ${customerSuccess}, Admin: ${adminSuccess}`);
+    console.log(
+      `Email results: ${successes}/${results.length} sent successfully. Customer: ${customerSuccess}, Admin: ${adminSuccess}`,
+    );
 
     return {
       statusCode: 200,
@@ -230,7 +244,7 @@ export const handler = async (event, context) => {
         customerSuccess,
         adminSuccess,
         customerEmailCount: customerEmails,
-        adminEmailCount: adminEmails
+        adminEmailCount: adminEmails,
       }),
     };
   } catch (error) {

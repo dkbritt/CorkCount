@@ -282,31 +282,38 @@ export default function Checkout() {
           } else if (customerSent) {
             toast({
               title: "Customer confirmation sent!",
-              description: "Check your email for order details. Admin notification may have failed.",
+              description:
+                "Check your email for order details. Admin notification may have failed.",
             });
           } else if (adminSent) {
             toast({
               title: "Admin notified!",
-              description: "Our team was notified, but your confirmation email failed. Please contact us.",
+              description:
+                "Our team was notified, but your confirmation email failed. Please contact us.",
               variant: "destructive",
             });
           }
         } else if (emailResult.partialSuccess) {
           toast({
             title: "Partial email success",
-            description: emailResult.error || "Some emails were sent, but not all. Please contact us if you don't receive confirmation.",
+            description:
+              emailResult.error ||
+              "Some emails were sent, but not all. Please contact us if you don't receive confirmation.",
             variant: "destructive",
           });
         } else {
           toast({
             title: "Email delivery failed",
-            description: emailResult.error || "Order was created successfully, but confirmation emails failed to send.",
+            description:
+              emailResult.error ||
+              "Order was created successfully, but confirmation emails failed to send.",
             variant: "destructive",
           });
         }
       } catch (emailError) {
         console.warn("Email sending failed:", emailError);
-        const errorMessage = emailError instanceof Error ? emailError.message : "Unknown error";
+        const errorMessage =
+          emailError instanceof Error ? emailError.message : "Unknown error";
         toast({
           title: "Email delivery error",
           description: `Order created successfully, but email failed: ${errorMessage}. Please save your order number: ${orderNumber}`,
@@ -465,7 +472,8 @@ export default function Checkout() {
                   autoComplete="email"
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  You'll receive order confirmation and pickup notifications at this email
+                  You'll receive order confirmation and pickup notifications at
+                  this email
                 </p>
                 {formErrors.email && (
                   <p className="mt-1 text-sm text-red-600">
