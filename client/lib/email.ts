@@ -337,12 +337,23 @@ export async function sendOrderConfirmationEmail(
     if (!result.success) {
       const detail = Array.isArray(result.failures)
         ? result.failures
-            .map((f: any) => `#${f.index + 1}: ${f.reason}`)
+            .map((f: any) => `${f.type === 'admin_notification' ? 'Admin' : 'Customer'} email failed: ${f.reason}`)
             .join("; ")
         : result.error || "Unknown error";
-      return { success: false, error: detail };
+      return {
+        success: false,
+        error: detail,
+        customerSuccess: result.customerSuccess || false,
+        adminSuccess: result.adminSuccess || false,
+        partialSuccess: result.sent > 0
+      };
     }
-    return { success: true };
+    return {
+      success: true,
+      customerSuccess: result.customerSuccess || true,
+      adminSuccess: result.adminSuccess || true,
+      emailsSent: result.sent || result.total || 1
+    };
   } catch (error) {
     console.error("Error sending order confirmation email:", error);
     const errorMessage =
