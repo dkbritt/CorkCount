@@ -258,15 +258,15 @@ export default function Checkout() {
       try {
         const emailResult = await sendOrderConfirmationEmail({
           orderNumber,
-          customerName: formData.customerName,
-          customerEmail: formData.email,
-          phone: formData.phone,
+          customerName: formData.customerName.trim(),
+          customerEmail: formData.email.trim().toLowerCase(),
+          phone: formData.phone?.trim() || "",
           pickupDate: formData.pickupDate,
           pickupTime: formData.pickupTime,
           paymentMethod: formData.paymentMethod,
           items: cartItems,
           totalPrice,
-          orderNotes: formData.orderNotes,
+          orderNotes: formData.orderNotes?.trim() || "",
         });
 
         if (emailResult.success) {
