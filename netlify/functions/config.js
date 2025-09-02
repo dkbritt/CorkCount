@@ -1,29 +1,29 @@
 exports.handler = async (event, context) => {
   // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
   // Only allow GET requests
-  if (event.httpMethod !== 'GET') {
+  if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Method not allowed' 
+      body: JSON.stringify({
+        success: false,
+        error: "Method not allowed",
       }),
     };
   }
@@ -36,10 +36,11 @@ exports.handler = async (event, context) => {
       path = path.replace("/api/config", "");
     }
 
-    if (path === '/supabase') {
+    if (path === "/supabase") {
       // Check for both non-VITE and VITE prefixed environment variables
       const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-      const key = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+      const key =
+        process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
       return {
         statusCode: 200,
@@ -52,11 +53,12 @@ exports.handler = async (event, context) => {
         }),
       };
     }
-    
-    if (path === '/email') {
+
+    if (path === "/email") {
       const fromEmail = process.env.VITE_FROM_EMAIL;
       const hasVerifiedDomain = fromEmail && !fromEmail.includes("resend.dev");
-      const isProductionReady = hasVerifiedDomain && process.env.NODE_ENV === "production";
+      const isProductionReady =
+        hasVerifiedDomain && process.env.NODE_ENV === "production";
 
       return {
         statusCode: 200,
@@ -78,19 +80,19 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Config endpoint not found' 
+      body: JSON.stringify({
+        success: false,
+        error: "Config endpoint not found",
       }),
     };
   } catch (error) {
-    console.error('Config error:', error);
+    console.error("Config error:", error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Internal server error' 
+      body: JSON.stringify({
+        success: false,
+        error: "Internal server error",
       }),
     };
   }

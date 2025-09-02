@@ -19,22 +19,31 @@ const BUCKET_NAME = "bottle-images";
 async function ensureBucketExists(supabase) {
   try {
     // Check if bucket exists
-    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-    
+    const { data: buckets, error: listError } =
+      await supabase.storage.listBuckets();
+
     if (listError) {
       console.error("Error listing buckets:", listError);
       return { success: false, error: listError.message };
     }
 
-    const bucketExists = buckets.some(bucket => bucket.name === BUCKET_NAME);
-    
+    const bucketExists = buckets.some((bucket) => bucket.name === BUCKET_NAME);
+
     if (!bucketExists) {
       // Create bucket
-      const { data, error: createError } = await supabase.storage.createBucket(BUCKET_NAME, {
-        public: true,
-        allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-        fileSizeLimit: 5242880, // 5MB
-      });
+      const { data, error: createError } = await supabase.storage.createBucket(
+        BUCKET_NAME,
+        {
+          public: true,
+          allowedMimeTypes: [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+          ],
+          fileSizeLimit: 5242880, // 5MB
+        },
+      );
 
       if (createError) {
         console.error("Error creating bucket:", createError);
@@ -64,8 +73,8 @@ async function uploadFile(supabase, file, filename) {
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(filename, file, {
-        cacheControl: '3600',
-        upsert: false
+        cacheControl: "3600",
+        upsert: false,
       });
 
     if (error) {
@@ -81,9 +90,8 @@ async function uploadFile(supabase, file, filename) {
     return {
       success: true,
       data: data,
-      publicUrl: urlData.publicUrl
+      publicUrl: urlData.publicUrl,
     };
-
   } catch (error) {
     console.error("Upload error:", error);
     return { success: false, error: error.message };
@@ -103,7 +111,6 @@ async function deleteFile(supabase, filename) {
     }
 
     return { success: true, data };
-
   } catch (error) {
     console.error("Delete error:", error);
     return { success: false, error: error.message };
@@ -113,18 +120,18 @@ async function deleteFile(supabase, filename) {
 exports.handler = async (event, context) => {
   // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
@@ -142,55 +149,59 @@ exports.handler = async (event, context) => {
     const method = event.httpMethod;
 
     // GET /storage/health - Health check
-    if (method === 'GET' && path === '/health') {
+    if (method === "GET" && path === "/health") {
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
           success: true,
-          storage: supabase ? 'ready' : 'not_configured',
+          storage: supabase ? "ready" : "not_configured",
           bucket: BUCKET_NAME,
-          message: supabase ? 'Supabase storage ready' : 'Supabase not configured - external URLs only'
+          message: supabase
+            ? "Supabase storage ready"
+            : "Supabase not configured - external URLs only",
         }),
       };
     }
 
     // Return early if Supabase is not configured for operations that need it
-    if (!supabase && (method === 'POST' || method === 'DELETE')) {
+    if (!supabase && (method === "POST" || method === "DELETE")) {
       return {
         statusCode: 503,
         headers,
         body: JSON.stringify({
           success: false,
-          error: 'Supabase storage not configured. Only external URLs are supported.'
+          error:
+            "Supabase storage not configured. Only external URLs are supported.",
         }),
       };
     }
 
     // POST /storage/upload - Upload image
-    if (method === 'POST' && path === '/upload') {
+    if (method === "POST" && path === "/upload") {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({
           success: false,
-          error: 'Direct file upload not supported yet. Please use external URLs for now.'
+          error:
+            "Direct file upload not supported yet. Please use external URLs for now.",
         }),
       };
     }
 
     // DELETE /storage/delete - Delete image
-    if (method === 'DELETE' && path === '/delete') {
+    if (method === "DELETE" && path === "/delete") {
       let body = {};
       try {
-        body = JSON.parse(event.body || '{}');
+        body = JSON.parse(event.body || "{}");
       } catch (error) {
         return {
           statusCode: 400,
           headers,
           body: JSON.stringify({
             success: false,
-            error: 'Invalid JSON in request body'
+            error: "Invalid JSON in request body",
           }),
         };
       }
@@ -202,7 +213,7 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify({
             success: false,
-            error: 'Filename is required'
+            error: "Filename is required",
           }),
         };
       }
@@ -213,7 +224,7 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify({
             success: false,
-            error: 'Supabase storage not configured'
+            error: "Supabase storage not configured",
           }),
         };
       }
@@ -225,7 +236,7 @@ exports.handler = async (event, context) => {
           statusCode: 200,
           headers,
           body: JSON.stringify({
-            success: true
+            success: true,
           }),
         };
       } else {
@@ -234,30 +245,28 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify({
             success: false,
-            error: result.error
+            error: result.error,
           }),
         };
       }
     }
-
 
     return {
       statusCode: 404,
       headers,
       body: JSON.stringify({
         success: false,
-        error: `Storage endpoint not found: ${method} ${path}`
+        error: `Storage endpoint not found: ${method} ${path}`,
       }),
     };
-
   } catch (error) {
-    console.error('Storage function error:', error);
+    console.error("Storage function error:", error);
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Internal server error'
+        error: error instanceof Error ? error.message : "Internal server error",
       }),
     };
   }

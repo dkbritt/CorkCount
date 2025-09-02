@@ -260,7 +260,12 @@ async function addInventoryItem(itemData) {
 // Update inventory item
 async function updateInventoryItem(id, itemData) {
   try {
-    console.log("Updating inventory item:", id, "with data keys:", Object.keys(itemData));
+    console.log(
+      "Updating inventory item:",
+      id,
+      "with data keys:",
+      Object.keys(itemData),
+    );
 
     const supabase = getSupabaseClient();
 
@@ -273,7 +278,11 @@ async function updateInventoryItem(id, itemData) {
     }
 
     // Check if image_url is too large (if it's a data URL)
-    if (itemData.image_url && typeof itemData.image_url === 'string' && itemData.image_url.startsWith('data:')) {
+    if (
+      itemData.image_url &&
+      typeof itemData.image_url === "string" &&
+      itemData.image_url.startsWith("data:")
+    ) {
       const sizeInMB = (itemData.image_url.length * 0.75) / (1024 * 1024); // Rough base64 size calculation
       console.log("Image data size:", Math.round(sizeInMB * 100) / 100, "MB");
 
@@ -286,7 +295,9 @@ async function updateInventoryItem(id, itemData) {
       .from("Inventory")
       .update(itemData)
       .eq("id", id)
-      .select("id, name, winery, vintage, type, price, quantity, flavor_notes, batch_id, location, image_url, tags, created_at")
+      .select(
+        "id, name, winery, vintage, type, price, quantity, flavor_notes, batch_id, location, image_url, tags, created_at",
+      )
       .single();
 
     if (error) {
