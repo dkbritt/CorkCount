@@ -173,15 +173,21 @@ The application will be available at `http://localhost:8080`
 
 ```sql
 CREATE TABLE "Inventory" (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  type TEXT,
-  flavor_notes TEXT,
-  description TEXT,
-  price DECIMAL(10,2),
+  winery TEXT DEFAULT 'KB Winery',
+  vintage INTEGER,
+  region TEXT,
+  type TEXT NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
   quantity INTEGER DEFAULT 0,
+  rating DECIMAL(3,2) DEFAULT 0,
+  description TEXT,
+  flavor_notes JSONB DEFAULT '[]'::jsonb,
+  image_url TEXT,
   tags JSONB DEFAULT '[]'::jsonb,
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
@@ -189,13 +195,38 @@ CREATE TABLE "Inventory" (
 
 ```sql
 CREATE TABLE "Orders" (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_email TEXT NOT NULL,
   customer_name TEXT NOT NULL,
+  customer_phone TEXT,
+  shipping_address JSONB,
   items JSONB NOT NULL,
   total DECIMAL(10,2) NOT NULL,
   status TEXT DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT NOW()
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### Batches Table
+
+```sql
+CREATE TABLE "Batches" (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  batch_number TEXT UNIQUE NOT NULL,
+  wine_type TEXT NOT NULL,
+  production_date DATE,
+  harvest_date DATE,
+  grape_variety TEXT,
+  vineyard_location TEXT,
+  quantity_produced INTEGER,
+  alcohol_content DECIMAL(4,2),
+  ph_level DECIMAL(3,2),
+  notes TEXT,
+  status TEXT DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
@@ -230,7 +261,7 @@ const tags = autoTagWine({
 
 For detailed documentation, see [AUTO_TAGGING_GUIDE.md](docs/AUTO_TAGGING_GUIDE.md)
 
-## 🔧 Development
+## ���� Development
 
 ### Available Scripts
 
