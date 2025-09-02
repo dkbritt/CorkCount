@@ -10,7 +10,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ 
-  placeholder = "Search wines or by type", 
+  placeholder = "Search your cellar…", 
   onSearch, 
   onClear,
   className = ""
@@ -37,13 +37,10 @@ export function SearchBar({
 
   return (
     <form onSubmit={handleSubmit} className={`relative ${className}`}>
-      <div className={`
-        relative flex items-center bg-white rounded-lg border transition-all duration-200
-        ${isFocused ? 'border-federal shadow-md ring-2 ring-federal/20' : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'}
-      `}>
+      <div className="wine-label-search relative flex items-center transition-all duration-300">
         {/* Search Icon */}
-        <div className="absolute left-3 flex items-center pointer-events-none">
-          <Search className="h-4 w-4 text-gray-400" />
+        <div className="absolute left-4 flex items-center pointer-events-none z-10">
+          <Search className="h-5 w-5 text-amber-700" />
         </div>
 
         {/* Input Field */}
@@ -54,28 +51,27 @@ export function SearchBar({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-20 py-3 rounded-lg bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none font-inter"
+          className="w-full pl-12 pr-24 py-4 bg-transparent wine-label-text wine-label-placeholder focus:outline-none font-cormorant text-lg font-medium z-10 relative"
         />
 
         {/* Clear & Search Buttons */}
-        <div className="absolute right-2 flex items-center gap-1">
+        <div className="absolute right-3 flex items-center gap-2 z-10">
           {query && (
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={handleClear}
-              className="h-8 w-8 p-0 hover:bg-gray-100 rounded-md"
+              className="h-9 w-9 p-0 hover:bg-amber-100 rounded-md transition-colors"
             >
-              <X className="h-4 w-4 text-gray-400" />
+              <X className="h-4 w-4 text-amber-700" />
             </Button>
           )}
-          
+
           <Button
             type="submit"
-            variant="accent"
             size="sm"
-            className="h-8 px-3 text-xs"
+            className="h-9 px-4 text-sm font-cormorant font-medium bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white border-0 shadow-sm"
             disabled={!query.trim()}
           >
             Search
