@@ -63,9 +63,9 @@ export function WineDetailsModal({
 
   const getWineTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case "red wine":
+      case "red":
         return "bg-wine text-white";
-      case "white wine":
+      case "white":
         return "bg-yellow-500 text-white";
       case "rosé":
         return "bg-pink-500 text-white";
