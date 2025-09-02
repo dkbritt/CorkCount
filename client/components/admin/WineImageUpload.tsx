@@ -33,24 +33,29 @@ export function WineImageUpload({
 
     setIsUploading(true);
     try {
-      const result = await uploadWineImage(file);
-      
-      if (result.success && result.url) {
-        setPreviewUrl(result.url);
-        onChange(result.url);
+      // For now, convert to data URL since direct upload isn't fully implemented
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setPreviewUrl(result);
+        onChange(result);
         toast({
-          title: "Upload successful",
-          description: "Wine image has been uploaded successfully.",
+          title: "Image processed",
+          description: "Image has been processed. For production use, consider using external URLs.",
         });
-      } else {
-        const error = result.error || "Failed to upload image";
-        onError?.(error);
+        setIsUploading(false);
+      };
+      reader.onerror = () => {
+        const errorMessage = "Failed to process image file";
+        onError?.(errorMessage);
         toast({
-          title: "Upload failed",
-          description: error,
+          title: "Processing failed",
+          description: errorMessage,
           variant: "destructive",
         });
-      }
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown upload error";
       onError?.(errorMessage);
@@ -59,7 +64,6 @@ export function WineImageUpload({
         description: errorMessage,
         variant: "destructive",
       });
-    } finally {
       setIsUploading(false);
     }
   };
