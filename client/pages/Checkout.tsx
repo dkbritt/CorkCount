@@ -262,25 +262,46 @@ export default function Checkout() {
         });
 
         if (emailResult.success) {
+          const emailsSent = emailResult.emailsSent || 1;
+          const adminSent = emailResult.adminSuccess;
+          const customerSent = emailResult.customerSuccess;
+
+          if (customerSent && adminSent) {
+            toast({
+              title: "Confirmation emails sent!",
+              description: `Order confirmation sent to you and our team. Check your email for pickup details.`,
+            });
+          } else if (customerSent) {
+            toast({
+              title: "Customer confirmation sent!",
+              description: "Check your email for order details. Admin notification may have failed.",
+            });
+          } else if (adminSent) {
+            toast({
+              title: "Admin notified!",
+              description: "Our team was notified, but your confirmation email failed. Please contact us.",
+              variant: "destructive",
+            });
+          }
+        } else if (emailResult.partialSuccess) {
           toast({
-            title: "Confirmation email sent!",
-            description:
-              "Check your email for order details and pickup instructions.",
+            title: "Partial email success",
+            description: emailResult.error || "Some emails were sent, but not all. Please contact us if you don't receive confirmation.",
+            variant: "destructive",
           });
         } else {
           toast({
-            title: "Email not sent",
-            description:
-              "Order was created successfully, but confirmation email failed to send.",
+            title: "Email delivery failed",
+            description: emailResult.error || "Order was created successfully, but confirmation emails failed to send.",
             variant: "destructive",
           });
         }
       } catch (emailError) {
         console.warn("Email sending failed:", emailError);
+        const errorMessage = emailError instanceof Error ? emailError.message : "Unknown error";
         toast({
-          title: "Email not sent",
-          description:
-            "Order was created successfully, but confirmation email failed to send.",
+          title: "Email delivery error",
+          description: `Order created successfully, but email failed: ${errorMessage}. Please save your order number: ${orderNumber}`,
           variant: "destructive",
         });
       }
