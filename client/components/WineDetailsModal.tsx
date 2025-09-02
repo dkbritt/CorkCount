@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, Calendar, Wine as WineIcon, Plus, Minus } from "lucide-react";
 import { Wine } from "@/components/WineCard";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { autoTagWine, formatTagsForDisplay } from "@/lib/autoTagger";
 
 interface WineDetailsModalProps {
   wine: Wine;
@@ -18,6 +19,18 @@ export function WineDetailsModal({
   onAddToCart,
 }: WineDetailsModalProps) {
   const [quantity, setQuantity] = useState(1);
+
+  // Generate tags from flavor notes and description
+  const displayTags = useMemo(() => {
+    const autoTags = autoTagWine({
+      flavorNotes: wine.flavorNotes || wine.description,
+      description: wine.description,
+      name: wine.name,
+      type: wine.type,
+    });
+    const finalTags = wine.tags && wine.tags.length > 0 ? wine.tags : autoTags;
+    return formatTagsForDisplay(finalTags);
+  }, [wine.flavorNotes, wine.description, wine.name, wine.type, wine.tags]);
 
   if (!isOpen) return null;
 
