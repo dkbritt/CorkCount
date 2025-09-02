@@ -228,6 +228,14 @@ exports.handler = async (event, context) => {
         };
       }
 
+      // Calculate total price from bottles ordered if not provided
+      let totalPrice = body.totalPrice;
+      if (!totalPrice && body.bottlesOrdered && Array.isArray(body.bottlesOrdered)) {
+        totalPrice = body.bottlesOrdered.reduce((sum, bottle) => {
+          return sum + (bottle.total_price || (bottle.price_per_bottle * bottle.quantity) || 0);
+        }, 0);
+      }
+
       // Map camelCase frontend fields to snake_case database fields
       const orderData = {
         order_number: body.orderNumber,
@@ -240,7 +248,7 @@ exports.handler = async (event, context) => {
         notes: body.orderNotes,
         bottles_ordered: body.bottlesOrdered, // Map bottlesOrdered to bottles_ordered
         status: 'Pending',
-        total_price: body.totalPrice || null,
+        total_price: totalPrice,
       };
 
       const result = await createOrder(orderData);
