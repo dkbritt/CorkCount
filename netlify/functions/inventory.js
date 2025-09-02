@@ -67,7 +67,7 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     // Select fields based on whether detailed info is requested
     const selectFields = detailed
       ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
-      : "id, name, winery, vintage, type, price, quantity, rating, image_url";
+      : "id, name, winery, vintage, type, price, quantity, rating";
 
     const { data: wines, error, count } = await supabase
       .from("Inventory")
@@ -106,7 +106,6 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
         price: wine.price,
         inStock: wine.quantity,
         rating: wine.rating || 0,
-        image: wine.image_url || "/placeholder.svg",
       };
 
       // Add detailed fields only if requested
@@ -116,11 +115,16 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
           region: wine.region || "",
           description: wine.description || "",
           flavorNotes: safeParseJSON(wine.flavor_notes, []),
+          image: wine.image_url || "/placeholder.svg",
           tags: safeParseJSON(wine.tags, []),
         };
       }
 
-      return baseWine;
+      // Basic mode: minimal fields, placeholder image
+      return {
+        ...baseWine,
+        image: "/placeholder.svg",
+      };
     });
 
     return {
