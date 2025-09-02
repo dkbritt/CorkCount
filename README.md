@@ -297,10 +297,12 @@ Functions are automatically rebuilt when changed during development.
 ### API Endpoints
 
 #### Core APIs
+
 - `GET /api/ping` - Health check
 - `GET /api/config/supabase` - Supabase configuration status
 
 #### Inventory Management
+
 - `GET /api/inventory` - List wines with pagination
 - `GET /api/inventory?detailed=true` - List wines with detailed fields (region, rating, description, flavor notes, image, tags)
 - `GET /api/inventory/:id` - Get single wine details
@@ -310,18 +312,21 @@ Functions are automatically rebuilt when changed during development.
 - `DELETE /api/inventory/:id` - Delete wine (admin)
 
 #### Order Management
+
 - `GET /api/orders` - List orders with pagination (admin)
 - `POST /api/orders` - Create new order
 - `PUT /api/orders/:id` - Update order status (admin)
 - `DELETE /api/orders/:id` - Delete order (admin)
 
 #### Batch Management
+
 - `GET /api/batches` - List wine batches (admin)
 - `POST /api/batches` - Create new batch (admin)
 - `PUT /api/batches/:id` - Update batch (admin)
 - `DELETE /api/batches/:id` - Delete batch (admin)
 
 #### Analytics & Utilities
+
 - `GET /api/metrics` - Sales and inventory metrics (admin)
 - `POST /api/email` - Send transactional emails
 - `POST /api/auth/login` - Admin authentication
@@ -329,12 +334,14 @@ Functions are automatically rebuilt when changed during development.
 #### Query Parameters
 
 **Inventory API Parameters:**
+
 - `page` - Page number for pagination (default: 1)
 - `limit` - Items per page (default: 50, max: 100)
 - `admin` - Set to "true" for admin view (includes all wines)
 - `detailed` - Set to "true" for detailed wine information
 
 **Detailed vs Basic Response:**
+
 ```javascript
 // Basic response (?detailed=false or omitted)
 {
@@ -494,21 +501,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Common Issues
 
 **502 Bad Gateway Errors:**
+
 - Check environment variables are set correctly
 - Verify Supabase connection in `/api/config/supabase`
 - Ensure all required environment variables are configured
 
 **Inventory API Issues:**
+
 - Use `?detailed=true` for full wine information
 - Check pagination parameters (`page`, `limit`)
 - Verify admin authentication for admin endpoints
 
 **Build Failures:**
+
 - Run `pnpm install` to ensure dependencies are current
 - Check TypeScript errors with `pnpm typecheck`
 - Verify environment variables are properly configured
 
 **Development Server:**
+
 - Frontend runs on port 8080
 - Netlify Functions are accessible at `/api/*`
 - Check browser console for client-side errors
