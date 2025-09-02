@@ -240,20 +240,6 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // GET /storage/health - Health check
-    if (method === 'GET' && path === '/health') {
-      const bucketResult = await ensureBucketExists(supabase);
-      
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          storage: bucketResult.success ? 'ready' : 'error',
-          bucket: BUCKET_NAME
-        }),
-      };
-    }
 
     return {
       statusCode: 404,
