@@ -162,6 +162,24 @@ export const handler = async (event, context) => {
           to: msg.to,
           subject: msg.subject,
           html: msg.html,
+          // Add headers to improve deliverability
+          headers: {
+            'X-Entity-Ref-ID': `kb-winery-${Date.now()}`,
+            'List-Unsubscribe': '<mailto:unsubscribe@kbwinery.com>',
+            'X-Priority': '3',
+            'X-Mailer': 'KB Winery Order System',
+          },
+          // Add tags for tracking
+          tags: [
+            {
+              name: 'category',
+              value: msg.type || 'order_confirmation'
+            },
+            {
+              name: 'source',
+              value: 'kb-winery-app'
+            }
+          ]
         }),
       });
       if (!response.ok) {
