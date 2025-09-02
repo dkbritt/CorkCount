@@ -64,9 +64,9 @@ export default function Index() {
   const [isWineDetailsModalOpen, setIsWineDetailsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch inventory from secure API
+  // Fetch inventory from secure API with retry logic
   useEffect(() => {
-    const fetchInventory = async () => {
+    const fetchInventory = async (retryCount = 0) => {
       try {
         setLoading(true);
         setError(null);
@@ -105,15 +105,29 @@ export default function Index() {
           });
         }
       } catch (err) {
-        console.error("Error fetching inventory:", formatError(err));
-        setError("An unexpected error occurred");
+        console.error(`Error fetching inventory (attempt ${retryCount + 1}):`, formatError(err));
+
+        // Retry up to 2 times with exponential backoff
+        if (retryCount < 2) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s delays
+          setTimeout(() => {
+            fetchInventory(retryCount + 1);
+          }, delay);
+          return;
+        }
+
+        // Final failure after retries
+        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+        setError(errorMessage);
         toast({
-          title: "Error",
-          description: "An unexpected error occurred while loading wines.",
+          title: "Connection Error",
+          description: `${errorMessage} Please refresh the page to try again.`,
           variant: "destructive",
         });
       } finally {
-        setLoading(false);
+        if (retryCount === 0 || retryCount >= 2) {
+          setLoading(false);
+        }
       }
     };
 
