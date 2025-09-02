@@ -72,12 +72,39 @@ export const uploadWineImage = async (file: File): Promise<{ success: boolean; u
       body: formData,
     });
 
-    const result = await response.json();
+    // Check if response is ok first
+    if (!response.ok) {
+      // Try to get error message from response
+      let errorMessage = 'Failed to upload image';
+      try {
+        const errorResult = await response.json();
+        errorMessage = errorResult.error || errorMessage;
+      } catch {
+        // If response isn't JSON, use status text
+        errorMessage = response.statusText || errorMessage;
+      }
 
-    if (!response.ok || !result.success) {
-      return { 
-        success: false, 
-        error: result.error || 'Failed to upload image' 
+      return {
+        success: false,
+        error: errorMessage
+      };
+    }
+
+    // Parse successful response
+    let result;
+    try {
+      result = await response.json();
+    } catch (jsonError) {
+      return {
+        success: false,
+        error: 'Invalid response from upload service'
+      };
+    }
+
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error || 'Upload failed'
       };
     }
 
