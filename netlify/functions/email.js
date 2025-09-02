@@ -1,29 +1,29 @@
 export const handler = async (event, context) => {
   // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
   // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Method not allowed' 
+      body: JSON.stringify({
+        success: false,
+        error: "Method not allowed",
       }),
     };
   }
@@ -58,10 +58,13 @@ export const handler = async (event, context) => {
     const hasVerifiedDomain = !fromEmail.includes("resend.dev");
     // In production, we should bypass test email requirements if we have a verified domain
     // OR if NODE_ENV is explicitly set to production
-    const isProductionReady = hasVerifiedDomain || process.env.NODE_ENV === "production";
+    const isProductionReady =
+      hasVerifiedDomain || process.env.NODE_ENV === "production";
     const isDevelopment = !isProductionReady;
 
-    console.log(`Email mode detection: NODE_ENV=${process.env.NODE_ENV}, hasVerifiedDomain=${hasVerifiedDomain}, isProductionReady=${isProductionReady}, isDevelopment=${isDevelopment}`);
+    console.log(
+      `Email mode detection: NODE_ENV=${process.env.NODE_ENV}, hasVerifiedDomain=${hasVerifiedDomain}, isProductionReady=${isProductionReady}, isDevelopment=${isDevelopment}`,
+    );
 
     const defaultFrom = `KB Winery <${fromEmail}>`;
     const body = event.body ? JSON.parse(event.body) : {};
@@ -71,9 +74,9 @@ export const handler = async (event, context) => {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ 
-          success: false, 
-          error: "No messages provided" 
+        body: JSON.stringify({
+          success: false,
+          error: "No messages provided",
         }),
       };
     }
@@ -85,7 +88,8 @@ export const handler = async (event, context) => {
       const recipients = Array.isArray(msg.to) ? msg.to : [msg.to];
 
       // In development mode, redirect emails to test address
-      const finalRecipients = isDevelopment && testEmail ? [testEmail] : recipients;
+      const finalRecipients =
+        isDevelopment && testEmail ? [testEmail] : recipients;
 
       // Adjust subject and content for development mode
       const finalSubject = isDevelopment
@@ -105,7 +109,8 @@ export const handler = async (event, context) => {
 
       // For order confirmations, also send to admin if configured
       if (msg.type === "order_confirmation" && filEmail && msg.orderData) {
-        const adminRecipient = isDevelopment && testEmail ? testEmail : filEmail;
+        const adminRecipient =
+          isDevelopment && testEmail ? testEmail : filEmail;
         const adminSubject = isDevelopment
           ? `[TEST] New Order - ${msg.orderData.orderNumber} (for ${filEmail})`
           : `New Order Received - ${msg.orderData.orderNumber}`;
@@ -113,7 +118,9 @@ export const handler = async (event, context) => {
           ? `<p><strong>TEST EMAIL - Original recipient: ${filEmail}</strong></p>${msg.html}`
           : msg.html;
 
-        console.log(`Adding admin email: ${adminRecipient} (dev mode: ${isDevelopment})`);
+        console.log(
+          `Adding admin email: ${adminRecipient} (dev mode: ${isDevelopment})`,
+        );
 
         emailsToSend.push({
           from: msg.from || defaultFrom,
@@ -138,7 +145,9 @@ export const handler = async (event, context) => {
 
     // In production mode, we should not require VITE_TEST_EMAIL
     if (isProductionReady && !isDevelopment) {
-      console.log("Running in production mode - bypassing VITE_TEST_EMAIL requirement");
+      console.log(
+        "Running in production mode - bypassing VITE_TEST_EMAIL requirement",
+      );
     }
 
     const sendOne = async (msg) => {
@@ -168,10 +177,7 @@ export const handler = async (event, context) => {
       .filter((x) => x.r.status === "rejected")
       .map((x) => ({
         index: x.i,
-        reason:
-          x.r.reason?.message ||
-          String(x.r.reason) ||
-          "Unknown error",
+        reason: x.r.reason?.message || String(x.r.reason) || "Unknown error",
       }));
 
     return {
@@ -184,7 +190,7 @@ export const handler = async (event, context) => {
       }),
     };
   } catch (error) {
-    console.error('Email error:', error);
+    console.error("Email error:", error);
     return {
       statusCode: 500,
       headers,
