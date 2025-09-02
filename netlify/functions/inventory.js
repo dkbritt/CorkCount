@@ -74,7 +74,7 @@ async function getAvailableInventory(page = 1, limit = 50, detailed = false) {
     const selectFields =
       detailed === true
         ? "id, name, winery, vintage, region, type, price, quantity, rating, description, flavor_notes, image_url, tags"
-        : "id, name, winery, vintage, type, price, quantity, image_url";
+        : "id, name, winery, vintage, type, price, quantity, image_url, flavor_notes";
 
     const {
       data: wines,
