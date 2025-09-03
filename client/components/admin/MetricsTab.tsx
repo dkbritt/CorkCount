@@ -394,14 +394,26 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div>
-        <h1 className="font-playfair text-3xl font-bold text-gray-900 mb-2">
-          Dashboard Metrics
-        </h1>
-        <p className="text-gray-600">
-          Monitor your wine inventory and business metrics
+      <div
+        ref={headerRef}
+        className={`admin-fade-in ${headerInView ? 'animate' : ''}`}
+        style={{ animationDelay: '0.1s' }}
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className="wine-icon-container w-12 h-12 flex items-center justify-center">
+            <Wine className="h-6 w-6 text-white" />
+          </div>
+          <h1 className="font-playfair text-3xl font-bold wine-accent-text">
+            Dashboard Metrics
+          </h1>
+        </div>
+        <p className="text-gray-600 ml-15">
+          Monitor your wine inventory and business metrics with real-time insights
         </p>
       </div>
+
+      {/* Section Divider */}
+      <div className="admin-section-divider wine-themed"></div>
 
       {/* Metric Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
