@@ -3,17 +3,19 @@ import { Badge } from "@/components/ui/badge";
 import {
   Wine,
   AlertTriangle,
-  Plus,
+  TrendingUp,
   Archive,
-  WineOff,
+  Grape,
   PieChart,
   Calendar,
   Activity,
   Loader2,
+  Package2,
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 interface MetricCard {
   title: string;
