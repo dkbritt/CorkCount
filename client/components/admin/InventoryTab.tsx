@@ -1079,6 +1079,7 @@ export function InventoryTab({
             onSearch={setSearchQuery}
             onClear={() => setSearchQuery("")}
             placeholder="search wines, or by type"
+            variant="admin"
           />
         </div>
 
