@@ -769,16 +769,12 @@ export function OrdersTab() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <input
-              type="text"
-              placeholder="Search orders by order #, customer name, or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-federal/20 focus:border-federal"
-            />
-          </div>
+          <SearchBar
+            onSearch={setSearchQuery}
+            onClear={() => setSearchQuery("")}
+            placeholder="Search orders by order #, customer name, or email..."
+            variant="admin"
+          />
         </div>
         <div className="flex gap-2">
           <div className="relative">
