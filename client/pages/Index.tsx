@@ -347,10 +347,14 @@ export default function Index() {
               <h1 className="font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in">
                 Sip Happens — Find Your Vintage
               </h1>
-              <p className="font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in">
-                Curated collection of premium wines from KB Winery. From everyday
-                favorites to rare vintages, each bottle tells a story of passion and tradition.
-              </p>
+              <div className="font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in">
+                <p>
+                  KB Winery's finest — from casual sips to collector's
+                  picks, every bottle tells a story.
+                  <br />
+                  <strong></strong>
+                </p>
+              </div>
 
               {/* Search Bar */}
               <div className="max-w-2xl mx-auto mb-8 hero-fade-in">
