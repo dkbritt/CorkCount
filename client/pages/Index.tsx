@@ -486,20 +486,14 @@ export default function Index() {
             }
           >
             {filteredWines.map((wine, index) => (
-              <div
+              <WineCard
                 key={wine.id}
-                style={{
-                  animationDelay: `${index * 0.1}s`,
-                }}
-              >
-                <WineCard
-                  wine={wine}
-                  onAddToCart={handleAddToCart}
-                  onViewDetails={handleViewWineDetails}
-                  variant="storefront"
-                  layout={viewMode}
-                />
-              </div>
+                wine={wine}
+                onAddToCart={handleAddToCart}
+                onViewDetails={handleViewWineDetails}
+                variant="storefront"
+                layout={viewMode}
+              />
             ))}
           </div>
         )}
