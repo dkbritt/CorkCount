@@ -583,7 +583,6 @@ export default function Index() {
         itemCount={totalCartItems}
         totalPrice={totalCartPrice}
         onOpenCart={handleOpenCart}
-        className="md:hidden" // Only show on mobile
       />
     </div>
   );
