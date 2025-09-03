@@ -43,6 +43,25 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Intersection observers for animations
+  const { elementRef: headerRef, isIntersecting: headerInView } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px',
+    triggerOnce: true,
+  });
+
+  const { elementRef: cardsRef, isIntersecting: cardsInView } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px',
+    triggerOnce: true,
+  });
+
+  const { elementRef: activityRef, isIntersecting: activityInView } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px',
+    triggerOnce: true,
+  });
+
   // Recent activity data (can be expanded to pull from multiple tables)
   const [recentActivity, setRecentActivity] = useState([
     {
