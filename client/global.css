@@ -372,6 +372,10 @@
     .hero-text-overlay {
       padding: 1.5rem;
     }
+
+    .ml-15 {
+      margin-left: 2.75rem; /* Smaller spacing for mobile (44px for 8-width icon + 8px gap) */
+    }
   }
 
   @media (max-width: 640px) {
