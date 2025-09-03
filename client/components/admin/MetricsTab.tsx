@@ -543,13 +543,13 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
               style={{ animationDelay: `${0.1 + (metricCards.length * 0.1)}s` }}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="wine-icon-container cork w-12 h-12 flex items-center justify-center shadow-sm">
+                <div className="w-12 h-12 bg-federal rounded-lg flex items-center justify-center shadow-sm">
                   <PieChart className="h-6 w-6 text-white" />
                 </div>
               </div>
 
               <div className="space-y-4">
-                <p className="text-sm font-medium wine-accent-text">
+                <p className="text-sm font-medium text-wine">
                   Wine Type Breakdown
                 </p>
 
