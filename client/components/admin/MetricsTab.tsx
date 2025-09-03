@@ -440,7 +440,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm font-medium wine-accent-text">
+                <p className="text-sm font-medium text-wine">
                   {metric.title}
                 </p>
                 <p className="text-3xl font-bold text-gray-900">
