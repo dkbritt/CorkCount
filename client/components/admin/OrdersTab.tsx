@@ -18,7 +18,9 @@ import {
   Search,
   Filter,
   Trash2,
+  ShoppingBag,
 } from "lucide-react";
+import { SearchBar } from "@/components/SearchBar";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
