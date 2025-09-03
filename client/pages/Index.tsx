@@ -21,6 +21,7 @@ import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { formatError } from "@/lib/errors";
 import { detectAnalyticsInterference } from "@/lib/analytics-utils";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 export default function Index() {
   const { toast } = useToast();
