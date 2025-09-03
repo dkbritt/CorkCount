@@ -632,9 +632,6 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         })()}
       </div>
 
-      {/* Section Divider */}
-      <div className="admin-section-divider wine-themed"></div>
-
       {/* Recent Activity */}
       <div
         ref={activityRef}
