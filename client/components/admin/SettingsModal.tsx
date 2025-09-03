@@ -229,14 +229,14 @@ export function SettingsModal({
           <div className="border-t border-gray-200 pt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Data Utilities</h3>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                 <RefreshCw className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-gray-900 mb-1">
                     Update Winery Names
                   </h4>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-gray-600 mb-3 break-words">
                     Updates any existing "CorkCount Winery" entries in the inventory to "KB Winery".
                     This is a one-time utility to rebrand existing data.
                   </p>
@@ -245,7 +245,7 @@ export function SettingsModal({
                     size="sm"
                     onClick={handleUpdateWineryNames}
                     disabled={isUpdatingWinery}
-                    className="bg-white"
+                    className="bg-white w-full sm:w-auto"
                   >
                     {isUpdatingWinery ? (
                       <>
@@ -263,14 +263,14 @@ export function SettingsModal({
               </div>
             </div>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                 <Tag className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-gray-900 mb-1">
                     Auto-Tag Wine Inventory
                   </h4>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-gray-600 mb-3 break-words">
                     Automatically generates flavor tags for all wines based on their flavor notes and descriptions.
                     Tags include: Berry, Earthy, Citrus, Floral, Chocolate, Vanilla, Spicy, Buttery, Nutty, Herbal.
                   </p>
@@ -279,7 +279,7 @@ export function SettingsModal({
                     size="sm"
                     onClick={handleAutoTagInventory}
                     disabled={isAutoTagging}
-                    className="bg-white"
+                    className="bg-white w-full sm:w-auto"
                   >
                     {isAutoTagging ? (
                       <>
