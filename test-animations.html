@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Test - CorkCount</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Hero animation - plays only once */
+        .hero-fade-in {
+            animation: heroFadeIn 1.2s ease-out forwards;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes heroFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-fade-in:nth-child(1) { animation-delay: 0.2s; }
+        .hero-fade-in:nth-child(2) { animation-delay: 0.4s; }
+        .hero-fade-in:nth-child(3) { animation-delay: 0.6s; }
+
+        /* Wine card scroll animations */
+        .wine-card-enter {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .wine-card-enter.animate {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Demo styles */
+        .hero {
+            height: 60vh;
+            background: linear-gradient(45deg, #722F37, #8B1538);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .wine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .wine-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .hero-fade-in,
+            .wine-card-enter {
+                animation: none;
+                transition: none;
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div>
+            <h1 class="hero-fade-in">KB Winery</h1>
+            <p class="hero-fade-in">Est. 2010 • Handcrafted Excellence</p>
+            <h2 class="hero-fade-in">Sip Happens — Find Your Vintage</h2>
+        </div>
+    </div>
+
+    <div class="wine-grid">
+        <div class="wine-card wine-card-enter">Wine Card 1</div>
+        <div class="wine-card wine-card-enter">Wine Card 2</div>
+        <div class="wine-card wine-card-enter">Wine Card 3</div>
+        <div class="wine-card wine-card-enter">Wine Card 4</div>
+        <div class="wine-card wine-card-enter">Wine Card 5</div>
+        <div class="wine-card wine-card-enter">Wine Card 6</div>
+    </div>
+
+    <script>
+        // Intersection Observer for wine cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Add staggered delay
+                    setTimeout(() => {
+                        entry.target.classList.add('animate');
+                    }, index * 100);
+                    
+                    // Unobserve to trigger only once
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all wine cards
+        document.querySelectorAll('.wine-card-enter').forEach(card => {
+            observer.observe(card);
+        });
+
+        console.log('✅ Animation System Loaded');
+        console.log('🎬 Hero: Plays once, no repeats');
+        console.log('🍇 Wine Cards: Scroll-triggered, staggered entrance');
+        console.log('♿ Respects prefers-reduced-motion');
+    </script>
+</body>
+</html>

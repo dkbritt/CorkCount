@@ -165,9 +165,11 @@
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
   }
 
-  /* Fade-in animation for hero content */
+  /* Fade-in animation for hero content - plays only once */
   .hero-fade-in {
     animation: heroFadeIn 1.2s ease-out forwards;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
     opacity: 0;
     transform: translateY(20px);
   }
@@ -185,6 +187,29 @@
   .hero-fade-in:nth-child(3) { animation-delay: 0.6s; }
   .hero-fade-in:nth-child(4) { animation-delay: 0.8s; }
   .hero-fade-in:nth-child(5) { animation-delay: 1.0s; }
+
+  /* Wine card scroll animations */
+  .wine-card-enter {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .wine-card-enter.animate {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-fade-in,
+    .wine-card-enter {
+      animation: none;
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   /* Responsive background handling */
   @media (max-width: 768px) {
