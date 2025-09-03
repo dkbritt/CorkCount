@@ -7,6 +7,7 @@ interface SearchBarProps {
   onSearch?: (query: string) => void;
   onClear?: () => void;
   className?: string;
+  variant?: "storefront" | "admin";
 }
 
 export function SearchBar({ 
