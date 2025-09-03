@@ -10,11 +10,12 @@ interface SearchBarProps {
   variant?: "storefront" | "admin";
 }
 
-export function SearchBar({ 
-  placeholder = "Search by wine name or type", 
-  onSearch, 
+export function SearchBar({
+  placeholder = "Search by wine name or type",
+  onSearch,
   onClear,
-  className = ""
+  className = "",
+  variant = "storefront"
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
