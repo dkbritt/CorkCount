@@ -213,13 +213,10 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Section Divider */}
-      <div className="admin-section-divider wine-themed"></div>
-
       {/* Tab Content */}
       <div
         ref={mainContentRef}
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8 admin-fade-in ${mainContentInView ? 'animate' : ''}`}
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-24 md:pb-8 admin-fade-in ${mainContentInView ? 'animate' : ''}`}
       >
         {renderTabContent()}
       </div>
