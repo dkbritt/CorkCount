@@ -333,6 +333,46 @@
     color: var(--admin-muted-plum);
   }
 
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .wine-icon-container {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .wine-icon-container svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .admin-metric-card {
+      padding: 1rem;
+    }
+
+    .admin-section-divider {
+      margin: 1.5rem 0;
+    }
+
+    .admin-fade-in {
+      animation-delay: 0s !important;
+    }
+
+    .hero-text-overlay {
+      padding: 1.5rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .admin-metric-card:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .admin-card-hover:hover {
+      transform: none;
+    }
+  }
+
   /* Responsive background handling */
   @media (max-width: 768px) {
     .hero-wine-gradient {
