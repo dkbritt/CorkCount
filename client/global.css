@@ -192,12 +192,145 @@
   /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
     .hero-fade-in,
-    .wine-card-enter {
+    .wine-card-enter,
+    .admin-fade-in,
+    .admin-card-hover {
       animation: none;
       transition: none;
       opacity: 1;
       transform: none;
     }
+  }
+
+  /* Admin Dashboard Enhancements */
+
+  /* Wine-themed color palette variables */
+  :root {
+    --admin-blush-rose: #F4E4E6;
+    --admin-muted-plum: #8E5572;
+    --admin-cork-brown: #A0826D;
+    --admin-soft-burgundy: #B85450;
+    --admin-champagne: #F7F3E9;
+    --admin-sage-green: #9CAF88;
+  }
+
+  /* Section dividers */
+  .admin-section-divider {
+    border-bottom: 1px solid #E5E7EB;
+    background: linear-gradient(to right, transparent 0%, #E5E7EB 20%, #E5E7EB 80%, transparent 100%);
+    height: 1px;
+    margin: 2rem 0;
+  }
+
+  .admin-section-divider.wine-themed {
+    background: linear-gradient(to right, transparent 0%, var(--admin-blush-rose) 20%, var(--admin-cork-brown) 50%, var(--admin-blush-rose) 80%, transparent 100%);
+    opacity: 0.6;
+  }
+
+  /* Fade-in animations for admin cards */
+  .admin-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .admin-fade-in.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Admin card hover effects */
+  .admin-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #E5E7EB;
+  }
+
+  .admin-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: var(--admin-blush-rose);
+  }
+
+  /* Wine-themed accent colors */
+  .wine-accent-bg {
+    background: linear-gradient(135deg, var(--admin-blush-rose) 0%, var(--admin-champagne) 100%);
+  }
+
+  .wine-accent-text {
+    color: var(--admin-muted-plum);
+  }
+
+  .wine-accent-border {
+    border-color: var(--admin-cork-brown);
+  }
+
+  /* Enhanced metric cards */
+  .admin-metric-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #F3F4F6;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .admin-metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--admin-soft-burgundy), var(--admin-muted-plum), var(--admin-cork-brown));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .admin-metric-card:hover::before {
+    opacity: 1;
+  }
+
+  .admin-metric-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--admin-blush-rose);
+  }
+
+  /* Wine-themed icon containers */
+  .wine-icon-container {
+    background: linear-gradient(135deg, var(--admin-soft-burgundy) 0%, var(--admin-muted-plum) 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.25);
+  }
+
+  .wine-icon-container.cork {
+    background: linear-gradient(135deg, var(--admin-cork-brown) 0%, #8B6F47 100%);
+  }
+
+  .wine-icon-container.rose {
+    background: linear-gradient(135deg, var(--admin-soft-burgundy) 0%, #D97398 100%);
+  }
+
+  .wine-icon-container.sage {
+    background: linear-gradient(135deg, var(--admin-sage-green) 0%, #7A8471 100%);
+  }
+
+  /* Activity section styling */
+  .admin-activity-section {
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--admin-champagne) 100%);
+    border: 1px solid var(--admin-blush-rose);
+  }
+
+  /* Tab navigation wine accents */
+  .admin-tab-active {
+    background: linear-gradient(135deg, var(--admin-muted-plum) 0%, var(--admin-soft-burgundy) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(142, 85, 114, 0.3);
+  }
+
+  .admin-tab-inactive:hover {
+    background-color: var(--admin-champagne);
+    color: var(--admin-muted-plum);
   }
 
   /* Responsive background handling */
