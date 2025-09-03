@@ -184,13 +184,10 @@ export default function AdminDashboard() {
         </div>
       </nav>
 
-      {/* Section Divider */}
-      <div className="admin-section-divider wine-themed"></div>
-
       {/* Tab Navigation - Desktop (top) */}
       <div className="hidden md:block bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-1 py-4 overflow-x-auto">
+          <div className="flex space-x-1 py-3 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
