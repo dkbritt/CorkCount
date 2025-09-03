@@ -344,18 +344,30 @@ export default function Index() {
       {/* Hero Section */}
       <div className="hero-wine-gradient text-white">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
-          <div className="text-center hero-content">
+          <div className="text-center hero-content" ref={heroRef}>
             <div className="hero-text-overlay max-w-4xl">
-              <div className="font-elegant text-6xl sm:text-8xl lg:text-9xl hero-main-title mb-2 hero-fade-in">
+              <div
+                className={`font-elegant text-6xl sm:text-8xl lg:text-9xl hero-main-title mb-2 hero-fade-in ${heroInView ? 'animate' : ''}`}
+                style={{ animationDelay: '0.2s' }}
+              >
                 KB Winery
               </div>
-              <div className="font-script text-lg sm:text-2xl lg:text-3xl hero-subtitle mb-6 tracking-wide hero-fade-in">
+              <div
+                className={`font-script text-lg sm:text-2xl lg:text-3xl hero-subtitle mb-6 tracking-wide hero-fade-in ${heroInView ? 'animate' : ''}`}
+                style={{ animationDelay: '0.4s' }}
+              >
                 Est. 2010&nbsp;• Handcrafted Excellence
               </div>
-              <h1 className="font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in">
+              <h1
+                className={`font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in ${heroInView ? 'animate' : ''}`}
+                style={{ animationDelay: '0.6s' }}
+              >
                 Sip Happens — Find Your Vintage
               </h1>
-              <div className="font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in">
+              <div
+                className={`font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in ${heroInView ? 'animate' : ''}`}
+                style={{ animationDelay: '0.8s' }}
+              >
                 <p>
                   KB Winery's finest — from casual sips to collector's
                   picks, every bottle tells a story.
@@ -365,7 +377,10 @@ export default function Index() {
               </div>
 
               {/* Search Bar */}
-              <div className="max-w-2xl mx-auto mb-8 hero-fade-in">
+              <div
+                className={`max-w-2xl mx-auto mb-8 hero-fade-in ${heroInView ? 'animate' : ''}`}
+                style={{ animationDelay: '1.0s' }}
+              >
                 <SearchBar onSearch={handleSearch} onClear={clearSearch} placeholder="Search by wine name or type" />
               </div>
             </div>
