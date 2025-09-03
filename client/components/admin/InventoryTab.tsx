@@ -1084,7 +1084,7 @@ export function InventoryTab({
           <SearchBar
             onSearch={setSearchQuery}
             onClear={() => setSearchQuery("")}
-            placeholder="search wines, or by type"
+            placeholder="Search wines by name or by type"
             variant="admin"
           />
         </div>
