@@ -184,8 +184,11 @@ export default function AdminDashboard() {
         </div>
       </nav>
 
+      {/* Section Divider */}
+      <div className="admin-section-divider wine-themed"></div>
+
       {/* Tab Navigation - Desktop (top) */}
-      <div className="hidden md:block bg-white border-b border-gray-200">
+      <div className="hidden md:block bg-white border-b wine-accent-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 py-4 overflow-x-auto">
             {tabs.map((tab) => {
@@ -199,8 +202,8 @@ export default function AdminDashboard() {
                   className={`
                     flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
                     ${isActive
-                      ? 'bg-federal text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'admin-tab-active'
+                      : 'text-gray-600 admin-tab-inactive'
                     }
                   `}
                 >
