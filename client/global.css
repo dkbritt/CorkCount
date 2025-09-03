@@ -165,28 +165,17 @@
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
   }
 
-  /* Fade-in animation for hero content - plays only once */
+  /* Fade-in animation for hero content - controlled by React state */
   .hero-fade-in {
-    animation: heroFadeIn 1.2s ease-out forwards;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
     opacity: 0;
     transform: translateY(20px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
   }
 
-  @keyframes heroFadeIn {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .hero-fade-in.animate {
+    opacity: 1;
+    transform: translateY(0);
   }
-
-  /* Stagger animation delays for different elements */
-  .hero-fade-in:nth-child(1) { animation-delay: 0.2s; }
-  .hero-fade-in:nth-child(2) { animation-delay: 0.4s; }
-  .hero-fade-in:nth-child(3) { animation-delay: 0.6s; }
-  .hero-fade-in:nth-child(4) { animation-delay: 0.8s; }
-  .hero-fade-in:nth-child(5) { animation-delay: 1.0s; }
 
   /* Wine card scroll animations */
   .wine-card-enter {
