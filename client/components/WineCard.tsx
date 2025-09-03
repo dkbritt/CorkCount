@@ -34,6 +34,11 @@ export function WineCard({
   layout = "grid",
 }: WineCardProps) {
   const [quantity, setQuantity] = useState(1);
+  const { elementRef, isIntersecting } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px',
+    triggerOnce: true,
+  });
   const isAvailable = wine.inStock > 0;
   const isLowStock = wine.inStock > 0 && wine.inStock <= 5;
 
