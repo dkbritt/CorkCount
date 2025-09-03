@@ -412,9 +412,6 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         </p>
       </div>
 
-      {/* Section Divider */}
-      <div className="admin-section-divider wine-themed"></div>
-
       {/* Metric Cards Grid */}
       <div
         ref={cardsRef}
