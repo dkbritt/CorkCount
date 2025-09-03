@@ -228,7 +228,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab Navigation - Mobile (bottom) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 wine-accent-bg border-t wine-accent-border z-30">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
         <div className="flex justify-around">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -241,8 +241,8 @@ export default function AdminDashboard() {
                 className={`
                   flex flex-col items-center gap-1 px-2 py-3 text-xs font-medium transition-all flex-1
                   ${isActive
-                    ? 'wine-accent-text bg-white/20'
-                    : 'wine-accent-text opacity-70 hover:opacity-100 hover:bg-white/10'
+                    ? 'text-wine bg-gray-50'
+                    : 'text-gray-600 hover:text-wine'
                   }
                 `}
               >
