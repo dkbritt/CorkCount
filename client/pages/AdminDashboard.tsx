@@ -264,12 +264,11 @@ export default function AdminDashboard() {
         return (
           <Button
             onClick={buttonConfig.action}
-            className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40 md:bottom-8 md:right-8"
-            variant="accent"
+            className="wine-icon-container cork fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 z-40 md:bottom-8 md:right-8 border-0"
             size="lg"
             title={buttonConfig.label}
           >
-            <Plus className="h-6 w-6" />
+            <Plus className="h-6 w-6 text-white" />
           </Button>
         );
       })()}
