@@ -140,19 +140,19 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-smoke overflow-x-hidden">
       {/* Top Navigation */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
+      <nav className="wine-accent-bg border-b wine-accent-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-wine rounded-lg flex items-center justify-center">
+              <div className="wine-icon-container w-8 h-8 flex items-center justify-center">
                 <Wine className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="font-playfair font-bold text-lg text-wine">
+                <span className="font-playfair font-bold text-lg wine-accent-text">
                   CorkCount
                 </span>
-                <span className="text-xs text-gray-500 -mt-1">
+                <span className="text-xs wine-accent-text opacity-70 -mt-1">
                   Admin Dashboard
                 </span>
               </div>
@@ -164,7 +164,7 @@ export default function AdminDashboard() {
                 variant="ghost"
                 size="sm"
                 onClick={handleOpenSettings}
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 hover:bg-white/20 wine-accent-text"
                 title="Settings"
               >
                 <Settings className="h-4 w-4" />
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
                 variant="navigation"
                 size="sm"
                 onClick={handleLogout}
-                className="gap-2"
+                className="gap-2 bg-white/10 hover:bg-white/20 wine-accent-text border-white/20"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Logout</span>
