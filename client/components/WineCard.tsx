@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Minus } from "lucide-react";
 import { autoTagWine, formatTagsForDisplay } from "@/lib/autoTagger";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 export interface Wine {
   id: string;
