@@ -656,14 +656,15 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         </div>
 
         <div className="divide-y divide-gray-200">
-          {recentActivity.map((activity) => (
+          {recentActivity.map((activity, index) => (
             <div
               key={activity.id}
-              className="p-6 hover:bg-gray-50 transition-colors"
+              className={`p-6 hover:bg-white/50 transition-all duration-200 admin-fade-in ${activityInView ? 'animate' : ''}`}
+              style={{ animationDelay: `${0.4 + (index * 0.05)}s` }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 mb-1">
+                  <p className="text-sm font-medium wine-accent-text mb-1">
                     {activity.action}
                   </p>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
