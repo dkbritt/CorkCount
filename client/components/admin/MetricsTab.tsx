@@ -635,12 +635,21 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         })()}
       </div>
 
+      {/* Section Divider */}
+      <div className="admin-section-divider wine-themed"></div>
+
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Activity className="h-5 w-5 text-gray-600" />
-            <h2 className="font-playfair text-xl font-semibold text-gray-900">
+      <div
+        ref={activityRef}
+        className={`admin-activity-section rounded-lg border admin-fade-in ${activityInView ? 'animate' : ''}`}
+        style={{ animationDelay: '0.3s' }}
+      >
+        <div className="p-6 border-b wine-accent-border">
+          <div className="flex items-center gap-3">
+            <div className="wine-icon-container sage w-10 h-10 flex items-center justify-center">
+              <Activity className="h-5 w-5 text-white" />
+            </div>
+            <h2 className="font-playfair text-xl font-semibold wine-accent-text">
               Recent Activity
             </h2>
           </div>
