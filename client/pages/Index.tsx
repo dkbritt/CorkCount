@@ -36,6 +36,13 @@ export default function Index() {
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Hook for hero animation control
+  const { elementRef: heroRef, isIntersecting: heroInView } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px',
+    triggerOnce: true,
+  });
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     // Load cart from localStorage on initialization, migrate legacy key
     try {
