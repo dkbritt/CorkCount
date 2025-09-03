@@ -392,7 +392,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
   // Remove getTrendIcon function as it's no longer needed
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Page Header */}
       <div
         ref={headerRef}
