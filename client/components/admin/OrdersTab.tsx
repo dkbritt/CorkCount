@@ -677,10 +677,10 @@ export function OrdersTab() {
         {/* Page Header */}
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-wine rounded-lg flex items-center justify-center">
-              <ShoppingBag className="h-6 w-6 text-white" />
+            <div className="w-12 h-12 md:w-12 md:h-12 bg-wine rounded-lg flex items-center justify-center">
+              <ShoppingBag className="h-6 w-6 md:h-6 md:w-6 text-white" />
             </div>
-            <h1 className="font-playfair text-3xl font-bold text-wine">
+            <h1 className="font-playfair text-2xl md:text-3xl font-bold text-wine">
               Customer Orders
             </h1>
           </div>
@@ -710,10 +710,10 @@ export function OrdersTab() {
         {/* Page Header */}
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-wine rounded-lg flex items-center justify-center">
-              <ShoppingBag className="h-6 w-6 text-white" />
+            <div className="w-12 h-12 md:w-12 md:h-12 bg-wine rounded-lg flex items-center justify-center">
+              <ShoppingBag className="h-6 w-6 md:h-6 md:w-6 text-white" />
             </div>
-            <h1 className="font-playfair text-3xl font-bold text-wine">
+            <h1 className="font-playfair text-2xl md:text-3xl font-bold text-wine">
               Customer Orders
             </h1>
           </div>
@@ -742,10 +742,10 @@ export function OrdersTab() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-wine rounded-lg flex items-center justify-center">
-              <ShoppingBag className="h-6 w-6 text-white" />
+            <div className="w-12 h-12 md:w-12 md:h-12 bg-wine rounded-lg flex items-center justify-center">
+              <ShoppingBag className="h-6 w-6 md:h-6 md:w-6 text-white" />
             </div>
-            <h1 className="font-playfair text-3xl font-bold text-wine">
+            <h1 className="font-playfair text-2xl md:text-3xl font-bold text-wine">
               Customer Orders
             </h1>
           </div>
