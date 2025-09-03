@@ -135,7 +135,6 @@ export function Navigation({
             </div>
           </nav>
           {/* Spacer for bottom navigation */}
-          <div className="md:hidden h-16" />
         </>
       )}
 
