@@ -211,6 +211,11 @@
 
   /* Admin Dashboard Enhancements */
 
+  /* Admin header consistency */
+  .ml-15 {
+    margin-left: 3.75rem; /* 60px for 12-width icon + 12px gap */
+  }
+
   /* Wine-themed color palette variables */
   :root {
     --admin-blush-rose: #F4E4E6;
