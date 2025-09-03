@@ -300,20 +300,20 @@ export function SettingsModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 p-6 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 sm:p-6 border-t border-gray-200">
           <Button
             variant="outline"
             onClick={handleResetToDefault}
-            className="bg-smoke hover:bg-gray-100"
+            className="bg-smoke hover:bg-gray-100 w-full sm:w-auto order-2 sm:order-1"
           >
             Reset
           </Button>
-          
-          <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={onClose}>
+
+          <div className="flex flex-col sm:flex-row gap-3 order-1 sm:order-2">
+            <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button variant="accent" onClick={handleSave}>
+            <Button variant="accent" onClick={handleSave} className="w-full sm:w-auto">
               Save Settings
             </Button>
           </div>
