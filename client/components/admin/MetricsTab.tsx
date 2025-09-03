@@ -664,7 +664,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium wine-accent-text mb-1">
+                  <p className="text-sm font-medium text-wine mb-1">
                     {activity.action}
                   </p>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
