@@ -107,14 +107,14 @@ export default function AdminDashboard() {
         return {
           show: true,
           label: "Add Bottle",
-          icon: Package,
+          icon: Grape,
           action: handleFloatingActionClick
         };
       case "batch":
         return {
           show: true,
           label: "Add Batch",
-          icon: ClipboardList,
+          icon: Beaker,
           action: handleFloatingActionClick
         };
       default:
