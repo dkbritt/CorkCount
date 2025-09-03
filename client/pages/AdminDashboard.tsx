@@ -5,13 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import {
   Wine,
   LogOut,
-  Package,
-  ShoppingCart,
-  ClipboardList,
-  BarChart3,
+  Package2,
+  ShoppingBag,
+  Beaker,
+  TrendingUp,
   Settings,
-  Plus
+  Plus,
+  Grape
 } from "lucide-react";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 // Import tab components and settings modal
 import { InventoryTab } from "@/components/admin/InventoryTab";
