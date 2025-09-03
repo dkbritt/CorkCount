@@ -460,14 +460,17 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
         {(() => {
           if (loading) {
             return (
-              <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:scale-105 transition-all duration-200">
+              <div
+                className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? 'animate' : ''}`}
+                style={{ animationDelay: `${0.1 + (metricCards.length * 0.1)}s` }}
+              >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                  <div className="wine-icon-container cork w-12 h-12 flex items-center justify-center shadow-sm">
                     <Loader2 className="h-6 w-6 text-white animate-spin" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium wine-accent-text">
                     Wine Type Breakdown
                   </p>
                   <p className="text-lg text-gray-500">Loading...</p>
