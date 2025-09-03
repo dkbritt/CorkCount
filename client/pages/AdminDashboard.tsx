@@ -46,6 +46,13 @@ export default function AdminDashboard() {
   });
   const navigate = useNavigate();
 
+  // Add intersection observer for main content animation
+  const { elementRef: mainContentRef, isIntersecting: mainContentInView } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px',
+    triggerOnce: true,
+  });
+
   // Callbacks for floating action button
   const [onAddInventory, setOnAddInventory] = useState<(() => void) | null>(null);
   const [onAddBatch, setOnAddBatch] = useState<(() => void) | null>(null);
