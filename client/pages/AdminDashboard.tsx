@@ -31,10 +31,10 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { id: "metrics", label: "Metrics", icon: BarChart3 },
-  { id: "inventory", label: "Inventory", icon: Package },
-  { id: "orders", label: "Orders", icon: ShoppingCart },
-  { id: "batch", label: "Batch Management", icon: ClipboardList },
+  { id: "metrics", label: "Metrics", icon: TrendingUp },
+  { id: "inventory", label: "Inventory", icon: Grape },
+  { id: "orders", label: "Orders", icon: ShoppingBag },
+  { id: "batch", label: "Batch Management", icon: Beaker },
 ];
 
 export default function AdminDashboard() {
