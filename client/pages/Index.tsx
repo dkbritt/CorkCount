@@ -343,7 +343,7 @@ export default function Index() {
 
       {/* Hero Section */}
       <div className="hero-wine-gradient text-white">
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 pt-8 pb-16 sm:pt-12 sm:pb-24">
           <div className="text-center hero-content" ref={heroRef}>
             <div className="hero-text-overlay max-w-4xl">
               <div
