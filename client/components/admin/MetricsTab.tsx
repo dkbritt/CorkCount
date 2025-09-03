@@ -44,23 +44,26 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
   const [error, setError] = useState<string | null>(null);
 
   // Intersection observers for animations
-  const { elementRef: headerRef, isIntersecting: headerInView } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px',
-    triggerOnce: true,
-  });
+  const { elementRef: headerRef, isIntersecting: headerInView } =
+    useIntersectionObserver({
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+      triggerOnce: true,
+    });
 
-  const { elementRef: cardsRef, isIntersecting: cardsInView } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px',
-    triggerOnce: true,
-  });
+  const { elementRef: cardsRef, isIntersecting: cardsInView } =
+    useIntersectionObserver({
+      threshold: 0.1,
+      rootMargin: "0px 0px -100px 0px",
+      triggerOnce: true,
+    });
 
-  const { elementRef: activityRef, isIntersecting: activityInView } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px',
-    triggerOnce: true,
-  });
+  const { elementRef: activityRef, isIntersecting: activityInView } =
+    useIntersectionObserver({
+      threshold: 0.1,
+      rootMargin: "0px 0px -100px 0px",
+      triggerOnce: true,
+    });
 
   // Recent activity data (can be expanded to pull from multiple tables)
   const [recentActivity, setRecentActivity] = useState([
@@ -396,8 +399,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
       {/* Page Header */}
       <div
         ref={headerRef}
-        className={`admin-fade-in ${headerInView ? 'animate' : ''}`}
-        style={{ animationDelay: '0.1s' }}
+        className={`admin-fade-in ${headerInView ? "animate" : ""}`}
+        style={{ animationDelay: "0.1s" }}
       >
         <div className="flex items-center gap-3 mb-2">
           <div className="w-12 h-12 md:w-12 md:h-12 bg-wine rounded-lg flex items-center justify-center">
@@ -408,7 +411,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           </h1>
         </div>
         <p className="text-gray-600 ml-15">
-          Monitor your wine inventory and business metrics with real-time insights
+          Monitor your wine inventory and business metrics with real-time
+          insights
         </p>
       </div>
 
@@ -423,11 +427,13 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           return (
             <div
               key={index}
-              className={`admin-metric-card admin-card-hover p-6 cursor-pointer admin-fade-in ${cardsInView ? 'animate' : ''}`}
-              style={{ animationDelay: `${0.1 + (index * 0.1)}s` }}
+              className={`admin-metric-card admin-card-hover p-6 cursor-pointer admin-fade-in ${cardsInView ? "animate" : ""}`}
+              style={{ animationDelay: `${0.1 + index * 0.1}s` }}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 ${metric.color} flex items-center justify-center shadow-sm`}>
+                <div
+                  className={`w-12 h-12 ${metric.color} flex items-center justify-center shadow-sm`}
+                >
                   {loading ? (
                     <Loader2 className="h-6 w-6 text-white animate-spin" />
                   ) : (
@@ -437,9 +443,7 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm font-medium text-wine">
-                  {metric.title}
-                </p>
+                <p className="text-sm font-medium text-wine">{metric.title}</p>
                 <p className="text-3xl font-bold text-gray-900">
                   {loading ? (
                     <span className="animate-pulse bg-gray-200 rounded h-8 w-16 block"></span>
@@ -458,8 +462,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           if (loading) {
             return (
               <div
-                className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? 'animate' : ''}`}
-                style={{ animationDelay: `${0.1 + (metricCards.length * 0.1)}s` }}
+                className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? "animate" : ""}`}
+                style={{ animationDelay: `${0.1 + metricCards.length * 0.1}s` }}
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-federal rounded-lg flex items-center justify-center shadow-sm">
@@ -511,8 +515,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           if (typeData.length === 0) {
             return (
               <div
-                className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? 'animate' : ''}`}
-                style={{ animationDelay: `${0.1 + (metricCards.length * 0.1)}s` }}
+                className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? "animate" : ""}`}
+                style={{ animationDelay: `${0.1 + metricCards.length * 0.1}s` }}
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-federal rounded-lg flex items-center justify-center shadow-sm">
@@ -536,8 +540,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
 
           return (
             <div
-              className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? 'animate' : ''}`}
-              style={{ animationDelay: `${0.1 + (metricCards.length * 0.1)}s` }}
+              className={`admin-metric-card admin-card-hover p-6 admin-fade-in ${cardsInView ? "animate" : ""}`}
+              style={{ animationDelay: `${0.1 + metricCards.length * 0.1}s` }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-federal rounded-lg flex items-center justify-center shadow-sm">
@@ -635,8 +639,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
       {/* Recent Activity */}
       <div
         ref={activityRef}
-        className={`bg-white rounded-lg border border-gray-200 admin-fade-in ${activityInView ? 'animate' : ''}`}
-        style={{ animationDelay: '0.3s' }}
+        className={`bg-white rounded-lg border border-gray-200 admin-fade-in ${activityInView ? "animate" : ""}`}
+        style={{ animationDelay: "0.3s" }}
       >
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -653,8 +657,8 @@ export function MetricsTab({ settings }: MetricsTabProps = {}) {
           {recentActivity.map((activity, index) => (
             <div
               key={activity.id}
-              className={`p-6 hover:bg-white/50 transition-all duration-200 admin-fade-in ${activityInView ? 'animate' : ''}`}
-              style={{ animationDelay: `${0.4 + (index * 0.05)}s` }}
+              className={`p-6 hover:bg-white/50 transition-all duration-200 admin-fade-in ${activityInView ? "animate" : ""}`}
+              style={{ animationDelay: `${0.4 + index * 0.05}s` }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">

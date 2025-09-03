@@ -15,7 +15,7 @@ export function SearchBar({
   onSearch,
   onClear,
   className = "",
-  variant = "storefront"
+  variant = "storefront",
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -41,14 +41,18 @@ export function SearchBar({
 
   return (
     <form onSubmit={handleSubmit} className={`relative ${className}`}>
-      <div className={`relative flex items-center transition-all duration-300 ${
-        isAdmin
-          ? "bg-white border border-gray-300 rounded-lg focus-within:border-wine focus-within:ring-2 focus-within:ring-wine/20"
-          : "wine-label-search"
-      }`}>
+      <div
+        className={`relative flex items-center transition-all duration-300 ${
+          isAdmin
+            ? "bg-white border border-gray-300 rounded-lg focus-within:border-wine focus-within:ring-2 focus-within:ring-wine/20"
+            : "wine-label-search"
+        }`}
+      >
         {/* Search Icon */}
         <div className="absolute left-4 flex items-center pointer-events-none z-10">
-          <Search className={`h-5 w-5 ${isAdmin ? "text-gray-400" : "text-amber-700"}`} />
+          <Search
+            className={`h-5 w-5 ${isAdmin ? "text-gray-400" : "text-amber-700"}`}
+          />
         </div>
 
         {/* Input Field */}

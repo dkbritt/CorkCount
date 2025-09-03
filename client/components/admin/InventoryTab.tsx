@@ -1205,12 +1205,14 @@ export function InventoryTab({
                             alt={item.name}
                             className="h-12 w-12 rounded-lg object-cover border border-gray-200"
                             onError={(e) => {
-                              e.currentTarget.src = '/placeholder.svg';
+                              e.currentTarget.src = "/placeholder.svg";
                             }}
                           />
                         ) : (
                           <div className="h-12 w-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">No image</span>
+                            <span className="text-gray-400 text-xs">
+                              No image
+                            </span>
                           </div>
                         )}
                       </div>
@@ -1287,12 +1289,16 @@ export function InventoryTab({
                       alt={item.name}
                       className="h-16 w-16 rounded-lg object-cover border border-gray-200"
                       onError={(e) => {
-                        e.currentTarget.src = '/placeholder.svg';
+                        e.currentTarget.src = "/placeholder.svg";
                       }}
                     />
                   ) : (
                     <div className="h-16 w-16 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                      <span className="text-gray-400 text-xs text-center">No<br/>image</span>
+                      <span className="text-gray-400 text-xs text-center">
+                        No
+                        <br />
+                        image
+                      </span>
                     </div>
                   )}
                 </div>

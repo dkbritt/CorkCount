@@ -11,7 +11,7 @@ import {
   TrendingUp,
   Settings,
   Plus,
-  Grape
+  Grape,
 } from "lucide-react";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
@@ -20,7 +20,10 @@ import { InventoryTab } from "@/components/admin/InventoryTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { BatchManagementTab } from "@/components/admin/BatchManagementTab";
 import { MetricsTab } from "@/components/admin/MetricsTab";
-import { SettingsModal, InventorySettings } from "@/components/admin/SettingsModal";
+import {
+  SettingsModal,
+  InventorySettings,
+} from "@/components/admin/SettingsModal";
 
 type TabType = "inventory" | "orders" | "batch" | "metrics";
 
@@ -40,21 +43,26 @@ const tabs: Tab[] = [
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("metrics");
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [inventorySettings, setInventorySettings] = useState<InventorySettings>({
-    lowStockThreshold: 5,
-    outOfStockThreshold: 0
-  });
+  const [inventorySettings, setInventorySettings] = useState<InventorySettings>(
+    {
+      lowStockThreshold: 5,
+      outOfStockThreshold: 0,
+    },
+  );
   const navigate = useNavigate();
 
   // Add intersection observer for main content animation
-  const { elementRef: mainContentRef, isIntersecting: mainContentInView } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px',
-    triggerOnce: true,
-  });
+  const { elementRef: mainContentRef, isIntersecting: mainContentInView } =
+    useIntersectionObserver({
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+      triggerOnce: true,
+    });
 
   // Callbacks for floating action button
-  const [onAddInventory, setOnAddInventory] = useState<(() => void) | null>(null);
+  const [onAddInventory, setOnAddInventory] = useState<(() => void) | null>(
+    null,
+  );
   const [onAddBatch, setOnAddBatch] = useState<(() => void) | null>(null);
 
   // Create stable callback setters using useCallback
@@ -108,14 +116,14 @@ export default function AdminDashboard() {
           show: true,
           label: "Add Bottle",
           icon: Grape,
-          action: handleFloatingActionClick
+          action: handleFloatingActionClick,
         };
       case "batch":
         return {
           show: true,
           label: "Add Batch",
           icon: Beaker,
-          action: handleFloatingActionClick
+          action: handleFloatingActionClick,
         };
       default:
         return { show: false };
@@ -125,11 +133,21 @@ export default function AdminDashboard() {
   const renderTabContent = () => {
     switch (activeTab) {
       case "inventory":
-        return <InventoryTab settings={inventorySettings} onSetAddCallback={handleSetAddInventory} />;
+        return (
+          <InventoryTab
+            settings={inventorySettings}
+            onSetAddCallback={handleSetAddInventory}
+          />
+        );
       case "orders":
         return <OrdersTab />;
       case "batch":
-        return <BatchManagementTab settings={inventorySettings} onSetAddCallback={handleSetAddBatch} />;
+        return (
+          <BatchManagementTab
+            settings={inventorySettings}
+            onSetAddCallback={handleSetAddBatch}
+          />
+        );
       case "metrics":
         return <MetricsTab settings={inventorySettings} />;
       default:
@@ -198,9 +216,10 @@ export default function AdminDashboard() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap
-                    ${isActive
-                      ? 'bg-wine text-white shadow-sm'
-                      : 'text-gray-600 hover:text-wine hover:bg-gray-100'
+                    ${
+                      isActive
+                        ? "bg-wine text-white shadow-sm"
+                        : "text-gray-600 hover:text-wine hover:bg-gray-100"
                     }
                   `}
                 >
@@ -216,7 +235,7 @@ export default function AdminDashboard() {
       {/* Tab Content */}
       <div
         ref={mainContentRef}
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-24 md:pb-8 admin-fade-in ${mainContentInView ? 'animate' : ''}`}
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-24 md:pb-8 admin-fade-in ${mainContentInView ? "animate" : ""}`}
       >
         {renderTabContent()}
       </div>
@@ -234,9 +253,10 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`
                   flex flex-col items-center gap-1 px-2 py-3 text-xs font-medium transition-all flex-1
-                  ${isActive
-                    ? 'text-wine bg-gray-50'
-                    : 'text-gray-600 hover:text-wine'
+                  ${
+                    isActive
+                      ? "text-wine bg-gray-50"
+                      : "text-gray-600 hover:text-wine"
                   }
                 `}
               >

@@ -14,12 +14,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        'playfair': ['Playfair Display', 'serif'],
-        'inter': ['Inter', 'sans-serif'],
-        'script': ['Dancing Script', 'cursive'],
-        'elegant': ['Great Vibes', 'cursive'],
-        'cormorant': ['Cormorant Garamond', 'serif'],
-        'baskerville': ['Libre Baskerville', 'serif'],
+        playfair: ["Playfair Display", "serif"],
+        inter: ["Inter", "sans-serif"],
+        script: ["Dancing Script", "cursive"],
+        elegant: ["Great Vibes", "cursive"],
+        cormorant: ["Cormorant Garamond", "serif"],
+        baskerville: ["Libre Baskerville", "serif"],
       },
       colors: {
         wine: {

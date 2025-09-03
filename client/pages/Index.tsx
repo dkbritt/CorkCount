@@ -38,11 +38,12 @@ export default function Index() {
   const [showFilters, setShowFilters] = useState(false);
 
   // Hook for hero animation control
-  const { elementRef: heroRef, isIntersecting: heroInView } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px',
-    triggerOnce: true,
-  });
+  const { elementRef: heroRef, isIntersecting: heroInView } =
+    useIntersectionObserver({
+      threshold: 0.1,
+      rootMargin: "0px 0px -100px 0px",
+      triggerOnce: true,
+    });
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     // Load cart from localStorage on initialization, migrate legacy key
     try {
@@ -84,10 +85,11 @@ export default function Index() {
         if (retryCount === 0) {
           const hasInterference = detectAnalyticsInterference();
           if (hasInterference) {
-            console.warn('⚠️ Analytics interference detected during app load');
+            console.warn("⚠️ Analytics interference detected during app load");
             toast({
               title: "Loading wines...",
-              description: "Using optimized connection for analytics compatibility.",
+              description:
+                "Using optimized connection for analytics compatibility.",
             });
           }
         }
@@ -126,7 +128,10 @@ export default function Index() {
           });
         }
       } catch (err) {
-        console.error(`Error fetching inventory (attempt ${retryCount + 1}):`, formatError(err));
+        console.error(
+          `Error fetching inventory (attempt ${retryCount + 1}):`,
+          formatError(err),
+        );
 
         // Retry up to 2 times with exponential backoff
         if (retryCount < 2) {
@@ -138,7 +143,8 @@ export default function Index() {
         }
 
         // Final failure after retries
-        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+        const errorMessage =
+          err instanceof Error ? err.message : "An unexpected error occurred";
         setError(errorMessage);
         toast({
           title: "Connection Error",
@@ -347,30 +353,30 @@ export default function Index() {
           <div className="text-center hero-content" ref={heroRef}>
             <div className="hero-text-overlay max-w-4xl">
               <div
-                className={`font-elegant text-6xl sm:text-8xl lg:text-9xl hero-main-title mb-2 hero-fade-in ${heroInView ? 'animate' : ''}`}
-                style={{ animationDelay: '0.2s' }}
+                className={`font-elegant text-6xl sm:text-8xl lg:text-9xl hero-main-title mb-2 hero-fade-in ${heroInView ? "animate" : ""}`}
+                style={{ animationDelay: "0.2s" }}
               >
                 KB Winery
               </div>
               <div
-                className={`font-script text-lg sm:text-2xl lg:text-3xl hero-subtitle mb-6 tracking-wide hero-fade-in ${heroInView ? 'animate' : ''}`}
-                style={{ animationDelay: '0.4s' }}
+                className={`font-script text-lg sm:text-2xl lg:text-3xl hero-subtitle mb-6 tracking-wide hero-fade-in ${heroInView ? "animate" : ""}`}
+                style={{ animationDelay: "0.4s" }}
               >
                 Est. 2010&nbsp;• Handcrafted Excellence
               </div>
               <h1
-                className={`font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in ${heroInView ? 'animate' : ''}`}
-                style={{ animationDelay: '0.6s' }}
+                className={`font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in ${heroInView ? "animate" : ""}`}
+                style={{ animationDelay: "0.6s" }}
               >
                 Sip Happens — Find Your Vintage
               </h1>
               <div
-                className={`font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in ${heroInView ? 'animate' : ''}`}
-                style={{ animationDelay: '0.8s' }}
+                className={`font-baskerville text-lg sm:text-xl lg:text-2xl mb-8 hero-description max-w-3xl mx-auto leading-relaxed hero-fade-in ${heroInView ? "animate" : ""}`}
+                style={{ animationDelay: "0.8s" }}
               >
                 <p>
-                  KB Winery's finest — from casual sips to collector's
-                  picks, every bottle tells a story.
+                  KB Winery's finest — from casual sips to collector's picks,
+                  every bottle tells a story.
                   <br />
                   <strong></strong>
                 </p>
@@ -378,10 +384,14 @@ export default function Index() {
 
               {/* Search Bar */}
               <div
-                className={`max-w-2xl mx-auto mb-8 hero-fade-in ${heroInView ? 'animate' : ''}`}
-                style={{ animationDelay: '1.0s' }}
+                className={`max-w-2xl mx-auto mb-8 hero-fade-in ${heroInView ? "animate" : ""}`}
+                style={{ animationDelay: "1.0s" }}
               >
-                <SearchBar onSearch={handleSearch} onClear={clearSearch} placeholder="Search by wine name or type" />
+                <SearchBar
+                  onSearch={handleSearch}
+                  onClear={clearSearch}
+                  placeholder="Search by wine name or type"
+                />
               </div>
             </div>
           </div>

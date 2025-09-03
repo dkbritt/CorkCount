@@ -17,16 +17,23 @@ interface SettingsModalProps {
   currentSettings: InventorySettings;
 }
 
-export function SettingsModal({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  currentSettings 
+export function SettingsModal({
+  isOpen,
+  onClose,
+  onSave,
+  currentSettings,
 }: SettingsModalProps) {
   const { toast } = useToast();
-  const [lowStockThreshold, setLowStockThreshold] = useState(currentSettings.lowStockThreshold.toString());
-  const [outOfStockThreshold, setOutOfStockThreshold] = useState(currentSettings.outOfStockThreshold.toString());
-  const [errors, setErrors] = useState<{ lowStock?: string; outOfStock?: string }>({});
+  const [lowStockThreshold, setLowStockThreshold] = useState(
+    currentSettings.lowStockThreshold.toString(),
+  );
+  const [outOfStockThreshold, setOutOfStockThreshold] = useState(
+    currentSettings.outOfStockThreshold.toString(),
+  );
+  const [errors, setErrors] = useState<{
+    lowStock?: string;
+    outOfStock?: string;
+  }>({});
   const [isUpdatingWinery, setIsUpdatingWinery] = useState(false);
   const [isAutoTagging, setIsAutoTagging] = useState(false);
 
@@ -39,22 +46,23 @@ export function SettingsModal({
 
   const validateForm = (): boolean => {
     const newErrors: { lowStock?: string; outOfStock?: string } = {};
-    
+
     const lowStock = parseInt(lowStockThreshold);
     const outOfStock = parseInt(outOfStockThreshold);
-    
+
     if (isNaN(lowStock) || lowStock < 0) {
       newErrors.lowStock = "Must be a number ≥ 0";
     }
-    
+
     if (isNaN(outOfStock) || outOfStock < 0) {
       newErrors.outOfStock = "Must be a number ≥ 0";
     }
-    
+
     if (!isNaN(lowStock) && !isNaN(outOfStock) && lowStock <= outOfStock) {
-      newErrors.lowStock = "Low stock threshold must be greater than out of stock threshold";
+      newErrors.lowStock =
+        "Low stock threshold must be greater than out of stock threshold";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -63,12 +71,12 @@ export function SettingsModal({
     if (!validateForm()) {
       return;
     }
-    
+
     const settings: InventorySettings = {
       lowStockThreshold: parseInt(lowStockThreshold),
-      outOfStockThreshold: parseInt(outOfStockThreshold)
+      outOfStockThreshold: parseInt(outOfStockThreshold),
     };
-    
+
     onSave(settings);
     onClose();
   };
@@ -124,10 +132,11 @@ export function SettingsModal({
         });
       }
     } catch (error) {
-      console.error('Auto-tagging error:', error);
+      console.error("Auto-tagging error:", error);
       toast({
         title: "Error",
-        description: "Auto-tagging failed. Make sure the database has a 'tags' column in the Inventory table.",
+        description:
+          "Auto-tagging failed. Make sure the database has a 'tags' column in the Inventory table.",
         variant: "destructive",
       });
     } finally {
@@ -157,9 +166,9 @@ export function SettingsModal({
               Inventory Alert Settings
             </h2>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onClose}
             className="h-8 w-8 p-0"
           >
@@ -180,11 +189,11 @@ export function SettingsModal({
               onChange={(e) => {
                 setLowStockThreshold(e.target.value);
                 if (errors.lowStock) {
-                  setErrors(prev => ({ ...prev, lowStock: undefined }));
+                  setErrors((prev) => ({ ...prev, lowStock: undefined }));
                 }
               }}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-wine/20 focus:border-wine ${
-                errors.lowStock ? 'border-red-300' : 'border-gray-300'
+                errors.lowStock ? "border-red-300" : "border-gray-300"
               }`}
               placeholder="5"
               min="0"
@@ -193,7 +202,8 @@ export function SettingsModal({
               <p className="mt-1 text-sm text-red-600">{errors.lowStock}</p>
             )}
             <p className="mt-1 text-sm text-gray-500 break-words">
-              Bottles with quantity at or below this number will be marked as "Low Stock"
+              Bottles with quantity at or below this number will be marked as
+              "Low Stock"
             </p>
           </div>
 
@@ -208,11 +218,11 @@ export function SettingsModal({
               onChange={(e) => {
                 setOutOfStockThreshold(e.target.value);
                 if (errors.outOfStock) {
-                  setErrors(prev => ({ ...prev, outOfStock: undefined }));
+                  setErrors((prev) => ({ ...prev, outOfStock: undefined }));
                 }
               }}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-wine/20 focus:border-wine ${
-                errors.outOfStock ? 'border-red-300' : 'border-gray-300'
+                errors.outOfStock ? "border-red-300" : "border-gray-300"
               }`}
               placeholder="0"
               min="0"
@@ -221,13 +231,16 @@ export function SettingsModal({
               <p className="mt-1 text-sm text-red-600">{errors.outOfStock}</p>
             )}
             <p className="mt-1 text-sm text-gray-500 break-words">
-              Bottles with quantity at or below this number will be marked as "Out of Stock"
+              Bottles with quantity at or below this number will be marked as
+              "Out of Stock"
             </p>
           </div>
 
           {/* Data Utilities */}
           <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Data Utilities</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Data Utilities
+            </h3>
 
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
               <div className="flex flex-col sm:flex-row sm:items-start gap-3">
@@ -237,8 +250,9 @@ export function SettingsModal({
                     Update Winery Names
                   </h4>
                   <p className="text-sm text-gray-600 mb-3 break-words">
-                    Updates any existing "CorkCount Winery" entries in the inventory to "KB Winery".
-                    This is a one-time utility to rebrand existing data.
+                    Updates any existing "CorkCount Winery" entries in the
+                    inventory to "KB Winery". This is a one-time utility to
+                    rebrand existing data.
                   </p>
                   <Button
                     variant="outline"
@@ -271,8 +285,10 @@ export function SettingsModal({
                     Auto-Tag Wine Inventory
                   </h4>
                   <p className="text-sm text-gray-600 mb-3 break-words">
-                    Automatically generates flavor tags for all wines based on their flavor notes and descriptions.
-                    Tags include: Berry, Earthy, Citrus, Floral, Chocolate, Vanilla, Spicy, Buttery, Nutty, Herbal.
+                    Automatically generates flavor tags for all wines based on
+                    their flavor notes and descriptions. Tags include: Berry,
+                    Earthy, Citrus, Floral, Chocolate, Vanilla, Spicy, Buttery,
+                    Nutty, Herbal.
                   </p>
                   <Button
                     variant="outline"
@@ -310,10 +326,18 @@ export function SettingsModal({
           </Button>
 
           <div className="flex flex-col sm:flex-row gap-3 order-1 sm:order-2">
-            <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
-            <Button variant="accent" onClick={handleSave} className="w-full sm:w-auto">
+            <Button
+              variant="accent"
+              onClick={handleSave}
+              className="w-full sm:w-auto"
+            >
               Save Settings
             </Button>
           </div>

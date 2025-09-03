@@ -37,7 +37,7 @@ export function WineCard({
   const [quantity, setQuantity] = useState(1);
   const { elementRef, isIntersecting } = useIntersectionObserver({
     threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px',
+    rootMargin: "0px 0px -50px 0px",
     triggerOnce: true,
   });
   const isAvailable = wine.inStock > 0;
@@ -93,7 +93,8 @@ export function WineCard({
     return (
       <div
         ref={elementRef}
-        className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group w-full max-w-full wine-card-enter ${isIntersecting ? 'animate' : ''}`}>
+        className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group w-full max-w-full wine-card-enter ${isIntersecting ? "animate" : ""}`}
+      >
         <div className="flex gap-4 p-4">
           {/* Wine Image */}
           <div className="flex-shrink-0 w-24 h-32 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg relative overflow-hidden">
@@ -230,7 +231,8 @@ export function WineCard({
   return (
     <div
       ref={elementRef}
-      className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group w-full max-w-full wine-card-enter ${isIntersecting ? 'animate' : ''}`}>
+      className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden group w-full max-w-full wine-card-enter ${isIntersecting ? "animate" : ""}`}
+    >
       {/* Wine Image */}
       <div className="aspect-[3/4] bg-gradient-to-b from-gray-50 to-gray-100 relative overflow-hidden">
         {wine.image ? (
