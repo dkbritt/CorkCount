@@ -194,11 +194,18 @@
     .hero-fade-in,
     .wine-card-enter,
     .admin-fade-in,
-    .admin-card-hover {
-      animation: none;
-      transition: none;
-      opacity: 1;
-      transform: none;
+    .admin-card-hover,
+    .admin-metric-card {
+      animation: none !important;
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .admin-metric-card:hover,
+    .admin-card-hover:hover {
+      transform: none !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
     }
   }
 
