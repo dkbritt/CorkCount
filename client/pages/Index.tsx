@@ -362,7 +362,7 @@ export default function Index() {
                 className={`font-script text-lg sm:text-2xl lg:text-3xl hero-subtitle mb-6 tracking-wide hero-fade-in ${heroInView ? "animate" : ""}`}
                 style={{ animationDelay: "0.4s" }}
               >
-                Est. 2010&nbsp;• Handcrafted Excellence
+                Est. 2004&nbsp;• Handcrafted Excellence
               </div>
               <h1
                 className={`font-cormorant text-3xl sm:text-5xl lg:text-6xl font-semibold mb-6 hero-headline hero-fade-in ${heroInView ? "animate" : ""}`}
