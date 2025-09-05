@@ -38,8 +38,8 @@ const paymentMethodLabels: Record<string, string> = {
 };
 
 const paymentInstructions: Record<string, string> = {
-  zelle: "Send payment to kbwinery@zelle.com before pickup.",
-  cashapp: "Send payment to $KBWinery before pickup.",
+  zelle: "Send payment to KelvinB1@gmail.com before pickup.",
+  cashapp: "Send payment to $kbritt4u before pickup.",
   cash: "Please bring exact change to pickup."
 };
 
